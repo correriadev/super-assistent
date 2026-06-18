@@ -1,0 +1,38 @@
+[
+  {
+    "id": "objetivo-simulador-impacto-caixa",
+    "peso": -6
+  },
+  {
+    "id": "publico-margem-estreita-ciclo-longo",
+    "peso": -6
+  },
+  {
+    "id": "comparacao-dois-cenarios-no-tempo",
+    "peso": -5
+  },
+  {
+    "id": "origem-aliquota-exata-ou-predefinida",
+    "peso": -6
+  },
+  {
+    "id": "venda-parcelada-segregacao-proporcional",
+    "peso": -3
+  },
+  {
+    "id": "estorno-cancelamento-reversao",
+    "peso": -7
+  },
+  {
+    "id": "fonte-faturamento-escrituracao",
+    "peso": -3
+  },
+  {
+    "id": "cobranca",
+    "peso": -1
+  },
+  {
+    "id": "nome-split",
+    "peso": -2
+  }
+]

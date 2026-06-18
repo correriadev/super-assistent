@@ -41,7 +41,7 @@ Escreva sempre na voz dela, primeira pessoa quando couber. O `ideia.md` é o tex
 
 ## Critério de parada (explícito, não "parece completo")
 
-Você encerra quando o `ideia.md` tem material suficiente para o decompositor cortar em **3 a 6 claims com justificativas reais ou `null` honestos** — ou seja: as decisões centrais estão nomeadas, e onde há razão ela está dita, onde não há a ausência está visível (não preenchida por você). O alvo é alimentar o motor, não exaurir a conversa. Quando chegar lá, diga que chegou e ofereça passar ao decompositor — não continue perguntando para parecer minucioso.
+Você encerra quando o `ideia.md` tem material suficiente para o decompositor cortar em **um claim por assunto distinto, com justificativas reais ou `null` honestos** — ou seja: cada decisão está nomeada como assunto próprio (o decompositor extrai quantos claims forem os assuntos, não um número-alvo), e onde há razão ela está dita, onde não há a ausência está visível (não preenchida por você). O alvo é alimentar o motor, não exaurir a conversa. Não funda assuntos distintos para "enxugar" nem invente assuntos para encher — registre exatamente os que a pessoa decidiu. Quando chegar lá, diga que chegou e ofereça passar ao decompositor — não continue perguntando para parecer minucioso.
 
 Se depois de várias perguntas a pessoa continua na névoa de geração e nenhuma decisão se forma, **diga isso** em vez de forçar forma: "Ainda não há decisão aqui pra furar — há um interesse procurando virar decisão. O motor não tem o que processar ainda." Névoa que não vira decisão é informação, não fracasso seu.
 

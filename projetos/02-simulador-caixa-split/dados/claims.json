@@ -1,0 +1,65 @@
+[
+  {
+    "id": "objetivo-simulador-impacto-caixa",
+    "content": "O produto e um simulador que mostra ao cliente, antes do split payment entrar em vigor, o tamanho do impacto no fluxo de caixa.",
+    "binding": "vinculante",
+    "category": "produto",
+    "justificativa": "Com o split, o IBS/CBS sai na liquidacao financeira da venda e nao entra mais no caixa do cliente; o intervalo entre receber e recolher (capital de giro) some, e quem tem margem apertada e ciclo longo sente no fluxo de caixa."
+  },
+  {
+    "id": "publico-margem-estreita-ciclo-longo",
+    "content": "O simulador comeca pelos clientes de margem estreita e ciclo financeiro longo.",
+    "binding": "vinculante",
+    "category": "publico",
+    "justificativa": "E esse perfil que o split machuca, porque e deles que o intervalo entre receber e recolher fazia mais diferenca."
+  },
+  {
+    "id": "comparacao-dois-cenarios-no-tempo",
+    "content": "O simulador compara lado a lado, para o mesmo faturamento, o regime de hoje (tributo entra no caixa e sai depois) e o split (IBS/CBS sai na liquidacao), tornando visivel a supressao do intervalo no tempo.",
+    "binding": "vinculante",
+    "category": "produto",
+    "justificativa": "A dor a tornar visivel e a supressao do intervalo no tempo; se nao mostrar a diferenca no tempo, nao serve."
+  },
+  {
+    "id": "origem-aliquota-exata-ou-predefinida",
+    "content": "Idealmente usa a aliquota exata do split padrao B2B, mas quando nao houver apuracao exata na simulacao usa percentual predefinido como aproximacao.",
+    "binding": "default-sobrescrevivel",
+    "category": "dados",
+    "justificativa": "Nem sempre havera a apuracao exata na simulacao; o split simplificado da propria lei opera com percentual predefinido quando a apuracao em tempo real nao da."
+  },
+  {
+    "id": "venda-parcelada-segregacao-proporcional",
+    "content": "Em venda parcelada, o tributo e segregado proporcionalmente em cada parcela, na data da liquidacao de cada uma.",
+    "binding": "vinculante",
+    "category": "calculo",
+    "justificativa": "A regra do split manda recolher proporcional em cada parcela; senao superestima a saida no mes da venda."
+  },
+  {
+    "id": "estorno-cancelamento-reversao",
+    "content": "O simulador deve reverter o valor do imposto em caso de estorno ou cancelamento (chargeback), recontando-o como caixa.",
+    "binding": "vinculante",
+    "category": "calculo",
+    "justificativa": "Se o imposto ja saiu no split e a venda e cancelada/estornada, esse valor volta a contar como caixa; sem tratar isso o simulador mostra um buraco maior do que o real e assusta o cliente a toa."
+  },
+  {
+    "id": "fonte-faturamento-escrituracao",
+    "content": "Os dados de faturamento sao puxados da propria escrituracao contabil que o escritorio ja faz para esses clientes.",
+    "binding": "default-sobrescrevivel",
+    "category": "dados",
+    "justificativa": "O escritorio ja tem o faturamento mensal dos clientes na sua contabilidade, entao puxa de la em vez de pedir que digitem."
+  },
+  {
+    "id": "cobranca",
+    "content": "O modelo de cobranca ainda nao esta definido, possivelmente embutido no honorario.",
+    "binding": "ilustrativo",
+    "category": "cobranca",
+    "justificativa": null
+  },
+  {
+    "id": "nome-split",
+    "content": "O nome do produto e \"Split\".",
+    "binding": "ilustrativo",
+    "category": "branding",
+    "justificativa": null
+  }
+]

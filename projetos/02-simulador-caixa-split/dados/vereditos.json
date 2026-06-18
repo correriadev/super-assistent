@@ -1,0 +1,85 @@
+[
+  {
+    "id": "publico-alvo-margem-estreita",
+    "veredito": "INCOMPLETO",
+    "lacunas_estruturais": [
+      "Definir critério mensurável para 'margem estreita' (tipo de margem + limiar).",
+      "Definir critério mensurável para 'ciclo financeiro longo' (métrica + limiar em dias).",
+      "Esclarecer se os dois critérios são cumulativos (E) ou alternativos (OU)."
+    ],
+    "itens_verificar": [
+      "[CRÍTICO] O split payment do IBS/CBS (LC 214/2025) faz o tributo sair na liquidação financeira, em vez de ser recolhido depois? Se não, o produto inteiro perde premissa.",
+      "Sob o split, o impacto no fluxo de caixa é materialmente maior para margem estreita e ciclo longo do que para outros perfis?",
+      "Existe na base do contador volume relevante desse perfil para justificar priorizá-lo?"
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  },
+  {
+    "id": "comparar-dois-cenarios",
+    "veredito": "PENDENTE-VERIFICAÇÃO",
+    "lacunas_estruturais": [
+      "Definir quais variáveis além do faturamento entram na comparação (alíquota efetiva, prazo de recolhimento atual, prazo de recebimento das vendas)."
+    ],
+    "itens_verificar": [
+      "[CRÍTICO] No desenho da LC 214/2025, o IBS/CBS sob split é retirado no instante da liquidação financeira (e não em outro momento)?",
+      "[CRÍTICO] Hoje o tributo que IBS/CBS substituirá transita pelo caixa do contribuinte e só é recolhido depois, gerando o intervalo?",
+      "A supressão desse intervalo comprime materialmente o capital de giro do perfil de cliente do contador?"
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  },
+  {
+    "id": "aliquota-percentual-aproximado",
+    "veredito": "INCOMPLETO",
+    "lacunas_estruturais": [
+      "O content não nomeia o percentual nem sua origem (valor fixo? tabela por setor? definido pela lei? configurável?).",
+      "O content não define o critério/gatilho que separa 'há apuração exata' de 'não há'."
+    ],
+    "itens_verificar": [
+      "[CRÍTICO] A LC 214/2025 prevê regime simplificado de split por percentual predefinido quando a apuração em tempo real não ocorre? Se não, a justificativa cai.",
+      "Caso exista, qual o percentual (ou tabela) e a que operações se aplica?",
+      "Em que condições a apuração exata do split B2B fica indisponível no fluxo real, e com que frequência?"
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  },
+  {
+    "id": "venda-parcelada-proporcional",
+    "veredito": "INCOMPLETO",
+    "lacunas_estruturais": [
+      "Não define tratamento de parcela inadimplente / não liquidada (imposto nunca recolhido? estorno?).",
+      "Não define liquidação parcial (proporção sobre valor liquidado ou nominal?).",
+      "Não define antecipação/quitação (imposto concentra na data efetiva de liquidação antecipada?)."
+    ],
+    "itens_verificar": [
+      "[CRÍTICO] A LC 214/2025 determina que, em venda parcelada, o recolhimento ocorre na liquidação financeira de cada parcela?",
+      "[CRÍTICO] O imposto é segregado proporcionalmente ao valor de cada parcela (e não integral na primeira nem por outra fórmula)?",
+      "Recolher integral no mês da venda de fato superestima a saída frente à regra do split?",
+      "A regra prevê tratamento específico para parcela inadimplente (estorno, suspensão, recolhimento sem liquidação)?"
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  },
+  {
+    "id": "forma-de-cobranca",
+    "veredito": "PASSA",
+    "lacunas_estruturais": [],
+    "itens_verificar": [
+      "(não bloqueante) O modelo de distribuição é via contador (B2B2C), de modo que exista honorário preexistente onde embutir? Resolver só se este caminho deixar de ser ilustrativo."
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  },
+  {
+    "id": "nome-split",
+    "veredito": "PASSA",
+    "lacunas_estruturais": [],
+    "itens_verificar": [
+      "(não bloqueante) 'Split' disponível como marca registrável (INPI) na classe de software/serviço fiscal?",
+      "(não bloqueante) 'Split' (produto) gera ambiguidade com 'split payment' (mecanismo legal) a ponto de confundir o cliente?"
+    ],
+    "pergunta_elicitacao": null,
+    "contradicao": null
+  }
+]

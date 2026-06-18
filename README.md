@@ -58,9 +58,11 @@ Testado com claims reais de um projeto do autor (Hub Contábil — SaaS de autom
   6. `PASSA` — de pé, sem ausência, sem vagueza, sem fato pendente. **[VALIDADO]**
 - **`[VERIFICAR]`** — item factual sinalizado em vez de afirmado. Formulado como **pergunta aberta**, nunca hipótese embutida (que ancoraria quem verifica). Acompanha fonte sugerida.
 
-## 6. Arquitetura: os cinco agents
+## 6. Arquitetura: os agents
 
-Runtime: **opencode ou Claude Code** com agents em markdown em `.opencode/agent/`. Sem código de integração com LLM próprio — tentativas disso quebraram repetidamente no ambiente e foram abandonadas. Dados em arquivos JSON, sem banco.
+> Núcleo de 5 (decompositor, gate, tradutor, expansor, orquestrador) + 2 de borda: **briefista** (passo 0, antes do motor) e **conselheiro** (modo adversarial avulso).
+
+Runtime: **Claude Code** (foco único atual; opencode adiado — ver ROADMAP) com agents em markdown em `agents/`. Sem código de integração com LLM próprio — tentativas disso quebraram repetidamente no ambiente e foram abandonadas. Dados em arquivos JSON, sem banco.
 
 ### Fluxo de um nível (ideação)
 ```
@@ -109,6 +111,8 @@ HUMANO revisa a expansão (corta/aprova os [Especulativo])
 - **tradutor** — converte vereditos técnicos em alerta sóbrio-concreto para o stakeholder. Triagem por gravidade (não número fixo), valoração conceitual ("você deixa de ganhar com X"), **revela mas NUNCA sugere solução**, sem jargão de intimidade, sem inventar número. **[VISÃO — escrito, não testado]**
 - **expansor** — gera claims do próximo nível a partir dos resolvidos; marca grau de derivação e declara `restricao_do_pai`. **[VISÃO — não testado]**
 - **orquestrador** — maestro; roda o ciclo, coordena a transição, mantém os pontos de controle humano.
+- **briefista** — passo 0, antes do decompositor: tira ideia vaga da névoa → `ideia.md` na voz da pessoa. Pergunta, **nunca propõe decisão** (justificativa fantasma é o pior modo de falha, um andar acima do gate). [VISÃO — escrito, não testado]
+- **conselheiro** — conselheiro adversarial avulso (fora do pipeline): testa raciocínio, não confirma. Mesma fronteira fato/lógica do gate, sem bajulação. [VISÃO — escrito, não testado]
 
 ## 7. Decisões de design travadas (com a razão)
 
@@ -147,10 +151,10 @@ Nenhuma quantidade de mecânica nova responde isso. O teste é: rodar a ideia de
 
 ## 11. Como começar o repositório
 
-1. Os cinco agents vão em `.opencode/agent/` (decompositor, gate, tradutor, expansor, orquestrador).
-2. Crie `dados/` para os JSONs (claims, vereditos, claims-nivel-N). Sem banco — pasta + JSON é suficiente até haver volume real.
-3. Estrutura sugerida para testes pessoais: uma pasta por projeto (`projetos/<nome>/` com ideia.md + os JSONs), versionada em git — histórico de graça, consultável com grep quando preciso.
-4. Para rodar: abra o opencode/Claude Code, fale com o orquestrador, dê a ideia.
+1. Os agents vão em `agents/` (decompositor, gate, tradutor, expansor, orquestrador + briefista, conselheiro).
+2. JSONs por projeto em `projetos/<nome>/` (claims, vereditos, claims-nivel-N). Sem banco — pasta + JSON é suficiente até haver volume real.
+3. Estrutura para testes pessoais: uma pasta por projeto (`projetos/<nome>/` com ideia.md + os JSONs), versionada em git — histórico de graça, consultável com grep quando preciso. Ideias livres ficam em `ideias/`.
+4. Para rodar: abra o Claude Code, fale com o orquestrador, dê a ideia.
 5. **Primeiro teste a fazer:** rodar um projeto descendo de ideação para concepção e **plantar uma contradição de propósito** (um claim de concepção que viola a ideação). Se o gate marcar `CONTRADIZ-NIVEL-ACIMA`, a tese central funcionou fora da cabeça do autor pela primeira vez. Se não, a `restricao_do_pai` declarada pelo expansor é o elo a investigar (é o mais novo e mais provável de estar torto).
 
 ## 12. Tecnologia: o que NÃO adicionar ainda

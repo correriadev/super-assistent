@@ -4,13 +4,13 @@
 >
 > **Princípio que ordena o roadmap:** o caminho mais curto até a pergunta de §10 do README — *"a crítica sóbria faz um terceiro parar e dizer 'não tinha visto isso'?"*. Nada de mecânica nova antes desse teste. Construir mais sistema antes da Fase 2 é a fuga confortável que o README registra como anti-meta.
 
-**Estado atual do repo:** só `README.md`. Zero código. Sem `.opencode/agent/`, sem `dados/`, sem `projetos/`. A spec existe; a implementação não.
+**Estado atual do repo:** 7 agents em `agents/` (5 núcleo + briefista + conselheiro). 1 projeto rodado end-to-end em `projetos/01-saas-fiscal-subvencao-reforma/` (ideia.md → claims.json → vereditos.json → alerta.md). Ideias livres em `ideias/`. Sem `dados/` (JSONs vivem por projeto). Fase 2 já cruzada (ver abaixo).
 
-**Dois runtimes em paralelo.** Os agents devem rodar tanto no **Claude Code** quanto no **opencode**. Toda alteração de configuração/agent vale para ambos os ambientes:
-- Claude Code: `C:\Users\artursc\.claude`
-- opencode: `C:\Users\artursc\.config\opencode`
+**Runtime único agora: Claude Code.** Ponto de virada (2026-06-18): o foco passa a ser **só Claude Code**. opencode fica para **depois** — paridade de runtime vira trabalho futuro, não restrição atual. Toda alteração de agent/config mira Claude Code primeiro; nada precisa ser espelhado no opencode nesta fase.
+- Claude Code: `~/.claude`
+- opencode (futuro): `~/.config/opencode`
 
-Os agents do repo vivem em `.opencode/agent/` (markdown), formato comum aos dois harnesses. Configs específicas de cada runtime (hooks, settings) ficam nas pastas acima e precisam ser mantidas em sincronia — uma mudança num ambiente exige refletir no outro.
+Os agents do repo vivem em `agents/` (markdown). Configs específicas do runtime (hooks, settings) ficam na pasta acima. Quando opencode voltar ao escopo, a sincronização vira tarefa explícita — não um custo carregado a cada mudança.
 
 ---
 
@@ -18,11 +18,11 @@ Os agents do repo vivem em `.opencode/agent/` (markdown), formato comum aos dois
 
 Tornar o repo rodável. Nada de lógica nova — apenas materializar a spec do README.
 
-- [ ] `.opencode/agent/`: 5 markdowns (decompositor, gate, tradutor, expansor, orquestrador)
-- [ ] `dados/` + `projetos/<nome>/` (ideia.md + JSONs)
+- [x] `agents/`: markdowns dos agents (decompositor, gate, tradutor, expansor, orquestrador + briefista, conselheiro)
+- [x] `projetos/<nome>/` (ideia.md + JSONs) — JSONs por projeto, sem pasta `dados/` global
 - [ ] Schema JSON travado: claim, veredito, binding
 - [ ] Orquestrador roda o ciclo de um nível end-to-end na ideia do autor (Hub Contábil)
-- [ ] **Validar em ambos os runtimes:** mesmo ciclo roda no Claude Code (`.claude`) e no opencode (`.config/opencode`)
+- [ ] **Validar no Claude Code** (`~/.claude`) — runtime único nesta fase; paridade opencode adiada
 
 **Saída:** ciclo de ideação completo funciona no repo novo.
 

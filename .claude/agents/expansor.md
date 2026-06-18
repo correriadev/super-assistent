@@ -24,8 +24,18 @@ Descer de nível NÃO é zoom (revelar mais detalhe do mesmo objeto). É **tradu
   - `[Implicado]` — o claim-pai **força** este filho. Se o pai é verdade, este filho é necessário. Ex: "catálogo curado" implica "existe uma tela que lista o catálogo". Já autorizado pelo pai; não é invenção sua.
   - `[Compatível]` — coerente com o pai, mas **não forçado** por ele. É uma proposta sua, razoável, que o pai não exige nem proíbe. Precisa de decisão humana para virar parte do projeto.
   - `[Especulativo]` — nem forçado nem sugerido pelo pai. Invenção sua, possivelmente útil, possivelmente fora de escopo. Candidato a ser cortado ou a virar contradição se o pai na verdade o exclui. Marque com honestidade — não disfarce especulação de implicação.
-- `deriva_de` — array de `id`s dos claims-pai dos quais este filho deriva.
+- `deriva_de` — array de `id`s dos claims-pai dos quais este filho deriva. **Este campo é o que carrega a herança de peso** (ver abaixo): o cálculo determinístico de peso soma o peso de cada pai listado aqui. `deriva_de` errado ou ausente quebra a herança e o filho nasce sem o peso que merecia. Declare com precisão de qual(is) pai(s) o filho efetivamente deriva.
 - `restricao_do_pai` — a restrição concreta que o(s) pai(s) impõem a este filho, em uma frase. É contra isto que o gate vai checar contradição depois. Ex: para um filho que deriva de "catálogo curado, não builder", a restrição é "não pode permitir o usuário montar a própria automação". Se o pai não impõe restrição relevante, use `null`.
+
+## Herança de peso (o filho não nasce zerado)
+
+Cada claim carrega um **peso** — número determinístico, calculado por código (`peso.py`), nunca por você. O peso mede quão resolvido o claim está. Você não calcula o peso; mas o desenho da expansão decide quanto cada filho herda.
+
+A regra: **o filho herda o peso do pai ao nascer.** Não nasce leve, não nasce zerado — nasce com o peso acumulado do pai (via `deriva_de`) mais a sua própria conta de dúvidas. Um filho recém-derivado de um pai resolvido (peso alto) já nasce pesado, porque toda a resolução do pai vale para ele.
+
+O filho só fica **mais leve que o pai** se trouxer **mais dúvidas abertas próprias** do que o pai tinha — ou seja, se a descida abriu lacunas/itens a verificar novos que o pai não carregava. Derivar um filho que não abre dúvida nova nenhuma o deixa com o mesmo peso do pai; cada dúvida nova que ele carrega o afunda em relação ao pai. É assim que a perda da tradução com perda aparece no número.
+
+Você não escreve o peso no JSON. Você garante a herança declarando `deriva_de` certo. O resto é o código.
 
 ## Regras
 

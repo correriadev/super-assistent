@@ -1,0 +1,26 @@
+[
+  {
+    "id": "publico-alvo-margem-estreita",
+    "peso": -6
+  },
+  {
+    "id": "comparar-dois-cenarios",
+    "peso": -4
+  },
+  {
+    "id": "aliquota-percentual-aproximado",
+    "peso": -5
+  },
+  {
+    "id": "venda-parcelada-proporcional",
+    "peso": -7
+  },
+  {
+    "id": "forma-de-cobranca",
+    "peso": -1
+  },
+  {
+    "id": "nome-split",
+    "peso": -2
+  }
+]

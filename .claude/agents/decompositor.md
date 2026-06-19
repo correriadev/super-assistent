@@ -2,6 +2,7 @@
 name: decompositor
 description: Quebra uma ideia em texto livre em um claim por assunto distinto (quantos forem) e grava dados/claims.json. Em projeto que já tem claims, ideia nova reabre os claims que toca em vez de criar órfãos. Invocar quando o orquestrador precisa gerar os claims a partir de uma ideia.
 tools: Write
+model: haiku
 ---
 
 <!-- temperatura pretendida: 0.4 — Claude Code não expõe temperatura por subagent. -->

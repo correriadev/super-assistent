@@ -2,6 +2,7 @@
 name: gate
 description: Avalia UM claim isolado e devolve veredito estrutural + itens a verificar. Invocar uma vez por claim, sem passar os outros claims junto.
 tools: Read
+model: sonnet
 ---
 
 <!-- temperatura pretendida: 0.1 — Claude Code não expõe temperatura por subagent. -->
@@ -90,6 +91,22 @@ Avalie cada claim como se fosse o único.
    Você só checa contra a `restricao_do_pai` declarada — não invente restrições que o pai não declarou. Se a restrição declarada não cobre o caso, não há contradição a afirmar.
 
 ## Saída
+
+**Formato de retorno (regra de custo — leia primeiro).** Você roda muitas vezes em paralelo, um subagent por claim. Tudo que você devolve volta para o contexto do orquestrador e é pago. Por isso: **o processo de 7 passos acima acontece no seu raciocínio interno; ele NÃO é devolvido.** Sua mensagem final ao chamador é **APENAS** o objeto JSON abaixo — compacto, sem o passo-a-passo, sem prosa antes ou depois, sem reproduzir a análise. Não narre como chegou ao veredito; entregue o veredito.
+
+```json
+{
+  "id": "<id do claim>",
+  "veredito": "<um dos seis rótulos>",
+  "lacunas_estruturais": ["<específica e acionável>", "..."],
+  "itens_verificar": ["[CRÍTICO] <fato checável> | <fato checável>", "..."],
+  "pergunta_elicitacao": "<só quando PRECISA-JUSTIFICAR, senão null>",
+  "contradicao": "<só quando CONTRADIZ-NIVEL-ACIMA: a restrição violada, senão null>"
+}
+```
+
+Esse schema é exatamente o que o orquestrador consolida em `dados/vereditos.json` — devolva nele direto. Itens críticos: prefixe com `[CRÍTICO]` dentro da string (não dilua no meio dos comuns). Não inclua marcadores de confiança `[Certo]`/`[Provável]` no retorno — eles guiam seu raciocínio interno, não o consumidor. Cabe abaixo o significado de cada campo:
+
 - **Veredito:** exatamente **um** destes **seis** rótulos — vocabulário fechado: `CONTRADIZ-NIVEL-ACIMA` · `PRECISA-JUSTIFICAR` · `INCOMPLETO` · `PENDENTE-VERIFICAÇÃO` · `CONTESTADO` · `PASSA`.
 
   **NÃO invente rótulos** fora destes seis.

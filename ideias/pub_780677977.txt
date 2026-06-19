@@ -1,0 +1,761 @@
+ ISSN 2965-6672 | Qualis A2
+
+
+
+
+   O RECOLHIMENTO NA
+LIQUIDAÇÃO FINANCEIRA
+ (SPLIT PAYMENT) NO IVA
+    DUAL BRASILEIRO:
+   NATUREZA JURÍDICA,
+ SUJEIÇÃO PASSIVA E OS
+LIMITES CONSTITUCIONAIS
+DE UM NOVO PARADIGMA
+     ARRECADATÓRIO
+THE COLLECTION AT FINANCIAL SETTLEMENT (SPLIT PAYMENT) IN THE
+   BRAZILIAN DUAL VAT: LEGAL NATURE, TAX LIABILITY AND THE
+    CONSTITUTIONAL LIMITS OF A NEW COLLECTION PARADIGM
+
+
+    Ciências Humanas, Ciências Sociais Aplicadas • 07/06/2026
+
+
+       REGISTRO DOI: 10.70773/revistatopicos/780677977
+
+
+
+                                                 Fransérgio Prata1
+RESUMO
+O artigo examina a natureza jurídica do recolhimento na liquidação
+financeira — o chamado split payment —, introduzido pela Emenda
+Constitucional n. 132/2023 e regulamentado pelos arts. 31 a 35 da Lei
+Complementar n. 214/2025 como modalidade de extinção do IBS e
+da CBS. A partir do método dedutivo e da análise de direito
+comparado, sustenta-se a hipótese de que o modelo brasileiro não
+configura   substituição    tributária   nem     responsabilidade        por
+transferência — afastada esta, expressamente, pelo art. 34, V, b, da
+LC 214/2025 —, mas um dever instrumental de colaboração dotado
+de eficácia extintiva automática, ancorado no princípio da
+praticabilidade. Demonstra-se que o mecanismo não desloca a
+sujeição passiva, e sim a disponibilidade financeira e o controle
+temporal do tributo, esvaziando a função ativa do contribuinte.
+Conclui-se que, embora constitucionalmente tolerável enquanto
+técnica de simplificação, o instituto encontra limites na capacidade
+contributiva e torna-se inconstitucional na medida em que o art. 47
+da LC 214/2025 condiciona o crédito do adquirente para além das
+duas hipóteses autorizadas pelo art. 156-A, § 5º, II, da Constituição.
+Palavras-chave: split payment; reforma tributária; IBS e CBS;
+sujeição passiva; praticabilidade tributária.
+
+ABSTRACT
+This article examines the legal nature of tax collection at financial
+settlement — the so-called split payment — introduced by
+Constitutional Amendment 132/2023 and regulated by articles 31 to
+35 of Complementary Law 214/2025 as a means of extinguishing the
+IBS and the CBS. Using the deductive method and comparative law
+analysis, it argues that the Brazilian model constitutes neither tax
+substitution nor liability by transfer — the latter being expressly
+excluded by article 34, V, b, of Complementary Law 214/2025 — but
+rather an instrumental duty of cooperation endowed with automatic
+extinctive effect, grounded in the principle of practicability. It is
+shown that the mechanism does not shift tax liability, but rather the
+financial availability and temporal control of the tax, emptying the
+taxpayer’s active role. It concludes that, although constitutionally
+tolerable as a simplification technique, the institute finds limits in
+the ability-to-pay principle and becomes unconstitutional insofar as
+article 47 conditions the purchaser’s credit beyond the two
+hypotheses authorized by article 156-A, paragraph 5, II, of the
+Constitution.
+Keywords: split payment; tax reform; IBS and CBS; tax liability; tax
+practicability.
+
+1. INTRODUÇÃO
+
+A Reforma Tributária do Consumo, inaugurada pela Emenda
+Constitucional n. 132, de 2023, e regulamentada pela Lei
+Complementar n. 214, de 2025, não se limita a substituir cinco
+tributos por um Imposto sobre Valor Agregado de feição dual — o
+Imposto sobre Bens e Serviços (IBS) e a Contribuição Social sobre
+Bens e Serviços (CBS). Para além da racionalização da base e da
+promessa de não cumulatividade ampla, a reforma introduz uma
+mudança de menor visibilidade política, porém de profundas
+consequências dogmáticas: a alteração do próprio modo de
+arrecadar.2
+
+No centro dessa transformação encontra-se o recolhimento na
+liquidação financeira da operação, ou split payment, previsto no art.
+156-A, § 5º, II, da Constituição e disciplinado pelos arts. 31 a 35 da LC
+214/2025. Por meio dele, no instante em que o adquirente paga pelo
+bem ou serviço, a parcela correspondente ao IBS e à CBS é
+segregada pelo prestador de serviços de pagamento e direcionada
+diretamente aos cofres públicos, recebendo o fornecedor apenas o
+valor líquido. O tributo, em regra, sequer ingressa no caixa do
+contribuinte.3
+
+A novidade desafia categorias clássicas do Direito Tributário. Se o
+contribuinte não recolhe, não dispõe do montante e não decide
+sobre o momento do pagamento, indaga-se: qual é a natureza
+jurídica desse fenômeno? Trata-se de substituição tributária? De
+responsabilidade de terceiro? De simples dever instrumental? E,
+sobretudo: até que ponto a automação da arrecadação pode
+comprimir a autonomia e as garantias do sujeito passivo sem
+afrontar a Constituição?
+
+O presente estudo enfrenta tais questões a partir da seguinte
+hipótese: o split payment brasileiro não constitui espécie de
+substituição tributária nem de responsabilidade por transferência,
+mas um dever instrumental de colaboração dotado de eficácia
+extintiva automática, fundado no princípio da praticabilidade; tal
+dever não desloca a sujeição passiva, e sim a disponibilidade
+financeira e o controle temporal do tributo, com limites
+constitucionais precisos na capacidade contributiva e na vedação ao
+condicionamento        do      crédito     além        das   hipóteses
+constitucionalmente admitidas.
+
+O percurso metodológico é dedutivo e analítico-comparativo. Parte-
+se das experiências europeias (Itália, Polônia e Romênia) para isolar a
+peculiaridade do desenho nacional (seção 2); descreve-se o regime
+positivo do instituto na LC 214/2025 (seção 3); examina-se a sua
+natureza jurídica em diálogo com a teoria da sujeição passiva (seção
+4);   investigam-se   as    repercussões   sobre   a    autonomia   do
+contribuinte à luz da praticabilidade (seção 5); e, por fim, mapeiam-
+se as tensões constitucionais do modelo (seção 6), antes das
+considerações finais.
+
+2. O SPLIT PAYMENT NO DIREITO COMPARADO: ORIGEM,
+MODELOS E LIÇÕES
+
+2.1. O Combate à Fraude no IVA e a Gênese do Mecanismo
+
+O split payment nasce como resposta a um problema estrutural dos
+tributos plurifásicos não cumulativos: o intervalo temporal entre o
+destaque do imposto na operação e o seu efetivo recolhimento abre
+espaço para fraudes — notadamente as fraudes carrossel — e para a
+inadimplência sistêmica, em que o tributo arrecadado do
+consumidor é apropriado como capital de giro e jamais repassado
+ao Fisco. A Comissão Europeia chegou a recomendá-lo como um
+dos instrumentos de combate à evasão no IVA, ainda que de modo
+cauteloso, dadas as repercussões sobre o fluxo de caixa
+empresarial.4
+
+A lógica é simples: se o valor do tributo for separado do preço no
+momento do pagamento, retira-se do agente econômico a
+possibilidade material de desviá-lo. A simplicidade do princípio,
+contudo, oculta uma diversidade considerável de desenhos
+institucionais, cuja comparação é indispensável para situar o modelo
+brasileiro.
+
+2.2. Os Modelos Europeus: Itália, Polônia e Romênia
+
+A Itália adota o split payment desde 1º de janeiro de 2015,
+inicialmente    restrito   a   fornecimentos   a   entes   públicos   e,
+posteriormente, estendido a sociedades cotadas no índice FTSE MIB.
+Nesse modelo, o adquirente público retém o IVA e o recolhe
+diretamente, enquanto o fornecedor recebe o valor líquido — uma
+técnica de retenção setorialmente delimitada, autorizada por
+decisão de execução do Conselho da União Europeia.5
+
+A Polônia instituiu o mecanismo de forma facultativa em 2018 e o
+tornou obrigatório, a partir de 2019, para setores de risco
+(combustíveis, aço, eletrônicos). Sua arquitetura é distinta: o
+adquirente realiza um único pagamento, que o banco fraciona,
+depositando o valor líquido na conta corrente do fornecedor e o
+montante do IVA em uma conta de IVA dedicada, de uso restrito, de
+titularidade do próprio fornecedor. A medida, por derrogar o regime
+comum do IVA, depende de autorização do Conselho, recentemente
+prorrogada até 2028.6
+
+A Romênia, por sua vez, adotou o mecanismo em 2018, mas o
+reduziu drasticamente em seguida, diante da elevada carga
+administrativa imposta às empresas — lição relevante sobre os
+custos de conformidade do instituto. Estudos comparativos
+demonstram que, embora as regras sejam superficialmente
+semelhantes, os Estados ajustam o desenho do split payment às
+suas necessidades e capacidades institucionais, não havendo um
+modelo único.7
+
+2.3. A Peculiaridade do Modelo Brasileiro: Do Blocked VAT
+Account Ao Split Inteligente
+
+A comparação revela o traço distintivo — e mais radical — do modelo
+nacional. Nos regimes europeus, o valor do tributo permanece, ainda
+que sob uso restrito, na esfera de titularidade do fornecedor (a
+chamada blocked VAT account): preserva-se a titularidade do
+crédito, apenas se limitando a sua livre disposição. No Brasil, ao
+contrário, o desenho projetado — o split padrão, dito “inteligente” —
+direciona o valor do tributo diretamente aos cofres públicos no
+instante da liquidação, de modo que o montante sequer transita
+pela conta do fornecedor.8
+
+Essa diferença não é meramente operacional. Enquanto o modelo
+polonês apenas imobiliza recursos do contribuinte, o modelo
+brasileiro promove a extinção da obrigação no próprio ato de
+pagamento, integrando documento fiscal eletrônico, sistema de
+pagamentos e administração tributária em tempo real. É essa
+integração que confere ao split brasileiro uma natureza que não se
+deixa capturar pelas categorias europeias — e que exige, como se
+verá, esforço dogmático próprio.
+
+3. O REGIME JURÍDICO DO SPLIT PAYMENT NA LC 214/2025
+
+3.1. A Base Constitucional e as Modalidades de Extinção
+
+A autorização constitucional do instituto reside no art. 156-A, § 5º, II,
+da Constituição, que faculta à lei complementar condicionar o
+aproveitamento do crédito ao efetivo recolhimento do tributo em
+etapa anterior, em duas hipóteses: quando o adquirente puder
+recolher o imposto incidente sobre suas aquisições e quando o
+recolhimento ocorrer na liquidação financeira da operação. É
+precisamente essa segunda hipótese que o split payment
+operacionaliza — e, registre-se desde já, é à literalidade dessa
+moldura que se deverá retornar ao examinar a constitucionalidade
+do art. 47 da LC 214/2025.9
+No plano infraconstitucional, o art. 27 da LC 214/2025 arrola cinco
+modalidades de extinção do débito de IBS e CBS, entre as quais o
+recolhimento na liquidação financeira (inciso III) e o recolhimento
+pelo adquirente (inciso IV). O split payment, portanto, é qualificado
+pela própria lei como modalidade de extinção da obrigação — dado
+dogmático decisivo, que o distingue de um simples adiantamento
+ou de uma garantia.10
+
+3.2. As Três Espécies de Split e o Papel dos Prestadores de
+Serviços de Pagamento
+
+A LC 214/2025 contempla três espécies do instituto: o split padrão
+(ou “inteligente”), aplicável às operações entre empresas, em que o
+sistema identifica a alíquota e o montante exatos do tributo; o split
+simplificado, que opera por percentuais predefinidos quando a
+apuração precisa em tempo real não for viável; e o recolhimento pelo
+adquirente, hipótese residual de internalização do dever pelo
+comprador.11
+
+O núcleo do regime encontra-se nos arts. 31 a 35, que impõem aos
+prestadores de serviços de pagamento eletrônico e às instituições
+operadoras de arranjos de pagamento o dever de segregar e
+recolher o IBS e a CBS no momento da liquidação financeira da
+transação — seja ela realizada por cartão, Pix, boleto ou
+transferência. O fornecedor é obrigado a inserir no documento fiscal
+os dados que permitam a identificação dos valores, e o recolhimento
+deve ocorrer na data da liquidação, inclusive nas operações
+parceladas, caso em que a segregação se dá proporcionalmente em
+cada parcela.12 13
+A Lei Complementar n. 227/2026, conversão do Projeto de Lei
+Complementar n. 108/2024, ao instituir o Comitê Gestor do IBS,
+promoveu ajustes no regime, sobretudo no tratamento das
+plataformas digitais — afastando a responsabilidade da plataforma
+pela diferença entre o recolhido e o devido quando viável o split
+payment e prestadas as informações exigidas. Confirma-se, assim, a
+centralidade do mecanismo na engenharia arrecadatória da
+reforma.14
+
+4. A NATUREZA JURÍDICA DO RECOLHIMENTO NA LIQUIDAÇÃO
+FINANCEIRA
+
+Definido o regime positivo, impõe-se a questão dogmática central: a
+que categoria pertence o split payment? A resposta exige confrontá-
+lo com as figuras tradicionais da sujeição passiva — o contribuinte e
+o responsável (CTN, art. 121) — e com os institutos de deslocamento
+subjetivo da obrigação.15
+
+4.1. Não é Substituição Tributária: Ausência de Deslocamento da
+Sujeição Passiva
+
+A primeira hipótese a descartar é a da substituição tributária. Na
+substituição, prevista no art. 150, § 7º, da Constituição e no art. 128 do
+CTN, um terceiro vinculado ao fato gerador é colocado no polo
+passivo da obrigação, passando a responder, ele próprio, pelo
+recolhimento — seja em caráter antecedente (“para trás”), seja
+subsequente (“para frente”). Há, em qualquer caso, deslocamento
+subjetivo: a obrigação tributária passa a ter por devedor pessoa
+distinta do realizador do fato imponível.16
+No split payment, esse deslocamento não ocorre. O prestador de
+serviços de pagamento não integra o polo passivo da obrigação
+tributária; não lhe é atribuída a condição de devedor do IBS ou da
+CBS. Ele apenas executa, no fluxo financeiro, um dever de segregar e
+repassar valores que, juridicamente, continuam sendo devidos pelo
+contribuinte da operação. Falta-lhe, portanto, o elemento essencial
+da substituição — a titularidade passiva da relação obrigacional.17
+
+4.2. Não é Responsabilidade por Transferência: O Art. 34, V, B, e a
+Exclusão Expressa
+
+Poderia objetar-se que o prestador de pagamento seria, ao menos,
+responsável tributário por transferência. A própria lei, contudo, refuta
+a tese de modo categórico. O art. 34, V, b, da LC 214/2025 afasta
+expressamente a responsabilidade tributária do prestador de
+serviços de pagamento pelo IBS e pela CBS incidentes sobre as
+operações cujos pagamentos liquide no âmbito do split payment. Se
+a lei exclui a responsabilidade, não há como reconduzir o agente
+financeiro à categoria de responsável.18
+
+Trata-se de opção deliberada e coerente: o legislador quis que o
+intermediário financeiro atuasse como mero executor de um
+comando automatizado, sem assumir o risco do crédito tributário. A
+consequência dogmática é relevante — o split payment não se
+enquadra nem na substituição nem na responsabilidade de
+terceiros, pois em nenhuma delas o agente que opera o
+recolhimento permanece fora do polo passivo.19
+
+4.3. Tese: Um Dever Instrumental de Colaboração com Eficácia
+Extintiva (Retenção-extinção Automatizada)
+Excluídas as categorias clássicas, propõe-se a seguinte qualificação:
+o split payment é um dever instrumental de colaboração imposto a
+terceiro alheio à relação obrigacional, dotado de eficácia extintiva
+automática. Não se confunde com obrigação acessória puramente
+declaratória (não se trata de informar, mas de pagar por conta de
+outrem) nem com substituição (não há deslocamento subjetivo). É
+um tertium genus: uma retenção que, no mesmo ato, extingue a
+obrigação — a que se pode denominar, para fins analíticos,
+retenção-extinção automatizada.20
+
+Essa qualificação encontra respaldo na própria sistemática legal. O
+art. 27, III, classifica o split payment como modalidade de extinção —
+e não de garantia ou de antecipação —, ao passo que o art. 34, V, b,
+retira do operador a condição de responsável. O prestador de
+pagamento é, por assim dizer, um longa manus técnico do sistema
+de arrecadação: colabora compulsoriamente, mas não responde
+pelo tributo. A obrigação nasce e se extingue na esfera do
+contribuinte; o que se transfere ao terceiro é apenas a execução
+material do recolhimento.21
+
+A premissa, expressa em documentos técnicos da própria
+administração, de que o modelo deve interferir minimamente nas
+práticas comerciais confirma essa leitura: o split foi concebido como
+uma camada operacional sobreposta à relação jurídica, e não como
+uma reconfiguração de seus sujeitos. A novidade, portanto, é menos
+de quem deve e mais de como e quando se paga.
+
+5.   REPERCUSSÕES       SOBRE     A   SUJEIÇÃO      PASSIVA     E   O
+ESVAZIAMENTO DA AUTONOMIA DO CONTRIBUINTE
+Se a sujeição passiva permanece, em rigor técnico, intacta, algo de
+substancial, contudo, se altera. O contribuinte que antes calculava,
+retinha em seu caixa e recolhia o tributo em momento posterior —
+exercendo função ativa no cumprimento da obrigação — passa a
+ocupar posição predominantemente operacional na cadeia de
+circulação de riquezas. Perde a disponibilidade econômica do
+montante e o controle sobre o momento do pagamento.22
+
+Esse fenômeno, que se pode chamar de esvaziamento da função
+ativa do contribuinte, é qualitativamente novo. Não há, repita-se,
+transferência da titularidade passiva; há, porém, uma transformação
+no modo de ser da obrigação, que deixa de depender de uma
+conduta voluntária de pagamento e passa a operar por
+automatismo financeiro. A obrigação tributária torna-se, em certo
+sentido, autoexecutável.
+
+5.1. Praticabilidade Tributária: Fundamento e Limite
+
+O fundamento dessa engenharia é o princípio da praticabilidade
+tributária — a exigência de que as leis fiscais sejam exequíveis em
+larga escala, com simplicidade, eficiência e controle da evasão. A
+praticabilidade autoriza técnicas de presunção, padronização e
+simplificação que viabilizam a administração de tributos de massa,
+sendo o split payment um de seus instrumentos mais sofisticados,
+ao prometer arrecadação em tempo real e redução drástica da
+inadimplência.23
+
+A praticabilidade, todavia, não é princípio absoluto. Como adverte a
+melhor doutrina, ela é simultaneamente fundamento e limite:
+legitima a simplificação, mas não pode sacrificar o núcleo de
+garantias do contribuinte — a legalidade, a igualdade material, a
+capacidade contributiva e a propriedade. Onde a busca da eficiência
+arrecadatória comprime desproporcionalmente esses bens, a
+praticabilidade deixa de justificar a medida e passa a exigir o
+controle de proporcionalidade.24 25
+
+É nesse equilíbrio que se deve avaliar o split payment. Sob a
+perspectiva da praticabilidade, o instituto é, em tese, virtuoso: reduz
+custos de fiscalização, combate a fraude e viabiliza a não
+cumulatividade ampla, ao assegurar ao Fisco que o crédito
+concedido ao adquirente corresponde a tributo efetivamente
+recolhido. Mas a virtude sistêmica não imuniza o mecanismo do
+escrutínio constitucional, sobretudo quanto a seus efeitos sobre o
+fluxo de caixa e sobre o direito ao crédito.26
+
+6. TENSÕES CONSTITUCIONAIS DO NOVO PARADIGMA
+
+6.1. Capacidade Contributiva e o Problema do Fluxo de Caixa
+
+A primeira tensão é econômica antes de ser jurídica, mas tem
+assento constitucional. Ao impedir que o valor do tributo transite
+pelo caixa do fornecedor, o split payment antecipa, na prática, a
+saída financeira do montante para o instante da venda — ao passo
+que, no regime atual, o recolhimento ocorre em prazo posterior. Para
+setores de margem estreita e ciclo financeiro longo, a supressão
+desse intervalo pode comprimir o capital de giro, repercutindo sobre
+a capacidade econômica efetiva do contribuinte (art. 145, § 1º, da
+Constituição).27
+
+A objeção não invalida o instituto, mas impõe-lhe modulação:
+regimes de devolução tempestiva de créditos, tratamento adequado
+de operações parceladas, estornos e cancelamentos (chargebacks) e
+mecanismos       de    ressarcimento    ágil      são   condições   de
+constitucionalidade material do modelo. Sem eles, a praticabilidade
+arrecadatória converte-se em transferência indevida de custo
+financeiro ao particular.
+
+6.2 O condicionamento do crédito: art. 47 da LC 214/2025 versus
+art. 156-A, § 5º, II, da Constituição
+
+A tensão mais aguda — e o ponto de maior interesse para a tese
+aqui sustentada — reside no direito ao crédito. A Constituição, no art.
+156-A, § 5º, II, autoriza condicionar o aproveitamento do crédito ao
+recolhimento anterior em apenas duas hipóteses: quando o
+adquirente puder recolher o imposto e quando o recolhimento se
+der na liquidação financeira (split payment).28
+
+O art. 47 da LC 214/2025, contudo, estabelece que o direito ao crédito
+do adquirente somente pode ser exercido quando ocorrida a
+extinção do tributo por qualquer das modalidades do art. 27. Ao
+remeter genericamente a todas as modalidades de extinção, a lei
+complementar amplia o universo de condicionamento para além
+das duas hipóteses taxativamente admitidas pela Constituição —
+alcançando, por exemplo, situações em que o fornecedor
+simplesmente não pagou o tributo por modalidade diversa do
+split.29
+
+Daí decorre relevante controvérsia de inconstitucionalidade: na
+medida em que o art. 47 transfere ao adquirente o risco do
+inadimplemento alheio fora das hipóteses constitucionais, há
+extrapolação da condicionante do art. 156-A, § 5º, II, com ofensa à não
+cumulatividade e à segurança jurídica. A leitura conforme à
+Constituição exige restringir o condicionamento do crédito às duas
+hipóteses   constitucionais,    preservando-se,    nas   demais,    o
+aproveitamento independentemente da conduta do fornecedor.30
+
+6.3. Sigilo, Livre Iniciativa e a Privatização da Função
+Arrecadatória
+
+Em terceiro lugar, a integração entre sistemas de pagamento e
+administração tributária projeta o tributo sobre o terreno do sigilo
+das operações financeiras (art. 5º, X e XII, da Constituição, e Lei
+Complementar n. 105/2001). A operacionalização do split pressupõe
+trânsito intenso de dados transacionais, cujo tratamento deve
+observar finalidade, proporcionalidade e proteção de dados, sob
+pena de conversão da arrecadação em vigilância patrimonial
+difusa.31
+
+Há, ademais, a imposição de pesados deveres e custos de
+conformidade aos prestadores de serviços de pagamento, que
+passam a exercer, compulsória e gratuitamente, função auxiliar de
+arrecadação — uma forma de privatização do aparato fiscal que
+tangencia a livre iniciativa (art. 170 da Constituição) e os custos de
+conformidade do sistema. Tais ônus, embora admissíveis em nome
+do    interesse    arrecadatório,   reclamam       razoabilidade    e,
+eventualmente, compensação, não podendo aniquilar a viabilidade
+econômica da atividade.32 33
+
+7. CONSIDERAÇÕES FINAIS
+
+O recolhimento na liquidação financeira é, talvez, a inovação mais
+disruptiva da Reforma Tributária do Consumo — e a menos
+compreendida      em   sua     dimensão    dogmática.    Procurou-se
+demonstrar que o split payment brasileiro, embora inspirado em
+experiências europeias, delas se afasta por direcionar o tributo
+diretamente aos cofres públicos, extinguindo a obrigação no próprio
+ato de pagamento, em vez de apenas imobilizar recursos do
+contribuinte.
+
+Quanto à natureza jurídica, sustentou-se que o instituto não
+configura substituição tributária — por ausência de deslocamento
+subjetivo   —   nem     responsabilidade    por    transferência   —
+expressamente afastada pelo art. 34, V, b, da LC 214/2025 —, mas um
+dever instrumental de colaboração dotado de eficácia extintiva
+automática, espécie de retenção-extinção em que o prestador de
+pagamento atua como longa manus técnico do sistema, sem
+ingressar no polo passivo. O que o mecanismo desloca não é a
+sujeição passiva, e sim a disponibilidade financeira e o controle
+temporal do tributo, esvaziando a função ativa do contribuinte.
+
+Esse esvaziamento, legitimado pela praticabilidade tributária, é
+constitucionalmente tolerável enquanto técnica de simplificação e
+de combate à fraude. Encontra, porém, limites que não podem ser
+ignorados: a capacidade contributiva, ameaçada pela compressão
+do fluxo de caixa, e — sobretudo — a não cumulatividade, violada na
+medida em que o art. 47 da LC 214/2025 condiciona o crédito do
+adquirente para além das duas hipóteses autorizadas pelo art. 156-A,
+§ 5º, II, da Constituição. Defende-se, quanto a este ponto,
+interpretação conforme que restrinja o condicionamento às
+hipóteses constitucionais, afastando a transferência ao adquirente
+do risco pelo inadimplemento alheio.
+
+A tese central, em síntese, é a de que a modernização arrecadatória
+não dispensa o controle constitucional: a eficiência é um valor, não
+um trunfo absoluto. O split payment será tanto mais legítimo
+quanto mais o seu desenho infralegal e regulamentar — a cargo do
+Comitê Gestor do IBS e da Receita Federal — assegurar devolução
+tempestiva de créditos, tratamento adequado de estornos, proteção
+de dados e razoabilidade dos custos de conformidade. Caberá à
+doutrina e à jurisprudência, nos próximos anos, calibrar esse
+equilíbrio entre a praticabilidade que a reforma persegue e as
+garantias que a Constituição preserva.34
+
+REFERÊNCIAS BIBLIOGRÁFICAS
+
+ÁVILA, Humberto. Teoria dos princípios: da definição à aplicação
+dos princípios jurídicos. São Paulo: Malheiros. [Edição e ano a
+conferir.]
+
+BERTOLUCCI, Aldo Vincenzo. Uma contribuição ao estudo da
+incidência dos custos de conformidade às leis e disposições
+tributárias. [Referência completa a confirmar pelo autor.]
+
+BRASIL. Constituição da República Federativa do Brasil de 1988.
+Brasília, DF: Senado Federal, 1988.
+
+BRASIL. Emenda Constitucional n. 132, de 20 de dezembro de 2023.
+Diário Oficial da União, Brasília, DF, 21 dez. 2023.
+
+BRASIL. Lei n. 5.172, de 25 de outubro de 1966. Código Tributário
+Nacional. Diário Oficial da União, Brasília, DF, 27 out. 1966.
+
+BRASIL. Lei Complementar n. 105, de 10 de janeiro de 2001. Diário
+Oficial da União, Brasília, DF, 11 jan. 2001.
+
+BRASIL. Lei Complementar n. 214, de 16 de janeiro de 2025. Diário
+Oficial da União, Brasília, DF, 16 jan. 2025.
+BRASIL. Lei Complementar n. 227, de 14 de janeiro de 2026. Diário
+Oficial da União, Brasília, DF, 14 jan. 2026.
+
+CARVALHO, Paulo de Barros. Curso de direito tributário. São Paulo:
+Noeses. [Edição e ano a conferir.]
+
+COSTA, Regina Helena. Praticabilidade e justiça tributária:
+exequibilidade de lei tributária e direitos do contribuinte. São Paulo:
+Malheiros, 2007.
+
+DERZI, Misabel de Abreu Machado. Direito tributário, direito penal
+e tipo. 2. ed. São Paulo: Revista dos Tribunais, 2007.
+
+FERRAGUT, Maria Rita. Responsabilidade tributária e o Código Civil
+de 2002. São Paulo: Noeses. [Edição e ano a conferir.]
+
+LEAL, S. C. Split payment e arrecadação do IBS. In: Gestão Fiscal
+Municipal — Tributação, Orçamento e Gasto Público, v. 10. São Paulo:
+Quartier Latin, 2025.
+
+MINISTÉRIO DA FAZENDA. Notas técnicas sobre a regulamentação
+do split payment e a arrecadação do IBS e da CBS. Brasília, 2025.
+
+OBRZEŻGIEWICZ, Dawid. Split Payment Mechanism in the
+European Union — Comparative Analysis. In: PROCHÁZKA, D. (ed.).
+Regulation of Finance and Accounting. Cham: Springer, 2022.
+
+SCHOUERI, Luís Eduardo. Direito tributário. São Paulo: Saraiva.
+[Edição e ano a conferir.]
+
+SOVOS. Split payments: new VAT collection mechanism in the
+European Union. 2020. Disponível em: https://sovos.com. Acesso em:
+29 maio 2026.
+
+SPLIT PAYMENT na reforma tributária: inovações e desafios sob a
+perspectiva da praticabilidade. Revista Tributária e de Finanças
+Públicas, São Paulo: ABDT. [Autoria, v., n. e ano a confirmar pelo
+autor.]
+
+SPLIT PAYMENT e o esvaziamento da autonomia do contribuinte na
+reforma tributária. Consultor Jurídico (ConJur), 10 abr. 2026. [Autoria
+a confirmar pelo autor.]
+
+UNIÃO EUROPEIA. Council Implementing Decision (EU) 2025/373,
+de 18 de fevereiro de 2025.
+
+
+ 1 Advogado. Professor de Direito. Mestrando em Direito Empresarial
+
+  pela Faculdades de Campinas (FACAMP). Pós-graduado em Direito
+          Tributário pela Faculdade Damásio. Pesquisador em Direito
+                Tributário no Grupo de Pesquisa em Direito Tributário
+ Contemporâneo e Processo Administrativo Tributário” da Faculdade
+ de Direito da Universidade de São Paulo (Ribeirão Preto) FDRP, com
+   ênfase na Reforma Tributária do Consumo. E-mail: acesse o artigo
+                                         original para visualizar o e-mail.
+
+2 BRASIL. Emenda Constitucional n. 132, de 20 de dezembro de 2023.
+
+ Altera o Sistema Tributário Nacional. Diário Oficial da União, Brasília,
+  DF, 21 dez. 2023. O art. 156-A, § 5º, II, b, da Constituição autoriza a lei
+complementar a condicionar o aproveitamento do crédito ao efetivo
+                   recolhimento na liquidação financeira da operação.
+
+ 3 BRASIL. Lei Complementar n. 214, de 16 de janeiro de 2025. Institui
+
+   o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre
+  Bens e Serviços (CBS) e o Imposto Seletivo. Diário Oficial da União,
+                                               Brasília, DF, 16 jan. 2025.
+
+     4 SOVOS. Split payments: new VAT collection mechanism in the
+
+ European Union. 2020. Sobre a recomendação do mecanismo pela
+ Comissão Europeia como instrumento de combate à fraude no IVA,
+    ver também a Diretiva 2006/112/CE e as decisões de execução do
+                                             Conselho citadas adiante.
+
+5 UNIÃO EUROPEIA. Council Implementing Decision (EU) 2020/1105.
+
+    Autoriza a Itália a aplicar o mecanismo de pagamento dividido a
+      fornecimentos a entidades públicas e a sociedades cotadas. O
+  regime italiano vigora desde 1º jan. 2015 (Legge 23 dic. 2014, n. 190).
+
+ 6 UNIÃO EUROPEIA. Council Implementing Decision (EU) 2025/373,
+
+  de 18 de fevereiro de 2025. Prorroga, até 28 fev. 2028, a autorização
+      para a Polônia aplicar o mecanismo obrigatório de pagamento
+         dividido a operações de setores de risco (combustíveis, aço,
+                             eletrônicos), com conta de IVA dedicada.
+
+        7 OBRZEŻGIEWICZ, Dawid. Split Payment Mechanism in the
+
+  European Union — Comparative Analysis. In: PROCHÁZKA, D. (ed.).
+       Regulation of Finance and Accounting. Cham: Springer, 2022.
+(Springer Proceedings in Business and Economics). A autora conclui
+    que, embora as regras sejam semelhantes, os Estados ajustam o
+                       desenho do mecanismo às suas necessidades.
+
+  8 Nos modelos europeus, o valor do tributo é depositado em conta
+
+de IVA de titularidade do próprio fornecedor, de uso restrito (blocked
+ VAT account), preservando-se a titularidade do crédito; no desenho
+      brasileiro, o valor não transita pela esfera do fornecedor, sendo
+         direcionado diretamente aos cofres públicos no instante da
+                                                             liquidação.
+
+                                                                       9
+
+
+    10 LC 214/2025, art. 27. As cinco modalidades de extinção são: I —
+
+compensação com créditos; II — pagamento pelo contribuinte; III —
+         recolhimento na liquidação financeira (split payment); IV —
+     recolhimento pelo adquirente; V — pagamento por responsável
+                                                legalmente designado.
+
+      11 CONSELHO REGIONAL DE CONTABILIDADE DE SÃO PAULO
+
+         (CRCSP). Split payment — regra do recolhimento. O regime
+  compreende três espécies: o split padrão (dito “inteligente”), o split
+                      simplificado e o recolhimento pelo adquirente.
+
+ 12 LC 214/2025, arts. 31 a 35. Os dispositivos impõem aos prestadores
+
+de serviços de pagamento eletrônico e às instituições operadoras de
+arranjos de pagamento o dever de segregar e recolher o IBS e a CBS
+                                no momento da liquidação financeira.
+
+13 LC 214/2025, art. 34, II. Nas operações com pagamento parcelado, a
+
+   segregação e o recolhimento far-se-ão de modo proporcional, na
+                                liquidação financeira de cada parcela.
+
+        14 BRASIL. Lei Complementar n. 227, de 14 de janeiro de 2026
+
+    (conversão do PLP n. 108/2024). Institui o Comitê Gestor do IBS e
+    promove alterações na LC 214/2025. Sancionada em 13 jan. 2026.
+
+   15 BRASIL. Lei n. 5.172, de 25 de outubro de 1966 (Código Tributário
+
+ Nacional), art. 121: sujeito passivo é o contribuinte (relação pessoal e
+ direta com o fato gerador) ou o responsável (cuja obrigação decorre
+                                         de disposição expressa de lei).
+
+    16 CRFB/1988, art. 150, § 7º (substituição tributária “para frente”) e
+
+CTN, art. 128 (responsabilidade de terceiro vinculado ao fato gerador).
+
+17 FERRAGUT, Maria Rita. Responsabilidade tributária e o Código Civil
+
+    de 2002. São Paulo: Noeses. [Edição e páginas a conferir.] Sobre a
+   distinção entre contribuinte e responsável e a necessária previsão
+                                      legal do deslocamento subjetivo.
+
+18 LC 214/2025, art. 34, V, b: afasta expressamente a responsabilidade
+
+    tributária do prestador de serviços de pagamento pelo IBS e pela
+    CBS incidentes sobre as operações cujos pagamentos liquide no
+                                              âmbito do split payment.
+
+19 CARVALHO, Paulo de Barros. Curso de direito tributário. São Paulo:
+
+      Noeses. [Edição, ano e páginas a conferir.] Sobre a estrutura da
+relação jurídico-tributária e os critérios da regra-matriz de incidência.
+
+    20 SCHOUERI, Luís Eduardo. Direito tributário. São Paulo: Saraiva.
+
+[Edição, ano e páginas a conferir.] Sobre sujeição passiva e os limites
+                   da atribuição de deveres instrumentais a terceiros.
+
+   21 LEAL, S. C. Split payment e arrecadação do IBS. In: Gestão Fiscal
+
+Municipal — Tributação, Orçamento e Gasto Público, v. 10. São Paulo:
+   Quartier Latin, 2025. Documento técnico que descreve a premissa
+         de mínima interferência do modelo operacional nas práticas
+                                                             comerciais.
+     22 Para a leitura segundo a qual o contribuinte deixa de exercer
+
+     função ativa no cumprimento da obrigação, ocupando posição
+   operacional na cadeia, ver, em sentido próximo: Split payment e o
+  esvaziamento da autonomia do contribuinte na reforma tributária.
+                   Consultor Jurídico (ConJur), 10 abr. 2026. [Autoria a
+                                     confirmar/completar pelo autor.]
+
+        23 COSTA, Regina Helena. Praticabilidade e justiça tributária:
+
+ exequibilidade de lei tributária e direitos do contribuinte. São Paulo:
+                                  Malheiros, 2007. [Páginas a conferir.]
+
+24 DERZI, Misabel de Abreu Machado. Direito tributário, direito penal
+
+       e tipo. 2. ed. São Paulo: Revista dos Tribunais, 2007. [Páginas a
+conferir.] Sobre praticabilidade como técnica de simplificação e seus
+                                      riscos para a igualdade material.
+
+  25 ÁVILA, Humberto. Teoria dos princípios: da definição à aplicação
+
+dos princípios jurídicos. São Paulo: Malheiros. [Edição, ano e páginas
+     a conferir.] Sobre proporcionalidade como controle de medidas
+                                                             restritivas.
+
+   26 Split payment na reforma tributária: inovações e desafios sob a
+
+     perspectiva da praticabilidade. Revista Tributária e de Finanças
+             Públicas (RTFP/ABDT). [Autoria, volume, número e ano a
+                                     confirmar/completar pelo autor.]
+
+   27 CRFB/1988, art. 145, § 1º: sempre que possível, os impostos terão
+
+caráter pessoal e serão graduados segundo a capacidade econômica
+                                                       do contribuinte.
+
+                                                     28 Sem definição.
+ 29 LC 214/2025, art. 47: o direito ao crédito pelo adquirente pode ser
+
+  exercido quando ocorrida a extinção dos tributos por qualquer das
+                                                modalidades do art. 27.
+
+            30 Para a tese de que o art. 47 da LC 214/2025 extrapola a
+
+  condicionante do art. 156-A, § 5º, II, da Constituição — que admite o
+  condicionamento do crédito apenas em duas hipóteses —, ver, em
+     sentido próximo: Direito ao crédito de IBS e CBS no contexto da
+reforma tributária. Consultor Jurídico (ConJur), 18 maio 2026. [Autoria
+                                    a confirmar/completar pelo autor.]
+
+ 31 CRFB/1988, art. 5º, X e XII; BRASIL. Lei Complementar n. 105, de 10
+
+                 de janeiro de 2001 (sigilo das operações financeiras).
+
+ 32 CRFB/1988, art. 170, caput e parágrafo único (livre iniciativa e livre
+
+                                    exercício da atividade econômica).
+
+     33 BERTOLUCCI, Aldo Vincenzo. Uma contribuição ao estudo da
+
+         incidência dos custos de conformidade às leis e disposições
+  tributárias. [Referência a completar pelo autor.] Sobre os custos de
+   conformidade (compliance costs) suportados pelos contribuintes.
+
+                 34 MINISTÉRIO DA FAZENDA. Notas técnicas sobre a
+
+ regulamentação do split payment e a arrecadação do IBS e da CBS.
+                                                           Brasília, 2025.
+

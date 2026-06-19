@@ -12,7 +12,7 @@ O fluxo deve ter o mínimo de atrito sem perder os pontos de controle humano. On
 
 ## Ciclo de um nível
 
-1. **Decompor.** Se for o nível 0 (ideação), invoque `decompositor` com a ideia em texto livre → `dados/claims.json`. Os claims vêm com `binding: null`. (Se for um nível derivado, os claims já vêm do expansor — pule para o passo 2.)
+1. **Decompor.** Se for o nível 0 (ideação), invoque `decompositor` com a ideia em texto livre → `dados/claims.json`. Os claims vêm com `binding: null` e `fonte: "decisão humana"`. (Se for um nível derivado, os claims já vêm do expansor — pule para o passo 2.)
 
 2. **Modalidade em lote.** Mostre TODOS os claims numa lista numerada (id + content) e peça a modalidade de todos de uma vez. Aceite resposta em lote: "1 vinculante, 2 ilustrativo, 3-4 vinculante, 5 default, 6 vinculante", ou marcação só das exceções ("todos vinculantes menos o 2, ilustrativo"). Uma interação, não uma por claim. Atualize `dados/claims.json`. **Não prossiga com nenhum `binding: null`** — o gate precisa da modalidade. Não adivinhe você mesmo.
 
@@ -22,11 +22,20 @@ O fluxo deve ter o mínimo de atrito sem perder os pontos de controle humano. On
 
 4. **Consolidar.** Escreva `dados/vereditos.json`: array, um objeto por claim com exatamente: `id`, `veredito` (um dos seis rótulos fechados: `CONTRADIZ-NIVEL-ACIMA`, `PRECISA-JUSTIFICAR`, `INCOMPLETO`, `PENDENTE-VERIFICAÇÃO`, `CONTESTADO`, `PASSA`), `lacunas_estruturais`, `itens_verificar`, `pergunta_elicitacao` (string só quando `PRECISA-JUSTIFICAR`, senão `null`), e `contradicao` (objeto com a restrição violada quando `CONTRADIZ-NIVEL-ACIMA`, senão `null`). Não invente campos.
 
-5. **Pesar (código, não você).** Depois de gravar `dados/vereditos.json`, chame o cálculo determinístico de peso — o script `peso.py` — sobre os claims + vereditos, e grave o peso de cada claim em `dados/pesos.json`. Use Bash, a partir da pasta do projeto: `python3 <caminho>/peso.py dados/claims.json dados/vereditos.json dados/pesos.json`. O peso mede quão resolvido cada claim está (alto = resolvido/afunda; baixo = cheio de pendência/flutua) e propaga a perda pela cadeia `deriva_de`. **Nunca invente o peso você mesmo nem peça a um agent para "avaliar o peso" — é função determinística, não julgamento de LLM.** Recalcule o peso a cada rodada e a cada ideia nova que reabra pontos (rode o script de novo sobre os dados atualizados).
+5. **Pesar (código, não você).** Depois de gravar `dados/vereditos.json`, chame o cálculo determinístico de peso — o script `peso.py` — sobre os claims + vereditos, e grave o peso de cada claim em `dados/pesos.json`. Use Bash, a partir da pasta do projeto: `python3 <caminho>/peso.py dados/claims.json dados/vereditos.json dados/pesos.json`. O peso mede quão resolvido cada claim está (alto = resolvido/afunda; baixo = cheio de pendência/flutua) e propaga a perda pela cadeia `deriva_de`. **Nunca invente o peso você mesmo nem peça a um agent para "avaliar o peso" — é função determinística, não julgamento de LLM.** Recalcule o peso a cada rodada e a cada ideia nova que reabra pontos (rode o script de novo sobre os dados atualizados). Base do claim-ideia é 10 (sem pendência fica assentado, não negativo); itens marcados "(não bloqueante)" não derrubam peso.
 
 6. **Traduzir.** Invoque `tradutor` com `dados/vereditos.json`. O alerta sóbrio dele é a saída principal que o humano lê. A tabela técnica fica como detalhe secundário, só se pedida.
 
 7. **Resolver.** O humano lê o alerta e resolve os flags que importam (responde os `PRECISA-JUSTIFICAR`, decide sobre `PENDENTE`, trata `CONTRADIZ`). Atualize o estado dos claims conforme ele resolve. Um claim resolvido é um que passou, ou que o humano conscientemente aceitou apesar do flag. **Ao fechar uma dúvida, mova-a de aberta para fechada em `dados/vereditos.json`**: tire o item de `lacunas_estruturais`/`itens_verificar` e registre-o em `lacunas_resolvidas`/`itens_verificados` no mesmo objeto. É isso que o `peso.py` lê para fazer o peso subir (só fechar dúvida pesa; redigir conteúdo novo sem fechar nada é neutro). Depois recalcule (passo 5).
+
+## Constelação-lei e sobreposição dimensional (código determinístico)
+
+Além da constelação-ideia (decisões humanas), um projeto pode ter uma **constelação-lei** derivada de um documento legal. Ela é código-assistida, mas o julgamento de verdade jurídica NUNCA é do sistema.
+
+- **Decompor lei.** Invoque o `decompositor` em **modo documento legal** com o texto da lei → `dados/claims-lei.json`. Cada claim-lei traz `fonte: {documento, trecho}` com o trecho **literal**. O `content` diz "o documento afirma X", nunca "X é verdade/constitucional".
+- **Pesar a lei (ancoragem).** Rode `peso.py` passando o texto do documento: `python3 <caminho>/peso.py dados/claims-lei.json dados/vereditos-lei.json dados/pesos-lei.json --doc <texto_da_lei>`. Claim-lei nasce LEVE (0) e só pesa se o `trecho` for localizável no documento (rastreabilidade, não verdade). Trecho inventado = peso 0 = "não confie".
+- **Sobreposição.** Um item `[VERIFICAR]` da constelação-ideia pode buscar resposta na lei via `sobreposicao.py` (`buscar_resposta`): retorna `confirma`/`refuta`/`não-encontrado` + a confiabilidade (= peso do claim-lei; leve responde "não confie ainda"). É **pista a confirmar por humano**, não veredito do sistema. Um LLM pode ajudar a casar pergunta↔claim, mas a verdade jurídica continua `[VERIFICAR]` humano.
+- **Propagação + log.** Quando uma emenda faz um claim-lei reflutuar (abre dúvida nele, peso cai), rode `propagacao.py` (`propagar`): todo claim cujo `fonte` aponta pra ele (`fonte.ref`) ganha **cicatriz "reveja"** e tem a dúvida reaberta (peso cai) — **nunca reescreva a resposta**, o dono re-resolve à mão. Cada propagação grava um evento no log append-only (`dados/eventos.jsonl`). O "diff entre versões" é a lista de eventos entre dois marcos (`eventos_entre`), não diff de linha.
 
 ## Transição para o próximo nível (só sob comando)
 

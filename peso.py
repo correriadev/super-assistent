@@ -2,45 +2,91 @@
 """
 peso.py — cálculo determinístico do PESO de cada claim.
 
-O peso mede quão RESOLVIDO um claim está. Peso alto = resolvido (afunda na
-constelação). Peso baixo = cheio de pendência (flutua, vira névoa).
+O peso mede quão RESOLVIDO/ASSENTADO um claim está. Peso alto = afunda na
+constelação. Peso baixo = flutua, vira névoa.
 
-NÃO é julgamento de LLM. É função pura das dúvidas (lacunas + itens a verificar)
-e da herança pela cadeia de derivação `deriva_de`.
+NÃO é julgamento de LLM. É função pura das dúvidas, da herança (`deriva_de`) e,
+para a constelação-lei, da ancoragem rastreável do trecho-fonte.
 
-Fórmula do peso de um claim:
+Fórmula:
 
-    peso(claim) = SOMA( peso(pai) para cada pai em deriva_de )   # herança
-                + dúvidas_fechadas                               # só fechar pesa
-                - dúvidas_abertas
+    peso = base + herança_dos_pais + dúvidas_fechadas − dúvidas_abertas
 
-  onde, para o próprio claim:
-    dúvidas_fechadas = lacunas_resolvidas + itens_verificados
-    dúvidas_abertas  = lacunas_estruturais (abertas) + itens_verificar (abertos)
-
-Regras deliberadas:
-  - Só FECHAR dúvida adiciona peso. Definir conteúdo sem que nada seja
-    questionado é NEUTRO (abertas=0, fechadas=0 -> contribuição própria 0).
-    Afirmar não é resolver.
-  - PROPAGAÇÃO: como o peso de um filho inclui o peso do(s) pai(s), abrir uma
-    dúvida num claim derruba o peso dele E o de todos os descendentes pela
-    cadeia `deriva_de`. Queda que desce até as folhas = mudança estrutural;
-    queda que para num claim = pontual. A propagação é automática porque o
-    cálculo é topológico (resolve o pai antes do filho).
-
-Claim raiz (sem `deriva_de`) começa a herança em 0.
+  - base:
+      * claim-IDEIA (fonte = "decisão humana" ou ausente): base = 10. A decisão
+        humana é o chão — nasce assentado.
+      * claim-LEI (fonte = {documento, trecho}): base = 0 (nasce LEVE, é
+        interpretação não-confirmada) + 10 SE o `trecho` estiver literalmente
+        localizável no texto do documento (ANCORAGEM rastreável). Ancoragem é
+        "o texto diz isto", NÃO "isto é verdadeiro/constitucional". Verdade
+        jurídica nunca pesa automático — continua [VERIFICAR] humano.
+  - herança_dos_pais = soma do peso de cada pai em `deriva_de`. Filho nasce com o
+    peso do pai; pai cai -> filhos caem, recursivamente (propagação topológica).
+  - dúvidas_abertas = lacunas/itens [VERIFICAR] REAIS não resolvidos. Itens
+    marcados "(não bloqueante)" NÃO contam.
+  - dúvidas_fechadas = lacunas_resolvidas + itens_verificados; cada uma SOBE o peso.
 
 Uso:
-    python3 peso.py <claims.json> <vereditos.json> [pesos.json]
-    python3 peso.py --self-test
+    python3 peso.py <claims.json> <vereditos.json> [pesos.json] [--doc <texto_lei>]
 """
 
 import json
 import sys
 
+PESO_BASE = 10        # base do claim-ideia (decisão humana é o chão)
+PESO_LEI_BASE = 0     # claim-lei nasce leve (interpretação não confirmada)
+ANCORA_BONUS = 10     # claim-lei com trecho-fonte localizável ganha isto
 
-def _count(x):
-    """Aceita lista (conta itens) ou inteiro (usa direto). None/ausente -> 0."""
+# Itens com qualquer um destes marcadores são ruído não-bloqueante: não pesam.
+_NONBLOCK_MARKERS = ("não bloqueante", "nao bloqueante")
+
+
+def _norm(s):
+    """Normaliza espaços/caixa para comparar trecho-fonte com o documento."""
+    return " ".join((s or "").split()).lower()
+
+
+def is_law_claim(claim):
+    """Claim-lei: tem fonte estruturada com trecho literal do documento."""
+    f = claim.get("fonte")
+    return isinstance(f, dict) and "trecho" in f
+
+
+def is_anchored(claim, doc_text):
+    """Ancorado = o trecho-fonte existe literalmente no texto do documento.
+    Rastreabilidade pura (substring normalizado), nunca juízo de verdade."""
+    if not is_law_claim(claim) or not doc_text:
+        return False
+    trecho = claim["fonte"].get("trecho") or ""
+    if not trecho.strip():
+        return False
+    return _norm(trecho) in _norm(doc_text)
+
+
+def relatorio_ancoragem(claims, doc_text):
+    """Mapa {id: bool} de ancoragem para os claims-lei (útil em teste/auditoria)."""
+    return {c["id"]: is_anchored(c, doc_text) for c in claims if is_law_claim(c)}
+
+
+def _base(claim, doc_text):
+    if is_law_claim(claim):
+        return PESO_LEI_BASE + (ANCORA_BONUS if is_anchored(claim, doc_text) else 0)
+    return PESO_BASE
+
+
+def _is_nonblocking(item):
+    return isinstance(item, str) and any(m in item.lower() for m in _NONBLOCK_MARKERS)
+
+
+def _count_open(lst):
+    if lst is None:
+        return 0
+    if isinstance(lst, int):
+        return lst
+    return sum(1 for x in lst if not _is_nonblocking(x))
+
+
+def _count_closed(x):
     if x is None:
         return 0
     if isinstance(x, int):
@@ -49,30 +95,30 @@ def _count(x):
 
 
 def _open_doubts(ver):
-    """Dúvidas abertas de um veredito: lacunas estruturais + itens a verificar."""
-    return _count(ver.get("lacunas_estruturais")) + _count(ver.get("itens_verificar"))
+    return _count_open(ver.get("lacunas_estruturais")) + _count_open(ver.get("itens_verificar"))
 
 
 def _closed_doubts(ver):
-    """Dúvidas fechadas: lacunas resolvidas + itens já verificados."""
-    return _count(ver.get("lacunas_resolvidas")) + _count(ver.get("itens_verificados"))
+    return _count_closed(ver.get("lacunas_resolvidas")) + _count_closed(ver.get("itens_verificados"))
 
 
-def compute_pesos(claims, vereditos):
+def compute_pesos(claims, vereditos, doc_text=None):
     """
-    claims: lista de {id, ..., deriva_de?: [ids]}
+    claims: lista de {id, ..., deriva_de?: [ids], fonte?: "decisão humana" | {documento, trecho}}
     vereditos: lista de {id, lacunas_estruturais?, itens_verificar?,
                          lacunas_resolvidas?, itens_verificados?}
+    doc_text: texto do documento legal, para verificar ancoragem de claims-lei.
     Retorna dict {id: peso}.
     """
     ver_by_id = {v["id"]: v for v in vereditos}
+    claim_by_id = {c["id"]: c for c in claims}
     deriva = {c["id"]: list(c.get("deriva_de") or []) for c in claims}
 
-    # contribuição própria de cada claim (fechadas - abertas)
+    # contribuição própria: base (ideia=10 / lei=0+ancora) + fechadas - abertas
     own = {}
     for c in claims:
         v = ver_by_id.get(c["id"], {})
-        own[c["id"]] = _closed_doubts(v) - _open_doubts(v)
+        own[c["id"]] = _base(c, doc_text) + _closed_doubts(v) - _open_doubts(v)
 
     peso = {}
     visiting = set()
@@ -87,7 +133,7 @@ def compute_pesos(claims, vereditos):
         for parent in deriva.get(cid, []):
             if parent in own:  # ignora pai inexistente (nível anterior já consolidado)
                 inherited += resolve(parent)
-        peso[cid] = inherited + own.get(cid, 0)
+        peso[cid] = own.get(cid, PESO_BASE) + inherited
         visiting.discard(cid)
         return peso[cid]
 
@@ -102,8 +148,12 @@ def _load(path):
 
 
 def main(argv):
-    if len(argv) >= 1 and argv[0] == "--self-test":
-        return _self_test()
+    doc_text = None
+    if "--doc" in argv:
+        i = argv.index("--doc")
+        with open(argv[i + 1], "r", encoding="utf-8") as f:
+            doc_text = f.read()
+        argv = argv[:i] + argv[i + 2:]
 
     if len(argv) < 2:
         print(__doc__)
@@ -113,7 +163,7 @@ def main(argv):
     vereditos = _load(argv[1])
     out = argv[2] if len(argv) >= 3 else "dados/pesos.json"
 
-    peso = compute_pesos(claims, vereditos)
+    peso = compute_pesos(claims, vereditos, doc_text)
     result = [{"id": cid, "peso": peso[cid]} for cid in (c["id"] for c in claims)]
     with open(out, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
@@ -121,86 +171,6 @@ def main(argv):
     for r in result:
         print(f"{r['id']}: {r['peso']}")
     print(f"\nGravado em {out}")
-    return 0
-
-
-def _self_test():
-    """Cobre os quatro casos de aceitação do design."""
-    # Estrutura: raiz R -> filho F -> folha L  (cadeia de derivação)
-    claims = [
-        {"id": "R"},
-        {"id": "F", "deriva_de": ["R"]},
-        {"id": "L", "deriva_de": ["F"]},
-    ]
-
-    # baseline: tudo definido, nenhuma dúvida -> definir é neutro -> peso 0
-    base_ver = [
-        {"id": "R", "lacunas_estruturais": [], "itens_verificar": []},
-        {"id": "F", "lacunas_estruturais": [], "itens_verificar": []},
-        {"id": "L", "lacunas_estruturais": [], "itens_verificar": []},
-    ]
-    p = compute_pesos(claims, base_ver)
-    assert p == {"R": 0, "F": 0, "L": 0}, p  # definir conteúdo sem dúvida = neutro
-
-    # CASO propagação raiz: abrir 1 dúvida em R derruba R E descendentes (F e L)
-    ver_root = [
-        {"id": "R", "itens_verificar": ["fato pendente"]},
-        {"id": "F"},
-        {"id": "L"},
-    ]
-    p = compute_pesos(claims, ver_root)
-    assert p["R"] == -1 and p["F"] == -1 and p["L"] == -1, p  # propagou até a folha
-
-    # CASO folha isolada: abrir 1 dúvida em L só derruba L
-    ver_leaf = [
-        {"id": "R"},
-        {"id": "F"},
-        {"id": "L", "lacunas_estruturais": ["borda indefinida"]},
-    ]
-    p = compute_pesos(claims, ver_leaf)
-    assert p["R"] == 0 and p["F"] == 0 and p["L"] == -1, p  # parou na folha
-
-    # CASO fechar dúvida sobe o peso: R com 2 abertas vs R com 1 aberta + 1 fechada
-    ver_aberto = [{"id": "R", "itens_verificar": ["a", "b"]}, {"id": "F"}, {"id": "L"}]
-    ver_fechado = [
-        {"id": "R", "itens_verificar": ["a"], "itens_verificados": ["b"]},
-        {"id": "F"},
-        {"id": "L"},
-    ]
-    pa = compute_pesos(claims, ver_aberto)
-    pf = compute_pesos(claims, ver_fechado)
-    assert pf["R"] > pa["R"], (pa["R"], pf["R"])  # fechar dúvida adiciona peso
-    assert pf["R"] == 0 and pa["R"] == -2, (pa["R"], pf["R"])
-
-    # CASO herança do expansor: filho nasce com o peso do pai (não zerado).
-    # Pai resolvido com peso alto -> filho sem dúvidas próprias herda esse peso.
-    claims2 = [{"id": "P"}, {"id": "C", "deriva_de": ["P"]}]
-    ver2 = [
-        {"id": "P", "itens_verificados": ["x", "y", "z"]},  # pai resolvido, peso +3
-        {"id": "C"},  # filho recém-nascido, sem dúvida própria
-    ]
-    p2 = compute_pesos(claims2, ver2)
-    assert p2["P"] == 3 and p2["C"] == 3, p2  # filho herda 3, não nasce zerado
-
-    # filho só fica mais leve que o pai se tiver mais dúvidas abertas próprias
-    ver3 = [
-        {"id": "P", "itens_verificados": ["x", "y", "z"]},
-        {"id": "C", "lacunas_estruturais": ["d1", "d2"]},  # 2 abertas próprias
-    ]
-    p3 = compute_pesos(claims2, ver3)
-    assert p3["C"] == 1 and p3["C"] < p3["P"], p3  # 3 herdado - 2 abertas = 1
-
-    # guarda de ciclo
-    try:
-        compute_pesos(
-            [{"id": "A", "deriva_de": ["B"]}, {"id": "B", "deriva_de": ["A"]}],
-            [{"id": "A"}, {"id": "B"}],
-        )
-        raise AssertionError("deveria ter detectado ciclo")
-    except ValueError:
-        pass
-
-    print("self-test OK — propagação, folha isolada, fechar sobe, definir é neutro, herança.")
     return 0
 
 

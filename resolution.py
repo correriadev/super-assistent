@@ -52,9 +52,10 @@ def resolve_verification_item(item, domains, on_not_found=None):
     """
     domain = domain_of(item)
 
-    # passo 1 — existe domínio próprio?
+    # passo 1 — existe domínio próprio? (registrado conta, mesmo com grafo vazio:
+    # um grafo esparso é resolvido pelo lazy-decompose no passo 2a, não é "no-domain")
     entry = domains.get(domain) if domain else None
-    if not entry or not entry.get("claims"):
+    if entry is None:
         return _to_user(
             "no-domain", item, domain=domain,
             suggestion="responda à mão OU autorize ingerir um documento deste domínio",
@@ -85,6 +86,49 @@ def resolve_verification_item(item, domains, on_not_found=None):
         confidence=r["confidence"],
         note=r["note"],
     )
+
+
+def make_lazy_decompose(decompose_fn, embed_fn=None, nav_floor=0.16):
+    """Fábrica do hook `on_not_found` (passo 2a, README §12) — lazy decompose dirigido
+    pela dúvida. Plumbing determinístico + UMA chamada LLM injetada (`decompose_fn`).
+
+    decompose_fn(secao_texto) -> lista de novos claims-fonte (extractor modo legal).
+                                 É o ÚNICO ponto que usa LLM. Injetado p/ manter testável.
+    embed_fn: se dado, navegação semântica (embeddings); senão, lexical (grátis).
+    nav_floor: piso de score da navegação — abaixo dele NÃO decompõe (poupa a chamada
+               num palpite fraco). Escala difere entre lexical (jaccard) e cosseno;
+               ajuste conforme o ranqueador injetado.
+
+    Retorna um hook(item, entry) compatível com `resolve_verification_item`.
+    entry precisa carregar `doc_text`. Mantém `entry["decomposed"]` como ledger
+    anti-bomba: nunca re-decompõe a mesma seção.
+    """
+    from score import compute_scores
+    from retrieval import retrieve
+
+    def hook(item, entry):
+        doc = entry.get("doc_text")
+        if not doc:
+            return None
+        ranked = retrieve(item, doc, embed_fn=embed_fn, top_k=1)
+        if not ranked:
+            return None
+        nav_score, chunk = ranked[0]
+        if nav_score < nav_floor:
+            return None  # navegação fraca: não decompõe no chute
+        if chunk["id"] in entry.get("decomposed", []):
+            return None  # já decomposto: o not-found é real, não re-gasta token
+
+        new_claims = decompose_fn(chunk["text"])  # ← LLM na borda (extractor)
+        if not new_claims:
+            return None
+
+        entry.setdefault("decomposed", []).append(chunk["id"])
+        entry["claims"] = entry["claims"] + new_claims
+        entry["scores"] = compute_scores(entry["claims"], [], doc_text=doc)
+        return resolve_link(item, entry["claims"], entry["scores"])
+
+    return hook
 
 
 def load_domains(mapping):

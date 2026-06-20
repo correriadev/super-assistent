@@ -1,0 +1,46 @@
+[
+  {
+    "id": "art-47-condicao-extincao-tributo",
+    "content": "O art. 47 da LC 214/2025 estabelece que o direito ao crédito do adquirente somente pode ser exercido quando ocorrida a extinção do tributo por qualquer das modalidades do art. 27.",
+    "binding": null,
+    "category": "credito",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 / art. 47",
+      "excerpt": "o direito ao crédito do adquirente somente pode ser exercido quando ocorrida a extinção do tributo por qualquer das modalidades do art. 27"
+    }
+  },
+  {
+    "id": "art-47-ampliacao-condicoes-extinc",
+    "content": "O documento alega que o art. 47, ao remeter genericamente a todas as modalidades de extinção previstas no art. 27, amplia o universo de condicionamento para além das duas hipóteses taxativamente admitidas pela Constituição, alcançando situações em que o fornecedor não pagou o tributo por modalidade diversa do split.",
+    "binding": null,
+    "category": "inconstitucionalidade",
+    "rationale": "a lei complementar amplia o universo de condicionamento para além das duas hipóteses taxativamente admitidas pela Constituição",
+    "provenance": {
+      "document": "LC 214/2025 / art. 47",
+      "excerpt": "Ao remeter genericamente a todas as modalidades de extinção, a lei complementar amplia o universo de condicionamento para além das duas hipóteses taxativamente admitidas pela Constituição — alcançando, por exemplo, situações em que o fornecedor simplesmente não pagou o tributo por modalidade diversa do split"
+    }
+  },
+  {
+    "id": "art-47-transferencia-risco-inadimpl",
+    "content": "O documento alega que o art. 47 transfere ao adquirente o risco do inadimplemento alheio fora das hipóteses constitucionais, extrapolando a condicionante do art. 156-A, § 5º, II, com ofensa à não cumulatividade e à segurança jurídica.",
+    "binding": null,
+    "category": "inconstitucionalidade",
+    "rationale": "na medida em que o art. 47 transfere ao adquirente o risco do inadimplemento alheio fora das hipóteses constitucionais, há extrapolação da condicionante do art. 156-A, § 5º, II, com ofensa à não cumulatividade e à segurança jurídica",
+    "provenance": {
+      "document": "LC 214/2025 / art. 47",
+      "excerpt": "na medida em que o art. 47 transfere ao adquirente o risco do inadimplemento alheio fora das hipóteses constitucionais, há extrapolação da condicionante do art. 156-A, § 5º, II, com ofensa à não cumulatividade e à segurança jurídica"
+    }
+  },
+  {
+    "id": "art-47-leitura-conforme-constituicao",
+    "content": "O documento sustenta que a leitura conforme à Constituição do art. 47 exige restringir o condicionamento do crédito às duas hipóteses constitucionais, preservando-se o aproveitamento do crédito independentemente da conduta do fornecedor nas demais hipóteses.",
+    "binding": null,
+    "category": "interpretacao",
+    "rationale": "preservar a não cumulatividade e a segurança jurídica",
+    "provenance": {
+      "document": "LC 214/2025 / art. 47",
+      "excerpt": "A leitura conforme à Constituição exige restringir o condicionamento do crédito às duas hipóteses constitucionais, preservando-se, nas demais, o aproveitamento independentemente da conduta do fornecedor"
+    }
+  }
+]

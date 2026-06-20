@@ -1,0 +1,58 @@
+[
+  {
+    "id": "rag-lazy-decompose-only",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "'Navegar para achar qual trecho decompor' sem critério de parada — quando o RAG achou o trecho certo? Não verificável/reproduzível.",
+      "Não diz o que acontece se o trecho recuperado contradiz o claim-pai — há detecção ou o conflito fica invisível?",
+      "'Nunca fonte de verdade' é restrição de runtime sem mecanismo de imposição (contrato/teste). Intenção, não decisão."
+    ],
+    "verification_items": [
+      "[CRÍTICO] RAG por similaridade, usado só para navegação, ainda reintroduz erro de atribuição de verdade? Se a distinção navegação/verdade isola o erro, a restrição é mais estreita que o claim afirma.",
+      "[CRÍTICO] Há algum ponto da arquitetura onde RAG já é usado/planejado além de decomposição (refs cruzadas, gerar verification_items, score)? Se sim, contradiz esta decisão.",
+      "A distinção 'navegação' vs 'fonte de verdade' é operacionalmente distinguível (camada que impede output do RAG alimentar score/rationale)?"
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "verification-item-carries-domain-address",
+    "status": "INCOMPLETO",
+    "structural_gaps": [
+      "'Endereço do domínio' indefinido: enum fechado? tag livre? id de nó? Sem isso 'carrega o endereço' não é implementável.",
+      "Os três exemplos (lei/eng/financeiro) não são qualificados como exaustivos ou ilustrativos — muda se o campo é fechado ou aberto.",
+      "Quem preenche o endereço (gerador do item, orchestrator, humano)? Sem isso 'carrega' é inerte como regra."
+    ],
+    "verification_items": [],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "grounding-exact-substring",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "Não define a unidade de 'trecho literal' (frase, parágrafo, n-chars) — conformidade ambígua.",
+      "Não trata documentos não-textuais (PDF imagem, scan, OCR ruidoso) onde substring exato falha estruturalmente."
+    ],
+    "verification_items": [
+      "[CRÍTICO] Documentos-fonte incluem formatos onde substring exato é inoperável (PDF escaneado, imagem, encoding não-UTF8)? Se sim, o mecanismo falha pra uma classe inteira de fontes.",
+      "A base é sempre ingerida como texto plano antes do grounding, garantindo substring sempre aplicável?"
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "sistema-never-closes-desfecho-user",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "'Em nenhum caminho' absoluto, mas não delimita o que é 'fechar': exibir 'confirms' já encerra, ou precisa de gesto explícito do usuário?",
+      "Não especifica o que é 'desfecho': estado persistido, ação do usuário, ou ausência de follow-up? Sem isso não é verificável."
+    ],
+    "verification_items": [
+      "[CRÍTICO] Devolver confirms/refutes sem ação explícita de fechamento produz 'autoridade falsa' perceptível, ou o usuário mantém controle por não-aceitação passiva? Se não se sustenta, a rationale perde a premissa central.",
+      "'Autoridade falsa' é problema documentado em recuperação de informação ou categoria interna ao projeto? Se interna, a rationale é autorreferente."
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  }
+]

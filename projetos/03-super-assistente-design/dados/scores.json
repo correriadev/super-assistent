@@ -1,0 +1,18 @@
+[
+  {
+    "id": "rag-lazy-decompose-only",
+    "score": 4
+  },
+  {
+    "id": "verification-item-carries-domain-address",
+    "score": 7
+  },
+  {
+    "id": "grounding-exact-substring",
+    "score": 6
+  },
+  {
+    "id": "sistema-never-closes-desfecho-user",
+    "score": 6
+  }
+]

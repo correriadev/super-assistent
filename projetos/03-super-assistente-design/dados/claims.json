@@ -1,0 +1,34 @@
+[
+  {
+    "id": "rag-lazy-decompose-only",
+    "content": "RAG entra só no passo de decompor sob demanda, navegando para achar qual trecho decompor, nunca virando fonte de verdade nem de score.",
+    "binding": "vinculante",
+    "category": "arquitetura",
+    "rationale": "RAG genérico por similaridade retorna 'texto parecido', e tratar parecido como 'o texto diz' reintroduz o erro que o sistema inteiro existe pra evitar.",
+    "provenance": "human decision"
+  },
+  {
+    "id": "verification-item-carries-domain-address",
+    "content": "Cada verification_item carrega o endereço do domínio que a responde (lei, engenharia, financeiro).",
+    "binding": "vinculante",
+    "category": "metadados",
+    "rationale": "Sem o endereço o sistema não sabe em qual grafo procurar — o passo de 'existe domínio próprio?' não roda sem essa etiqueta.",
+    "provenance": "human decision"
+  },
+  {
+    "id": "grounding-exact-substring",
+    "content": "O grounding de um claim-fonte é o trecho literal achado por substring exato no documento, não por similaridade semântica.",
+    "binding": "vinculante",
+    "category": "validacao",
+    "rationale": "Grounding tem que ser conferível por um humano que clica e lê o trecho; se aceitar 'parecido', o sistema passa a afirmar 'a lei basicamente diz isso' sem que diga — exatamente o que é proibido.",
+    "provenance": "human decision"
+  },
+  {
+    "id": "sistema-never-closes-desfecho-user",
+    "content": "Em nenhum caminho o sistema fecha a dúvida sozinho; todo desfecho deságua no usuário.",
+    "binding": "vinculante",
+    "category": "autoridade",
+    "rationale": "Auto-fechar a resposta seria interpretação automática, que reintroduz o erro de autoridade falsa em escala.",
+    "provenance": "human decision"
+  }
+]

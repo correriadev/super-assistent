@@ -1,127 +1,127 @@
 [
   {
     "id": "objetivo-simulador-impacto-caixa",
-    "veredito": "PENDENTE-VERIFICAÇÃO",
-    "lacunas_estruturais": [
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
       "Métrica de 'impacto' indefinida (capital de giro adicional? dias de caixa? valor retido? % de saldo?).",
       "Quem opera o simulador — o contador em nome do cliente ou o cliente final."
     ],
-    "itens_verificar": [
+    "verification_items": [
       "[CRÍTICO] O split ainda não está em vigor para o público-alvo na janela do produto (cronograma de transição)?",
       "Sob o split, IBS/CBS é retido na liquidação financeira, não em apuração posterior?",
       "Hoje existe intervalo receber→recolher que funciona como capital de giro?",
       "O impacto recai materialmente sobre margem apertada e ciclo longo?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "publico-margem-estreita-ciclo-longo",
-    "veredito": "INCOMPLETO",
-    "lacunas_estruturais": [
+    "status": "INCOMPLETO",
+    "structural_gaps": [
       "'margem estreita' sem limiar mensurável.",
       "'ciclo financeiro longo' sem corte em dias.",
       "Critérios são cumulativos (E) ou alternativos (OU)?"
     ],
-    "itens_verificar": [
+    "verification_items": [
       "[CRÍTICO] No regime atual o intervalo receber→recolher gera float que o split elimina?",
       "[CRÍTICO] O impacto é materialmente maior em margem estreita/ciclo longo que em outros perfis?",
       "A carteira típica tem volume suficiente desse perfil para ser público inicial?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "comparacao-dois-cenarios-no-tempo",
-    "veredito": "PENDENTE-VERIFICAÇÃO",
-    "lacunas_estruturais": [
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
       "Definir a variável quantitativa da comparação (dias de float, valor do float, ou ambos) — refinamento para descer de nível."
     ],
-    "itens_verificar": [
+    "verification_items": [
       "[CRÍTICO] No regime atual há float entre receber o tributo embutido e recolher?",
       "[CRÍTICO] A LC 214/2025 recolhe o split na liquidação financeira, não em apuração posterior?",
       "[CRÍTICO] Para o público-alvo o intervalo é economicamente relevante (float material)?",
       "O split aplica-se aos contribuintes e modalidades relevantes para esse público?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "origem-aliquota-exata-ou-predefinida",
-    "veredito": "INCOMPLETO",
-    "lacunas_estruturais": [
+    "status": "INCOMPLETO",
+    "structural_gaps": [
       "Condição testável que dispara o fallback ('não houver apuração exata').",
       "De onde vem o 'percentual predefinido' (valor ou regra/fonte).",
       "'split padrão B2B' pressupõe alíquota única ou varia por operação?"
     ],
-    "itens_verificar": [
+    "verification_items": [
       "[CRÍTICO] A LC 214/2025 prevê split simplificado por percentual predefinido quando não há apuração em tempo real?",
       "Existe alíquota exata única do split B2B ou varia por setor/regime/operação?",
       "Qual o percentual predefinido a usar (valor e fonte normativa)?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "venda-parcelada-segregacao-proporcional",
-    "veredito": "PENDENTE-VERIFICAÇÃO",
-    "lacunas_estruturais": [],
-    "itens_verificar": [
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [],
+    "verification_items": [
       "[CRÍTICO] A LC 214/2025 manda recolher proporcional a cada parcela na liquidação de cada uma?",
       "A base da proporção é o valor financeiro de cada parcela ou outro critério?",
       "Em antecipação de recebíveis/cartão, a 'liquidação' é o recebimento pelo vendedor ou a parcela do consumidor?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "estorno-cancelamento-reversao",
-    "veredito": "INCOMPLETO",
-    "lacunas_estruturais": [
+    "status": "INCOMPLETO",
+    "structural_gaps": [
       "Período em que o valor revertido reentra no caixa (período do estorno vs. retroativo).",
       "Cancelamento parcial reverte proporcional? Valor integral ou líquido de taxas/multas?",
       "Estorno, cancelamento e chargeback seguem a mesma regra ou se separam?"
     ],
-    "itens_verificar": [
+    "verification_items": [
       "[CRÍTICO] No split, cancelamento/estorno devolve o tributo como caixa disponível, não só crédito futuro?",
       "[CRÍTICO] O tributo de fato sai na liquidação, existindo valor já recolhido a reverter?",
       "O timing da devolução é imediato ou defasado?",
       "Cancelamento e chargeback têm o mesmo tratamento de reversão?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "fonte-faturamento-escrituracao",
-    "veredito": "PENDENTE-VERIFICAÇÃO",
-    "lacunas_estruturais": [],
-    "itens_verificar": [
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [],
+    "verification_items": [
       "[CRÍTICO] O escritório realmente escritura esses clientes e a escrituração contém o faturamento mensal?",
       "O faturamento escriturado tem granularidade/tempestividade compatível com o split (liquidação)?",
       "Há caminho técnico de extração do sistema contábil (formato/API/arquivo)?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "cobranca",
-    "veredito": "PASSA",
-    "lacunas_estruturais": [],
-    "itens_verificar": [
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [
       "(não bloqueante) Contador pode embutir cobrança de software no honorário sem problema regulatório (CFC/CRC)? Só morde quando a cobrança for decidida."
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   },
   {
     "id": "nome-split",
-    "veredito": "PASSA",
-    "lacunas_estruturais": [],
-    "itens_verificar": [
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [
       "(não bloqueante) 'Split' disponível como marca (INPI) na classe fiscal-contábil?",
       "(não bloqueante) 'Split' é distintivo ou genérico demais (colide com o mecanismo legal)?"
     ],
-    "pergunta_elicitacao": null,
-    "contradicao": null
+    "elicitation_question": null,
+    "contradiction": null
   }
 ]

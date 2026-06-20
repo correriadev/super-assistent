@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""
+resolution.py — orquestra a resolução de um verification_item entre graphs (README §12).
+
+Determinístico, sem LLM. Implementa a árvore de decisão do cross-graph linking:
+
+    verification_item (com domain)
+    │
+    1. existe domínio próprio (source graph p/ esse domain)?
+    │   ├── NÃO → outcome "no-domain"  (devolve ao usuário: responder à mão ou ingerir doc)
+    │   └── SIM ↓
+    2. procura nos nós (linking.resolve_link)
+    │   ├── not-found ↓
+    │   │     2a. hook on_not_found (lazy-decompose / RAG navegação) — ÚNICO ponto
+    │   │         que pode usar LLM no futuro; default não faz nada
+    │   │     └── ainda not-found → outcome "not-found"
+    │   └── found → confidence pelo score do nó-fonte:
+    │         ├── reliable (score > 0) → outcome "found-strong"  (pista confirms/refutes + excerpt)
+    │         └── leve (score ≤ 0)     → outcome "found-weak"    ("não confie ainda")
+
+REGRA DURA: o sistema NUNCA fecha a dúvida. Todo desfecho volta ao usuário
+(`system_decided: False`). confirms/refutes é pista, não veredito.
+"""
+
+import json
+
+from linking import resolve_link, domain_of, item_text
+
+OUTCOMES = ("no-domain", "not-found", "found-weak", "found-strong")
+
+
+def _to_user(outcome, item, **payload):
+    out = {
+        "outcome": outcome,
+        "system_decided": False,   # invariante: o sistema nunca decide
+        "action_required": True,
+        "item": item_text(item),
+    }
+    out.update(payload)
+    return out
+
+
+def resolve_verification_item(item, domains, on_not_found=None):
+    """
+    item: verification_item objeto {text, domain, critical} (ou string legada).
+    domains: dict {domain_name: {"claims": [...], "scores": {id: score}}}.
+    on_not_found: hook opcional p/ lazy-decompose dirigido pela dúvida (passo 2a).
+                  Recebe (item, domain_entry); devolve uma resolução estilo
+                  resolve_link (com novo "claims"/"scores" já decompostos) ou None.
+                  É o ÚNICO ponto que pode usar RAG/LLM no futuro. Default: None.
+    Retorna um dict 'to_user' com outcome ∈ OUTCOMES. NUNCA fecha a dúvida.
+    """
+    domain = domain_of(item)
+
+    # passo 1 — existe domínio próprio?
+    entry = domains.get(domain) if domain else None
+    if not entry or not entry.get("claims"):
+        return _to_user(
+            "no-domain", item, domain=domain,
+            suggestion="responda à mão OU autorize ingerir um documento deste domínio",
+        )
+
+    # passo 2 — procura nos nós
+    r = resolve_link(item, entry["claims"], entry.get("scores", {}))
+
+    # passo 2a — hook de lazy-decompose (navegação RAG), se fornecido
+    if r["result"] == "not-found" and on_not_found is not None:
+        r2 = on_not_found(item, entry)
+        if r2 and r2.get("result") != "not-found":
+            r = r2
+
+    if r["result"] == "not-found":
+        return _to_user(
+            "not-found", item, domain=domain,
+            suggestion="nem a fonte deste domínio resolve; responda à mão ou decomponha a seção relevante",
+        )
+
+    # found — confidence pelo score do nó-fonte
+    outcome = "found-strong" if r.get("reliable") else "found-weak"
+    return _to_user(
+        outcome, item, domain=domain,
+        result=r["result"],                 # confirms | refutes (PISTA, não veredito)
+        source_claim=r["source_claim"],
+        excerpt=r.get("excerpt"),
+        confidence=r["confidence"],
+        note=r["note"],
+    )
+
+
+def load_domains(mapping):
+    """Helper: monta o dict `domains` a partir de arquivos.
+    mapping: {domain: {"claims_path": ..., "doc_path": ...(opcional), "verdicts": [...](opcional)}}.
+    Calcula o score de cada source graph (grounding se houver doc_path)."""
+    from score import compute_scores
+    out = {}
+    for dom, m in mapping.items():
+        claims = json.load(open(m["claims_path"], encoding="utf-8"))
+        doc = open(m["doc_path"], encoding="utf-8").read() if m.get("doc_path") else None
+        scores = compute_scores(claims, m.get("verdicts", []), doc_text=doc)
+        out[dom] = {"claims": claims, "scores": scores}
+    return out

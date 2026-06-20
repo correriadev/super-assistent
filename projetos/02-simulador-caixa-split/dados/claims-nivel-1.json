@@ -1,0 +1,287 @@
+[
+  {
+    "id": "tela-entrada-faturamento",
+    "content": "Existe uma tela onde o usuário (ou o sistema) insere ou confirma os dados de faturamento mensal para o simulador.",
+    "binding": null,
+    "category": "interface",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "fonte-dados-faturamento"
+    ],
+    "parent_constraint": "Os dados de faturamento devem vir da escrituração contábil do escritório, não de digitação manual pelo cliente.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "fonte-dados-faturamento"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "calculo-regime-atual",
+    "content": "O simulador calcula o fluxo de caixa no regime atual: recebimento bruto, retenção do imposto até o dia de recolhimento.",
+    "binding": null,
+    "category": "motor",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "dois-cenarios-comparacao",
+      "objetivo-simulador-impacto-caixa"
+    ],
+    "parent_constraint": "Deve representar o intervalo de tempo entre receber o tributo e recolhê-lo, de forma que o cliente veja o capital de giro atualmente disponível.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "dois-cenarios-comparacao",
+        "objetivo-simulador-impacto-caixa"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "calculo-regime-split",
+    "content": "O simulador calcula o fluxo de caixa no regime split: o imposto é segregado e sai no momento da liquidação, não há intervalo de retenção.",
+    "binding": null,
+    "category": "motor",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "dois-cenarios-comparacao",
+      "objetivo-simulador-impacto-caixa"
+    ],
+    "parent_constraint": "Deve representar a ausência do intervalo de tempo: imposto sai na liquidação, não há capital de giro temporário.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "dois-cenarios-comparacao",
+        "objetivo-simulador-impacto-caixa"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "comparacao-lado-a-lado",
+    "content": "A interface exibe lado a lado os dois regimes (atual vs split) para o mesmo faturamento, facilitando a visualização da diferença.",
+    "binding": null,
+    "category": "interface",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "dois-cenarios-comparacao"
+    ],
+    "parent_constraint": "A comparação deve ser visual e simultânea; ocultar um regime ou apresentar sequencialmente enfraqueceria a percepção da diferença.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "dois-cenarios-comparacao"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "integracao-contabilidade",
+    "content": "O sistema integra com a plataforma de contabilidade do escritório para recuperar dados de faturamento sem necessidade de entrada manual.",
+    "binding": null,
+    "category": "arquitetura",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "fonte-dados-faturamento"
+    ],
+    "parent_constraint": "Não pode solicitar digitação ao cliente; os dados vêm da contabilidade.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "fonte-dados-faturamento"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "aliquota-exata-ou-aproximada",
+    "content": "O simulador tenta usar a alíquota exata do split B2B; se indisponível, usa percentual predefinido (split simplificado).",
+    "binding": null,
+    "category": "motor",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "aliquota-split-aproximacao"
+    ],
+    "parent_constraint": "Deve suportar fallback para percentual predefinido quando a apuração exata não estiver disponível em tempo real.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "aliquota-split-aproximacao"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "suporte-parcelado",
+    "content": "Para vendas parceladas, o simulador segrega proporcionalmente o imposto em cada parcela, aplicando o split na data de liquidação individual de cada uma.",
+    "binding": null,
+    "category": "motor",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "venda-parcelada-segregacao"
+    ],
+    "parent_constraint": "O cálculo deve respeitar a proporcionalidade do imposto por parcela e a data de liquidação de cada uma, não da venda original.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "venda-parcelada-segregacao"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "tratamento-estorno-cancelamento",
+    "content": "O simulador reverte transações estornadas ou canceladas: se o imposto foi segregado no split, ele retorna ao caixa quando a transação é revertida.",
+    "binding": null,
+    "category": "motor",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "estorno-cancelamento-reversal"
+    ],
+    "parent_constraint": "Qualquer estorno ou cancelamento deve reverter a segregação do imposto; caso contrário, o simulador mostrará um impacto maior que o real.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "estorno-cancelamento-reversal"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "filtro-ou-segmentacao-publico",
+    "content": "O acesso ao simulador é oferecido inicialmente a clientes com margem estreita e ciclo financeiro longo, ou há um indicador que mostra se o impacto será relevante para o perfil.",
+    "binding": null,
+    "category": "estrategia",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "publico-alvo-perfil"
+    ],
+    "parent_constraint": "O simulador é mais relevante e impactante para perfis com ciclo financeiro longo e margem estreita; usar para outros perfis pode gerar expectativas falsas de impacto.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "publico-alvo-perfil"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "formato-resultado-metrica-principal",
+    "content": "O resultado principal exibe a diferença de fluxo de caixa entre os dois regimes em unidade monetária e/ou percentual de faturamento.",
+    "binding": null,
+    "category": "interface",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "objetivo-simulador-impacto-caixa"
+    ],
+    "parent_constraint": "Deve deixar visível o 'buraco' de caixa causado pela supressão do intervalo; abstração numérica pura pode não comunicar o impacto de forma clara ao cliente.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "objetivo-simulador-impacto-caixa"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "branding-identidade-visual",
+    "content": "O produto é nomeado e visualmente identificado como 'Split'.",
+    "binding": null,
+    "category": "identidade",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "nome-produto"
+    ],
+    "parent_constraint": "Todo material, telas e documentação devem usar 'Split' como nome do produto."
+  },
+  {
+    "id": "modelo-monetizacao-indefinido",
+    "content": "A estratégia de cobrança permanece em aberto; o desenvolvimento não é bloqueado por essa decisão, mas a arquitetura deve permitir incorporação ao honorário ou modelo alternativo.",
+    "binding": null,
+    "category": "pagamento",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "modelo-cobranca"
+    ],
+    "parent_constraint": "A solução não pode ser rigidamente acoplada a um modelo de cobrança específico; deve ser flexível o bastante para aceitar ajustes posteriores.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "modelo-cobranca"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "timeline-entrada-vigor-split",
+    "content": "O simulador deve estar pronto antes da entrada em vigor do split payment (ou próximo a essa data), porque seu propósito é mostrar o impacto ao cliente antes de ele ocorrer.",
+    "binding": null,
+    "category": "cronograma",
+    "derivation": "[Especulativo]",
+    "derives_from": [
+      "objetivo-simulador-impacto-caixa"
+    ],
+    "parent_constraint": "Se o simulador for entregue após o split entrar em vigor, a urgência da comunicação desaparece e o cliente já viveria o impacto; o valor de planejamento preventivo se perde.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "objetivo-simulador-impacto-caixa"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "relatorio-exportavel",
+    "content": "O resultado da simulação pode ser exportado em formato padrão (PDF, Excel) para que o cliente compartilhe com seu time financeiro ou contador.",
+    "binding": null,
+    "category": "interface",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "objetivo-simulador-impacto-caixa"
+    ],
+    "parent_constraint": "Mostrar o impacto é mais eficaz se o cliente puder levar a evidência adiante; formato exportável aumenta a adoção da informação.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "objetivo-simulador-impacto-caixa"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "cenarios-parametrizaveis",
+    "content": "O simulador permite ao cliente variar parâmetros de entrada (faturamento mensal, percentual de parcelado, datas de recolhimento) para ver múltiplos cenários.",
+    "binding": null,
+    "category": "funcionalidade",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "dois-cenarios-comparacao"
+    ],
+    "parent_constraint": "Ao menos os dois cenários-base (atual vs split) devem ser obrigatórios; variações de parâmetros são adicionais e não devem ofuscar a comparação principal.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "dois-cenarios-comparacao"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  },
+  {
+    "id": "validacao-dados-entrada",
+    "content": "O simulador valida os dados de entrada (faturamento não-negativo, datas coerentes, percentuais entre 0 e 100) antes de executar o cálculo.",
+    "binding": null,
+    "category": "qualidade",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "integracao-contabilidade"
+    ],
+    "parent_constraint": "Mesmo que os dados venham da contabilidade integrada, devem ser validados antes do cálculo, porque erros de integração ou dados corrompidos são sempre possíveis.",
+    "provisional": {
+      "state": "review",
+      "parents": [
+        "integracao-contabilidade"
+      ],
+      "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
+    }
+  }
+]

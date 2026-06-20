@@ -231,4 +231,32 @@ Pipeline rodado do zero: `extractor`(haiku) → modalidade humana em lote → 9 
 
 **Anti-regressão (reafirmado):** grounding por substring exato; verdade humana; `confirms/refutes` é pista; `system_decided` sempre False; empate não é resolvido pelo sistema, é exposto. O embedder mudou só a **navegação e o matching** — nunca o grounding nem o veredito.
 
+## 14. DESCIDA DE NÍVEL PARAMETRIZÁVEL — movimento sem perder a cicatriz (construído e testado)
+
+A pré-condição do §8 do orchestrator (só desce para concepção sobre claims **resolvidos**), na forma **binária**, é sentida pelo usuário como burocracia — mata o momentum mesmo quando a fundação está "boa o suficiente". `descent.py` troca **"bloquear"** por **"seguir com cicatriz rastreada"**, reusando a propagação (§7). Determinístico, `test_descent.py`, 10 testes.
+
+### 14.1 `descent_gate(claims, verdicts, policy, min_fraction, accepted)`
+Decide se o gate abre, conforme a política:
+
+| `descent_policy` | comportamento | uso |
+|---|---|---|
+| `strict` | todos resolvidos ou pára (histórico) | auditoria, fundação crítica |
+| `vinculante_only` | bloqueia só `vinculante` aberto; ilustrativo/default passam | equilíbrio |
+| `threshold` | desce se fração resolvida ≥ `min_fraction` | "o essencial está de pé" |
+| `provisional` | sempre desce; pais abertos → filhos `provisional` | **sentir movimento** |
+| `force` | sempre desce, sem marca | protótipo descartável |
+
+Retorna `{allowed, blocked_by, provisional_parents, resolved_fraction, reason}`. "Resolvido" = status `PASSA` **ou** aceite humano explícito (`accepted`). O gate é por **status**, não por score (score é termômetro; status é o portão).
+
+### 14.2 Chão absoluto
+`CONTRADIZ-NIVEL-ACIMA` aberto **bloqueia em QUALQUER política** (inclusive `force`/`provisional`) e **não é liberável por aceite** — filho que contradiz o pai é incoerência, não burocracia.
+
+### 14.3 Marca `provisional` + propagação fiada na descida
+`mark_provisional(child, provisional_parents)` carimba `provisional: {state: review, parents, reason}` no filho cujo `derives_from` cai em pai aberto (espelho do `stale`). O filho **herda o score baixo do pai** via `derives_from` (score.py já faz) — nasce flutuando, **visível na água**: é aqui que o usuário **sente** o movimento sem perder a honestidade. `refresh_provisional(children, provisional_parents)` re-avalia contra o estado ATUAL dos pais: pai que resolveu → filho perde a marca (vira claim normal); pai que reabriu/mudou → marca fica. É a propagação ligada na descida.
+
+Distinção: `provisional` (pai não-assentado) ≠ `[Especulativo]` (derivação inventada pelo expander) — eixos distintos, ambos pedem humano por motivos diferentes.
+
+### 14.4 Risco nomeado
+`provisional` só é honesto se a marca for **lida** (reporter destaca, score baixo visível) e a propagação **disparar de fato** quando o pai muda. Sem isso, vira `force` com etapa a mais — cicatriz teatro. Próximo passo de integração: o orchestrator (passo 8) chama `descent_gate` com a política do projeto; o expander, após gerar, roda `refresh_provisional`; o reporter renderiza nós `provisional`.
+
 > Nota de honestidade: o **motor determinístico** — peso, ancoragem da constelação-lei, sobreposição dimensional, propagação cross-constelação, log de eventos — saiu do conceito e virou **código testado** (pytest, 17/17). O que **ainda é só conceito**: a visualização (água/montanha/7 estágios) e o fluxo end-to-end num projeto real. A elegância do modelo não prova que é útil — o próximo passo é construir algo que sirva ao autor no uso real, e descobrir o valor usando.

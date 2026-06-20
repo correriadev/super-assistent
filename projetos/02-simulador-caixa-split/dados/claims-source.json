@@ -42,5 +42,82 @@
       "document": "LC 214/2025 / art. 47",
       "excerpt": "A leitura conforme à Constituição exige restringir o condicionamento do crédito às duas hipóteses constitucionais, preservando-se, nas demais, o aproveitamento independentemente da conduta do fornecedor"
     }
+  },
+  {
+    "id": "split-payment-constitutional-basis",
+    "content": "O texto afirma que o split payment (recolhimento na liquidação financeira da operação) está previsto no art. 156-A, § 5º, II, da Constituição",
+    "binding": null,
+    "category": "pagamento",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição"
+    }
+  },
+  {
+    "id": "split-payment-legal-discipline",
+    "content": "O documento afirma que o split payment é disciplinado pelos arts. 31 a 35 da LC 214/2025",
+    "binding": null,
+    "category": "pagamento",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "disciplinado pelos arts. 31 a 35 da LC 214/2025"
+    }
+  },
+  {
+    "id": "split-payment-mechanism",
+    "content": "O texto descreve que no split payment, no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+    "binding": null,
+    "category": "pagamento",
+    "rationale": "reduzir custos administrativos de conformidade ao segregar automaticamente a parcela de tributo no momento do pagamento",
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento"
+    }
+  },
+  {
+    "id": "split-padrao-operacoes-empresas",
+    "content": "o texto afirma que o split padrão (ou inteligente) é aplicável às operações entre empresas, com identificação da alíquota e montante exatos do tributo pelo sistema",
+    "binding": null,
+    "category": "tributacao",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "o split padrão (ou \"inteligente\"), aplicável às operações entre empresas, em que o sistema identifica a alíquota e o montante exatos do tributo"
+    }
+  },
+  {
+    "id": "split-simplificado-percentuais",
+    "content": "o texto afirma que o split simplificado opera por percentuais predefinidos quando a apuração precisa em tempo real não for viável",
+    "binding": null,
+    "category": "tributacao",
+    "rationale": "quando a apuração precisa em tempo real não for viável",
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "o split simplificado, que opera por percentuais predefinidos quando a apuração precisa em tempo real não for viável"
+    }
+  },
+  {
+    "id": "recolhimento-adquirente-residual",
+    "content": "o texto afirma que o recolhimento pelo adquirente é uma hipótese residual do instituto",
+    "binding": null,
+    "category": "tributacao",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "o recolhimento pelo adquirente, hipótese residual de internaliza"
+    }
+  },
+  {
+    "id": "segregacao-recolhimento-proporcional",
+    "content": "O documento afirma que segregação e recolhimento far-se-ão de modo proporcional na liquidação financeira de cada parcela.",
+    "binding": null,
+    "category": "liquidacao",
+    "rationale": null,
+    "provenance": {
+      "document": "LC 214/2025 (art. doutrinário pub_780677977)",
+      "excerpt": "segregação e o recolhimento far-se-ão de modo proporcional, na liquidação financeira de cada parcela."
+    }
   }
 ]

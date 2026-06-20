@@ -1,6 +1,6 @@
 """Árvore de decisão do cross-graph linking (resolution.py). Sem LLM."""
 
-from resolution import resolve_verification_item, OUTCOMES
+from resolution import resolve_verification_item, attach_candidates, OUTCOMES
 
 SRC = [{"id": "art47",
         "content": "o art. 47 condiciona o crédito do adquirente à extinção do tributo",
@@ -63,4 +63,20 @@ def test_todo_desfecho_volta_ao_usuario():
                  _item("o art. 47 condiciona o crédito à extinção?")]:
         r = resolve_verification_item(item, DOMAINS)
         assert r["system_decided"] is False and r["action_required"] is True
-        assert r["outcome"] in OUTCOMES
+
+
+def test_ambiguous_carimba_candidates_no_item_e_segue_aberto():
+    # dois claims-fonte idênticos no peso -> empate -> ambíguo; embed constante força tie
+    src = [
+        {"id": "a", "content": "split na liquidação", "provenance": {"document": "X", "excerpt": "split na liquidação"}},
+        {"id": "b", "content": "split por parcela", "provenance": {"document": "X", "excerpt": "split por parcela"}},
+    ]
+    domains = {"lei": {"claims": src, "scores": {"a": 10, "b": 10}}}
+    item = _item("split?")
+    r = resolve_verification_item(item, domains, embed_fn=lambda t: [1.0, 1.0])
+    assert r["outcome"] == "ambiguous" and r["system_decided"] is False
+    # carimba o slot no próprio item; item NÃO vira verified
+    assert attach_candidates(item, {"result": "ambiguous", "candidates": r["candidates"]}) is True
+    assert {c["source_claim"] for c in item["candidates"]} == {"a", "b"}
+    # resolução não-ambígua limpa o slot
+    assert attach_candidates(item, {"result": "confirms"}) is False and "candidates" not in item

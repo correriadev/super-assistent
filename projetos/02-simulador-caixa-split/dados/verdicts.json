@@ -1,125 +1,289 @@
 [
   {
+    "id": "publico-alvo-perfil",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "'Margem estreita' e 'ciclo financeiro longo' não têm critério mensurável definido: qual margem e qual prazo delimitam o público-inicial para fins de filtragem de clientes?",
+      "A rationale explica por que esse perfil sofre mais, mas não justifica por que é o público *inicial* — um público mais amplo poderia incluir empresas com alto volume bruto mesmo com margem razoável."
+    ],
+    "verification_items": [
+      {
+        "text": "O split payment (IBS/CBS) na LC 214/2025 retém o imposto na liquidação financeira, eliminando o intervalo entre receber e recolher para todos os contribuintes — ou há regimes/setores onde o intervalo ainda persiste?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          },
+          {
+            "source_claim": "split-payment-mechanism",
+            "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+            "confidence": 10
+          }
+        ]
+      },
+      {
+        "text": "Empresas com margem estreita e ciclo financeiro longo são, de fato, as mais impactadas em termos de necessidade de capital de giro pelo split payment, em comparação com perfis de alto volume e margem razoável?",
+        "domain": "financeiro",
+        "critical": true
+      },
+      {
+        "text": "Existe data de vigência estabelecida na LC 214/2025 para o início do split payment que torne o impacto sobre capital de giro uma realidade operacional no prazo do projeto?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          },
+          {
+            "source_claim": "split-payment-legal-discipline",
+            "excerpt": "disciplinado pelos arts. 31 a 35 da LC 214/2025",
+            "confidence": 10
+          }
+        ]
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "dois-cenarios-comparacao",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [],
+    "verification_items": [
+      {
+        "text": "No regime atual, o intervalo entre o ingresso do tributo no caixa do contribuinte e o seu recolhimento é suficientemente longo para que a diferença de capital de giro seja materialmente perceptível no simulador?",
+        "domain": "financeiro",
+        "critical": false
+      },
+      {
+        "text": "A LC 214/2025 já está em vigor ou tem data de entrada em vigor definida que permita comparar os dois regimes como estados simultâneos possíveis (e não como hipótese futura incerta)?",
+        "domain": "lei",
+        "critical": true
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null,
+    "verified_items": [
+      {
+        "text": "No split payment da LC 214/2025, o IBS e o CBS são de fato segregados no momento da liquidação financeira (e não em etapa posterior, como repasse ao fisco com delay)?",
+        "source_claim": "split-payment-mechanism",
+        "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+        "via": "cross-graph link, human-confirmed"
+      }
+    ]
+  },
+  {
+    "id": "aliquota-split-aproximacao",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [],
+    "verification_items": [
+      {
+        "text": "Qual é o percentual predefinido do split simplificado conforme a LC 214/2025 (ou regulamentação posterior), e ele se aplica a operações B2B de forma idêntica ao split padrão?",
+        "domain": "lei",
+        "critical": true
+      },
+      {
+        "text": "Em que condições a 'alíquota exata do split padrão B2B' está disponível para consulta no momento da simulação — existe uma fonte ou API pública/oficial que o simulador pode consumir?",
+        "domain": "engenharia",
+        "critical": false
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null,
+    "verified_items": [
+      {
+        "text": "A LC 214/2025 prevê um regime de 'split simplificado' com percentual predefinido como fallback quando a apuração exata em tempo real não está disponível?",
+        "source_claim": "split-simplificado-percentuais",
+        "excerpt": "o split simplificado, que opera por percentuais predefinidos quando a apuração precisa em tempo real não for viável",
+        "via": "cross-graph link, human-confirmed"
+      }
+    ]
+  },
+  {
+    "id": "venda-parcelada-segregacao",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "O claim não define o que conta como 'liquidação de cada parcela': é a data de vencimento contratual, a data de liquidação financeira na adquirente, ou a data de crédito na conta do vendedor? Ambiguidade impede operacionalizar o momento exato do split.",
+      "O claim não especifica como calcular 'proporcional': igual entre parcelas ou ponderado por valor de cada parcela? Necessário para implementação sem arbítrio."
+    ],
+    "verification_items": [
+      {
+        "text": "O mecanismo de split payment definido para o IBS/CBS opera por parcela individual de cada transação, ou opera sobre o total da transação na primeira liquidação, ou por outro critério?",
+        "domain": "lei",
+        "critical": true
+      },
+      {
+        "text": "O fato de segregar por parcela (e não concentrar na venda) realmente evita superestimação da saída no mês da venda para todos os regimes de parcelamento contemplados no escopo do simulador?",
+        "domain": "financeiro",
+        "critical": false
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null,
+    "verified_items": [
+      {
+        "text": "A LC 214/2025 ou regulamentação derivada determina que, em vendas parceladas, o split payment do IBS/CBS incide proporcionalmente em cada parcela no momento da sua liquidação financeira individual — e não na data da venda ou da primeira parcela?",
+        "source_claim": "split-payment-mechanism",
+        "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+        "via": "cross-graph link, human-confirmed"
+      }
+    ]
+  },
+  {
+    "id": "estorno-cancelamento-reversal",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [],
+    "verification_items": [
+      {
+        "text": "No regime de split payment da LC 214/2025, quando uma venda é cancelada ou estornada após a liquidação financeira com segregação de IBS/CBS, o mecanismo de devolução ao contribuinte (crédito, ressarcimento ou estorno direto) ocorre em qual prazo e por qual canal?",
+        "domain": "lei",
+        "critical": true
+      },
+      {
+        "text": "A LC 214/2025 ou regulamentação subsequente prevê tratamento distinto entre cancelamento (antes da liquidação) e estorno (após a liquidação) para fins de recuperação do imposto segregado no split payment?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          },
+          {
+            "source_claim": "segregacao-recolhimento-proporcional",
+            "excerpt": "segregação e o recolhimento far-se-ão de modo proporcional, na liquidação financeira de cada parcela.",
+            "confidence": 10
+          }
+        ]
+      },
+      {
+        "text": "O valor revertido ao contribuinte no estorno do split payment retorna imediatamente ao caixa disponível, ou fica retido como crédito a compensar em período posterior?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-mechanism",
+            "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+            "confidence": 10
+          },
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          }
+        ]
+      },
+      {
+        "text": "A frequência de estornos e cancelamentos no segmento de clientes contábeis alvo é representativa o suficiente para que a ausência desse tratamento distorça materialmente a simulação?",
+        "domain": null,
+        "critical": false
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "fonte-dados-faturamento",
+    "status": "PENDENTE-VERIFICAÇÃO",
+    "structural_gaps": [
+      "O claim não especifica o formato ou protocolo de extração dos dados (integração via API com sistema contábil, exportação manual de planilha, acesso direto a banco de dados): sem isso, 'puxar de lá' é operacionalmente indefinido para quem for implementar.",
+      "O claim não delimita o escopo de 'escrituração contábil do escritório': engloba todos os clientes atendidos pelo escritório ou apenas os que têm determinado tipo de contrato/serviço? A universalidade da fonte precisa ser declarada."
+    ],
+    "verification_items": [
+      {
+        "text": "Os sistemas contábeis em uso no escritório expõem os dados de faturamento mensal por cliente em formato acessível programaticamente (API, exportação estruturada ou acesso direto) sem exigir intervenção manual a cada consulta?",
+        "domain": "engenharia",
+        "critical": true
+      },
+      {
+        "text": "A escrituração contábil do escritório contém o faturamento do cliente com granularidade mensal e segregação por cliente suficiente para alimentar o simulador sem transformação manual significativa?",
+        "domain": "engenharia",
+        "critical": true
+      },
+      {
+        "text": "O uso dos dados de faturamento do cliente extraídos da escrituração do escritório para alimentar uma ferramenta de simulação requer consentimento explícito do cliente ou está coberto pelos termos do contrato de prestação de serviços contábeis existente?",
+        "domain": "lei",
+        "critical": false
+      },
+      {
+        "text": "Todos os clientes-alvo do simulador têm faturamento já registrado na escrituração do escritório (ou há clientes que têm apenas parte do faturamento registrado lá, exigindo complementação por digitação)?",
+        "domain": null,
+        "critical": false
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "modelo-cobranca",
+    "status": "PRECISA-JUSTIFICAR",
+    "structural_gaps": [],
+    "verification_items": [],
+    "elicitation_question": "Qual razão inclina para incorporar ao honorário em vez de cobrar separado (ex: avulso, SaaS, licença por uso)?",
+    "contradiction": null
+  },
+  {
+    "id": "nome-produto",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
     "id": "objetivo-simulador-impacto-caixa",
     "status": "PENDENTE-VERIFICAÇÃO",
-    "structural_gaps": [
-      "Métrica de 'impacto' indefinida (capital de giro adicional? dias de caixa? valor retido? % de saldo?).",
-      "Quem opera o simulador — o contador em nome do cliente ou o cliente final."
-    ],
-    "verification_items": [
-      "[CRÍTICO] O split ainda não está em vigor para o público-alvo na janela do produto (cronograma de transição)?",
-      "Sob o split, IBS/CBS é retido na liquidação financeira, não em apuração posterior?",
-      "Hoje existe intervalo receber→recolher que funciona como capital de giro?",
-      "O impacto recai materialmente sobre margem apertada e ciclo longo?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "publico-margem-estreita-ciclo-longo",
-    "status": "INCOMPLETO",
-    "structural_gaps": [
-      "'margem estreita' sem limiar mensurável.",
-      "'ciclo financeiro longo' sem corte em dias.",
-      "Critérios são cumulativos (E) ou alternativos (OU)?"
-    ],
-    "verification_items": [
-      "[CRÍTICO] No regime atual o intervalo receber→recolher gera float que o split elimina?",
-      "[CRÍTICO] O impacto é materialmente maior em margem estreita/ciclo longo que em outros perfis?",
-      "A carteira típica tem volume suficiente desse perfil para ser público inicial?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "comparacao-dois-cenarios-no-tempo",
-    "status": "PENDENTE-VERIFICAÇÃO",
-    "structural_gaps": [
-      "Definir a variável quantitativa da comparação (dias de float, valor do float, ou ambos) — refinamento para descer de nível."
-    ],
-    "verification_items": [
-      "[CRÍTICO] No regime atual há float entre receber o tributo embutido e recolher?",
-      "[CRÍTICO] A LC 214/2025 recolhe o split na liquidação financeira, não em apuração posterior?",
-      "[CRÍTICO] Para o público-alvo o intervalo é economicamente relevante (float material)?",
-      "O split aplica-se aos contribuintes e modalidades relevantes para esse público?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "origem-aliquota-exata-ou-predefinida",
-    "status": "INCOMPLETO",
-    "structural_gaps": [
-      "Condição testável que dispara o fallback ('não houver apuração exata').",
-      "De onde vem o 'percentual predefinido' (valor ou regra/fonte).",
-      "'split padrão B2B' pressupõe alíquota única ou varia por operação?"
-    ],
-    "verification_items": [
-      "[CRÍTICO] A LC 214/2025 prevê split simplificado por percentual predefinido quando não há apuração em tempo real?",
-      "Existe alíquota exata única do split B2B ou varia por setor/regime/operação?",
-      "Qual o percentual predefinido a usar (valor e fonte normativa)?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "venda-parcelada-segregacao-proporcional",
-    "status": "PENDENTE-VERIFICAÇÃO",
     "structural_gaps": [],
     "verification_items": [
-      "[CRÍTICO] A LC 214/2025 manda recolher proporcional a cada parcela na liquidação de cada uma?",
-      "A base da proporção é o valor financeiro de cada parcela ou outro critério?",
-      "Em antecipação de recebíveis/cartão, a 'liquidação' é o recebimento pelo vendedor ou a parcela do consumidor?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "estorno-cancelamento-reversao",
-    "status": "INCOMPLETO",
-    "structural_gaps": [
-      "Período em que o valor revertido reentra no caixa (período do estorno vs. retroativo).",
-      "Cancelamento parcial reverte proporcional? Valor integral ou líquido de taxas/multas?",
-      "Estorno, cancelamento e chargeback seguem a mesma regra ou se separam?"
-    ],
-    "verification_items": [
-      "[CRÍTICO] No split, cancelamento/estorno devolve o tributo como caixa disponível, não só crédito futuro?",
-      "[CRÍTICO] O tributo de fato sai na liquidação, existindo valor já recolhido a reverter?",
-      "O timing da devolução é imediato ou defasado?",
-      "Cancelamento e chargeback têm o mesmo tratamento de reversão?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "fonte-faturamento-escrituracao",
-    "status": "PENDENTE-VERIFICAÇÃO",
-    "structural_gaps": [],
-    "verification_items": [
-      "[CRÍTICO] O escritório realmente escritura esses clientes e a escrituração contém o faturamento mensal?",
-      "O faturamento escriturado tem granularidade/tempestividade compatível com o split (liquidação)?",
-      "Há caminho técnico de extração do sistema contábil (formato/API/arquivo)?"
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "cobranca",
-    "status": "PASSA",
-    "structural_gaps": [],
-    "verification_items": [
-      "(não bloqueante) Contador pode embutir cobrança de software no honorário sem problema regulatório (CFC/CRC)? Só morde quando a cobrança for decidida."
-    ],
-    "elicitation_question": null,
-    "contradiction": null
-  },
-  {
-    "id": "nome-split",
-    "status": "PASSA",
-    "structural_gaps": [],
-    "verification_items": [
-      "(não bloqueante) 'Split' disponível como marca (INPI) na classe fiscal-contábil?",
-      "(não bloqueante) 'Split' é distintivo ou genérico demais (colide com o mecanismo legal)?"
+      {
+        "text": "A LC 214/2025 implementa split payment de modo que o IBS/CBS é segregado na própria liquidação financeira, eliminando o intervalo entre recebimento do bruto e recolhimento do tributo?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-mechanism",
+            "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento",
+            "confidence": 10
+          },
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          }
+        ]
+      },
+      {
+        "text": "O split payment (conforme LC 214/2025 e regulamentação subsequente) entra em vigor em data suficientemente futura para que um simulador entregue valor de antecipação ao cliente — isto é, a janela de 'antes de doer' ainda existe?",
+        "domain": "lei",
+        "critical": true,
+        "candidates": [
+          {
+            "source_claim": "split-payment-constitutional-basis",
+            "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição",
+            "confidence": 10
+          },
+          {
+            "source_claim": "split-payment-legal-discipline",
+            "excerpt": "disciplinado pelos arts. 31 a 35 da LC 214/2025",
+            "confidence": 10
+          }
+        ]
+      },
+      {
+        "text": "O mecanismo de split afeta igualmente todos os regimes tributários (Simples, Lucro Presumido, Lucro Real) ou há diferenciação que mudaria o escopo do simulador?",
+        "domain": "lei",
+        "critical": false
+      },
+      {
+        "text": "A prática atual de o cliente segurar o tributo entre recebimento e recolhimento é efetivamente a fonte principal de capital de giro para o perfil de cliente contábil alvo?",
+        "domain": null,
+        "critical": false
+      }
     ],
     "elicitation_question": null,
     "contradiction": null

@@ -23,7 +23,9 @@ _STOP = {
 }
 _NEG = {"não", "nao", "fora", "nunca", "jamais", "nem", "exceto", "salvo"}
 
-_THRESHOLD = 0.16  # sobreposição mínima (Jaccard) para considerar "encontrado"
+_THRESHOLD = 0.16      # sobreposição mínima (Jaccard) para considerar "encontrado" (lexical)
+_SEM_THRESHOLD = 0.45  # piso de cosseno quando há embed_fn (escala difere do jaccard)
+_MARGIN = 0.05         # top-1 e top-2 mais perto que isto (ambos acima do piso) = empate ambíguo
 
 
 def _tokens(texto):
@@ -64,25 +66,38 @@ def domain_of(item):
     return item.get("domain") if isinstance(item, dict) else None
 
 
-def resolve_link(question, source_claims, source_scores, threshold=_THRESHOLD):
+def resolve_link(question, source_claims, source_scores, threshold=_THRESHOLD, embed_fn=None, margin=_MARGIN):
     """
     question: string do verification_item do idea graph.
     source_claims: lista de claims do source graph (content + provenance).
     source_scores: dict {id: score} (saída de score.compute_scores no source graph).
+    embed_fn: se dado, casa pergunta↔claim por cosseno (semântico) em vez de jaccard
+              (lexical). Mesma injeção do retrieval — o claim mais PARECIDO ganha, não o
+              mais curto-e-denso. Sem ele, matching lexical (grátis, mas com viés ao
+              claim genérico).
+    margin: gate de empate. Se top-1 e top-2 estão ambos acima do piso e separados por
+            menos que `margin`, NÃO auto-escolhe — devolve result "ambiguous" com os dois
+            candidatos para o humano decidir (torna a incerteza visível em vez de chutar o
+            mais "central"). Mesma filosofia do resto: o sistema não fecha a dúvida.
     Retorna dict {result, source_claim, excerpt, confidence, reliable, note}.
-    result ∈ {"confirms", "refutes", "not-found"}.
+    result ∈ {"confirms", "refutes", "not-found", "ambiguous"}.
     `question` aceita string ou um verification_item objeto (usa o .text).
     """
     question = item_text(question) if isinstance(question, dict) else question
-    q_terms = _terms(question)
 
-    best, best_score = None, 0.0
-    for c in source_claims:
-        s = _jaccard(q_terms, _terms(_claim_text(c)))
-        if s > best_score:
-            best, best_score = c, s
+    if embed_fn is not None:
+        from retrieval import _cosine  # lazy: evita import circular (retrieval importa linking)
+        qv = embed_fn(question)
+        scored = sorted(((_cosine(qv, embed_fn(_claim_text(c))), c) for c in source_claims),
+                        key=lambda x: x[0], reverse=True)
+        floor = _SEM_THRESHOLD
+    else:
+        q_terms = _terms(question)
+        scored = sorted(((_jaccard(q_terms, _terms(_claim_text(c))), c) for c in source_claims),
+                        key=lambda x: x[0], reverse=True)
+        floor = threshold
 
-    if best is None or best_score < threshold:
+    if not scored or scored[0][0] < floor:
         return {
             "result": "not-found",
             "source_claim": None,
@@ -90,6 +105,28 @@ def resolve_link(question, source_claims, source_scores, threshold=_THRESHOLD):
             "confidence": 0,
             "reliable": False,
             "note": "nem o source graph endereça esta dúvida; segue verification_item humano.",
+        }
+
+    best_score, best = scored[0]
+
+    # margin gate: top-2 acima do piso e quase empatados → o sistema não escolhe sozinho
+    if len(scored) > 1 and scored[1][0] >= floor and (best_score - scored[1][0]) < margin:
+        def _cand(c):
+            prov = c.get("provenance") or {}
+            return {
+                "source_claim": c["id"],
+                "excerpt": prov.get("excerpt") if isinstance(prov, dict) else None,
+                "confidence": source_scores.get(c["id"], 0),
+            }
+        return {
+            "result": "ambiguous",
+            "source_claim": None,
+            "excerpt": None,
+            "confidence": source_scores.get(best["id"], 0),
+            "reliable": False,
+            "ambiguous": True,
+            "candidates": [_cand(best), _cand(scored[1][1])],
+            "note": "dois claims-fonte quase empatam; escolha humana — o sistema não decide qual responde.",
         }
 
     polarity = "refutes" if (_has_negation(question) ^ _has_negation(_claim_text(best))) else "confirms"

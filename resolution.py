@@ -26,7 +26,7 @@ import json
 
 from linking import resolve_link, domain_of, item_text
 
-OUTCOMES = ("no-domain", "not-found", "found-weak", "found-strong")
+OUTCOMES = ("no-domain", "not-found", "ambiguous", "found-weak", "found-strong")
 
 
 def _to_user(outcome, item, **payload):
@@ -40,7 +40,7 @@ def _to_user(outcome, item, **payload):
     return out
 
 
-def resolve_verification_item(item, domains, on_not_found=None):
+def resolve_verification_item(item, domains, on_not_found=None, embed_fn=None):
     """
     item: verification_item objeto {text, domain, critical} (ou string legada).
     domains: dict {domain_name: {"claims": [...], "scores": {id: score}}}.
@@ -61,8 +61,8 @@ def resolve_verification_item(item, domains, on_not_found=None):
             suggestion="responda à mão OU autorize ingerir um documento deste domínio",
         )
 
-    # passo 2 — procura nos nós
-    r = resolve_link(item, entry["claims"], entry.get("scores", {}))
+    # passo 2 — procura nos nós (semântico se embed_fn dado)
+    r = resolve_link(item, entry["claims"], entry.get("scores", {}), embed_fn=embed_fn)
 
     # passo 2a — hook de lazy-decompose (navegação RAG), se fornecido
     if r["result"] == "not-found" and on_not_found is not None:
@@ -76,6 +76,15 @@ def resolve_verification_item(item, domains, on_not_found=None):
             suggestion="nem a fonte deste domínio resolve; responda à mão ou decomponha a seção relevante",
         )
 
+    # empate — dois claims-fonte quase iguais; o humano escolhe qual responde
+    if r["result"] == "ambiguous":
+        return _to_user(
+            "ambiguous", item, domain=domain,
+            candidates=r["candidates"],
+            suggestion="dois trechos-fonte empatam; escolha qual responde (o sistema não decide qual)",
+            note=r["note"],
+        )
+
     # found — confidence pelo score do nó-fonte
     outcome = "found-strong" if r.get("reliable") else "found-weak"
     return _to_user(
@@ -86,6 +95,20 @@ def resolve_verification_item(item, domains, on_not_found=None):
         confidence=r["confidence"],
         note=r["note"],
     )
+
+
+def attach_candidates(item, resolution):
+    """Carimba os candidatos de um match AMBÍGUO no próprio verification_item (slot
+    `candidates`) — a superfície que o humano lê p/ escolher entre os trechos em conflito.
+
+    O item segue ABERTO (a dúvida não fechou; o sistema não decide qual responde). Se a
+    resolução não é ambígua, limpa qualquer `candidates` antigo. Retorna True se carimbou.
+    """
+    if resolution.get("result") != "ambiguous":
+        item.pop("candidates", None)
+        return False
+    item["candidates"] = resolution["candidates"]
+    return True
 
 
 def make_lazy_decompose(decompose_fn, embed_fn=None, nav_floor=0.16):

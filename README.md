@@ -198,4 +198,37 @@ verification_item (com endereço de domínio: lei / engenharia / financeiro)
 
 **Anti-regressão:** a ancoragem continua substring exato; a verdade continua humana; o `confirms/refutes` por negação-XOR é pista rasa de propósito (não confiar como veredito). Ver §5.1, §7 e [`GLOSSARY.md`].
 
+## 13. CROSS-GRAPH LINKING COMPLETO — matching semântico, margin gate, slot de candidatos (construído e testado)
+
+Esta seção fecha o §12: a resolução de dúvida sob demanda saiu de plumbing e virou fluxo ponta-a-ponta, validado num projeto real (02-simulador-caixa-split) com os modelos reais. Suíte **45/45 pytest**.
+
+### 13.1 Embedder real, local e injetado [CONSTRUÍDO]
+`embed.py` fornece o `embed_fn(text) -> vetor` que `retrieval` e `linking` esperam. Modelo `sentence-transformers` `paraphrase-multilingual-MiniLM-L12-v2` (multilíngue, simétrico, inferência **grátis e offline** após o download). Vive em `.venv` (gitignored). O repositório **não** chama API nenhuma — o modelo entra por injeção, na borda; o motor continua determinístico.
+
+### 13.2 Matching semântico no `resolve_link` [CONSTRUÍDO]
+`resolve_link(question, claims, scores, embed_fn=None)` agora casa **pergunta ↔ claim por cosseno** quando recebe `embed_fn` (senão, jaccard lexical, com o viés conhecido ao claim genérico curto-e-denso). O mesmo `embed_fn` é passado por `resolve_verification_item(..., embed_fn=)`.
+
+**Achado medido (responde ao §12):** no doc longo (LC 214, ~760 linhas) o **lexical é inútil** — 11 de 15 dúvidas navegam para *headings/citações*. O **semântico acerta 15/15** em prosa substantiva (cosseno 0.5–0.83). Logo o embedder não é opcional para documento de porte real; é o que destrava o linking.
+
+### 13.3 As duas falhas do matcher e seus tratamentos [CONSTRUÍDO]
+1. **Empate** (dois claims quase iguais) → **margin gate**: se `top1 − top2 < margin` (0.05) e ambos acima do piso, `resolve_link` devolve `result: "ambiguous"` + `candidates` e **não escolhe**. Mesma filosofia do resto: tornar a dúvida visível, nunca chutar o mais "central".
+2. **Pick confiante-errado** (o modelo coloca o claim genérico acima do específico com folga; o certo cai em 4º) → o margin gate **não pega** (não é empate). Só **embedder melhor** ou **revisão humana** resolve. É um teto de qualidade do modelo, não um bug de lógica.
+
+### 13.4 Slot `candidates` — a superfície humana do empate [CONSTRUÍDO]
+O match ambíguo carimba `candidates: [{source_claim, excerpt, confidence}]` **no próprio `verification_item`** (não num array no veredito) via `resolution.attach_candidates`. O item **segue aberto** (o score continua contando a dúvida); `link_claim` **recusa** persistir match ambíguo. O `reporter` foi atualizado para renderizar os candidatos como uma **escolha que volta ao humano** ("qual desses responde — escolha, o sistema não crava por você"). No projeto 02, **6 de 15** itens viraram ambíguos — eram `confirms` silenciosos antes; o gate os revelou.
+
+### 13.5 Demonstração ponta-a-ponta no projeto 02 [CONSTRUÍDO]
+Pipeline rodado do zero: `extractor`(haiku) → modalidade humana em lote → 9 `gate`(sonnet, lotes ≤5) → `score` → linking semântico → `reporter`(haiku). Grafo `lei` cresceu de 4 (art-47) para **11 claims** (10/11 grounded) decompondo 3 seções gold sob demanda. **3 fatos legais críticos verificados** (truth-call humano): mecânica-na-liquidação, split-simplificado-percentual, parcela-proporcional — com excerpt literal da lei; scores subiram (dois-cenarios/aliquota 7→9, parcela 5→7).
+
+**Custo medido:** gate ≈ **8k tokens/claim** (sonnet, carrega a spec + raciocina) — é o gargalo real do fan-out; pesar antes de rodar N claims. Extractor/reporter (haiku) ≈ 4–9k cada. Embedder: **0** (local).
+
+### 13.6 Próximos passos
+- **Repontar links imprecisos à mão** quando o match confiante-errado escapar (caso da parcela: ancorou no excerpt do mecanismo geral, não no preciso sec-105). É o ponto onde a revisão humana fecha o que o modelo erra.
+- **Rodar o `reporter` real** sobre os 6 itens ambíguos para validar a "tela de escolha" renderizada.
+- **Embedder maior / tunado para jurídico** se a precisão do match incomodar — o MiniLM pequeno é o teto atual (§13.3, falha 2).
+- **Fontes adicionais** para os fatos que o documento atual não cobre (vigência, mecânica de estorno/cancelamento, diferenciação por regime tributário).
+- **Render do empate no veredito → escolha → fechamento:** hoje o slot `candidates` existe no dado e o reporter sabe lê-lo; falta o loop humano de escolher um candidato e isso virar `verified_item` + link persistido automaticamente.
+
+**Anti-regressão (reafirmado):** grounding por substring exato; verdade humana; `confirms/refutes` é pista; `system_decided` sempre False; empate não é resolvido pelo sistema, é exposto. O embedder mudou só a **navegação e o matching** — nunca o grounding nem o veredito.
+
 > Nota de honestidade: o **motor determinístico** — peso, ancoragem da constelação-lei, sobreposição dimensional, propagação cross-constelação, log de eventos — saiu do conceito e virou **código testado** (pytest, 17/17). O que **ainda é só conceito**: a visualização (água/montanha/7 estágios) e o fluxo end-to-end num projeto real. A elegância do modelo não prova que é útil — o próximo passo é construir algo que sirva ao autor no uso real, e descobrir o valor usando.

@@ -1,7 +1,7 @@
 """Forma A: verification_item com endereço de domínio. Sem LLM."""
 
-from score import compute_scores, item_text
-from linking import resolve_link, domain_of
+from engine.score import compute_scores, item_text
+from engine.linking import resolve_link, domain_of
 
 
 def test_score_conta_item_objeto():

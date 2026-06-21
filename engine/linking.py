@@ -86,7 +86,7 @@ def resolve_link(question, source_claims, source_scores, threshold=_THRESHOLD, e
     question = item_text(question) if isinstance(question, dict) else question
 
     if embed_fn is not None:
-        from retrieval import _cosine  # lazy: evita import circular (retrieval importa linking)
+        from engine.retrieval import _cosine  # lazy: evita import circular (retrieval importa linking)
         qv = embed_fn(question)
         scored = sorted(((_cosine(qv, embed_fn(_claim_text(c))), c) for c in source_claims),
                         key=lambda x: x[0], reverse=True)

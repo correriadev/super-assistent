@@ -1,8 +1,8 @@
 """Suíte pytest do cross-graph link resolution (linking.py) + persistência. Sem LLM."""
 
 import json
-from score import compute_scores
-from linking import resolve_link, link_claim
+from engine.score import compute_scores
+from engine.linking import resolve_link, link_claim
 
 DOC = open("ideias/pub_780677977.txt", encoding="utf-8").read()
 SOURCE = json.load(

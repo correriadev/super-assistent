@@ -1,6 +1,6 @@
 """Árvore de decisão do cross-graph linking (resolution.py). Sem LLM."""
 
-from resolution import resolve_verification_item, attach_candidates, OUTCOMES
+from engine.resolution import resolve_verification_item, attach_candidates, OUTCOMES
 
 SRC = [{"id": "art47",
         "content": "o art. 47 condiciona o crédito do adquirente à extinção do tributo",

@@ -1,7 +1,7 @@
 """Navegação (retrieval.py) lexical + semântica + lazy decompose. Stubs, sem LLM/API."""
 
-from retrieval import split_sections, rank_lexical, rank_semantic, retrieve
-from resolution import make_lazy_decompose, resolve_verification_item
+from engine.retrieval import split_sections, rank_lexical, rank_semantic, retrieve
+from engine.resolution import make_lazy_decompose, resolve_verification_item
 
 DOC = (
     "Art. 31. Os prestadores devem segregar e recolher o IBS e a CBS no momento da "

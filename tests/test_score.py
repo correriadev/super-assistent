@@ -1,6 +1,6 @@
 """Suíte pytest do score determinístico (score.py). Sem LLM."""
 
-from score import compute_scores, SCORE_BASE, grounding_report
+from engine.score import compute_scores, SCORE_BASE, grounding_report
 
 
 def test_pass_so_non_blocking_fica_positivo():

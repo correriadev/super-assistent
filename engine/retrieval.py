@@ -17,7 +17,7 @@ quarentena aqui — nunca vira fonte de verdade nem de score.
 import math
 import re
 
-from linking import _terms, _jaccard, item_text
+from engine.linking import _terms, _jaccard, item_text
 
 
 def split_sections(doc_text):

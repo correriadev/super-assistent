@@ -1,9 +1,9 @@
 """Suíte pytest da cascade invalidation + event log (propagation.py). Sem LLM."""
 
 import json
-from score import compute_scores
-from linking import resolve_link, link_claim
-from propagation import propagate, log_event, read_events, events_between
+from engine.score import compute_scores
+from engine.linking import resolve_link, link_claim
+from engine.propagation import propagate, log_event, read_events, events_between
 
 DOC = open("ideias/pub_780677977.txt", encoding="utf-8").read()
 SOURCE = json.load(

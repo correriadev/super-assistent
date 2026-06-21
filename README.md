@@ -1,262 +1,50 @@
-# Camada Conceitual — Sessão 2 (constelação, dimensões, peso, versionamento)
+# super-assistente
 
-> **Adendo ao `CONTEXTO-REPOSITORIO.md`.** Este documento captura tudo que foi decidido na sessão de design de hoje — a camada conceitual que ainda não estava em nenhum arquivo (os agents em disco são da sessão anterior). Regra mantida: cada item marcado **[DECIDIDO]** (fechado, vira construção), **[A CONSTRUIR]** (decidido mas ainda não codado), **[BUG CONHECIDO]** (existe, com defeito mapeado) ou **[EM ABERTO]** (ainda precisa de decisão).
->
-> Ordem de leitura: o conceito central é **peso**; tudo o mais (constelação, dimensões, cicatriz, versionamento) é consequência ou extensão dele.
+Motor **determinístico** que pesa, propaga e deriva os *claims* de um projeto através de níveis de abstração (ideação → concepção → …). Mede quão resolvido cada decisão está, propaga o abalo quando algo muda, e desce de nível sem perder o rastro do que ainda é frágil. **LLM só na borda, injetado** — o núcleo é aritmética testável.
 
----
+## Genérico por design
 
-> **Terminologia.** Os termos cunhados aqui (peso, constelação, fonte, cicatriz, sobreposição, névoa, montanha) são a **linguagem de design** — boa para pensar e para a futura camada visual. No **código, dados e agents** o projeto adota agora os termos técnicos/de-mercado equivalentes: peso→**score**, constelação→**knowledge graph** (idea graph / source graph), fonte→**provenance**, ancoragem→**grounding**, cicatriz→**stale/invalidation**, sobreposição→**cross-graph linking**, propagação→**cascade invalidation**. Mapa completo e congelados em [`GLOSSARY.md`](GLOSSARY.md). Abaixo o texto mantém a metáfora; o identificador técnico vai entre parênteses quando importa.
+A ideia de referência é um simulador (app), mas a essência serve a **qualquer projeto que desce de abstração com dúvida e derivação**: takes de um filme, plano de viagem, mudança geográfica/de vida/treino. Claims, peso, cicatriz e descida de nível são o mesmo motor em qualquer domínio.
 
-## 1. PESO (score) — o número que sustenta tudo
+## Como rodar
 
-**[DECIDIDO]** Cada claim tem um **peso**: um número que mede **quão resolvido ele está**. Peso não é atribuído por ninguém — é **computado** a partir das lacunas estruturais e itens a verificar. É a inversão central da sessão: o gate aponta o que falta, e o peso é o **efeito** disso, não uma calibração de entrada.
-
-**Fórmula:**
-```
-peso = peso_base + herança_dos_pais + dúvidas_fechadas − dúvidas_abertas
-```
-- `peso_base` = 10 (positivo, para um claim sem pendência assentar, não nascer negativo).
-- `dúvidas_abertas` = só lacunas e `[VERIFICAR]` reais não resolvidos. Itens "(não bloqueante)" **NÃO contam**.
-- `dúvidas_fechadas` = pendências já resolvidas; cada uma **sobe** o peso (resolver afunda o ponto).
-- `herança_dos_pais` = claim derivado herda o peso do(s) pai(s) via `deriva_de`; nasce com o peso do pai, não do zero.
-
-**Princípio que define a fórmula [DECIDIDO]:** só **fechar dúvida** dá peso. **Definir conteúdo sem que nada seja questionado é neutro** — não pesa. (Afirmar não é resolver. Isso impede inflar densidade escrevendo mais; o sistema premia resolução, não verborragia.)
-
-**[CORRIGIDO]** O bug (pesos negativos, inclusive PASSA negativo porque itens "(não bloqueante)" eram contados como dúvida) foi resolvido. `peso.py` agora aplica `peso_base = 10`, herança via `deriva_de`, crédito por dúvida fechada, e ignora itens "(não bloqueante)". Verificado por pytest (`test_peso.py`): claim PASSA fica assentado (≥10), nunca negativo. Código determinístico, sem LLM — testá-lo via LLM foi identificado como desperdício de tokens.
-
-**[DECIDIDO]** Peso negativo é válido e significa **"afundado em névoa"** (muita dúvida aberta). Positivo significa **assentado** (resolvido). O que importa é a posição relativa, não o sinal — mas um PASSA jamais pode ser negativo.
-
----
-
-## 2. CONSTELAÇÃO COMO ÁGUA — a representação visual
-
-**[DECIDIDO]** A constelação é um campo onde cada ponto (claim) assenta numa **profundidade contínua determinada pelo seu peso**. Não há degraus/faixas fixas — é água, fluida. Um conceito por natureza tem poucas resoluções, então **boia raso**; um item muito resolvido (ex: código) **afunda**. A profundidade é **coordenada visual**, não um campo de dado separado — emerge do peso.
-
-**Comportamentos [DECIDIDO]:**
-- **Derivar mantém o filho perto do pai** (herança de peso). Cadeia de derivação = cadeia coesa, pontos próximos.
-- **Resolver afunda** o ponto (ganha peso, desce).
-- **Ideia nova reabre o ponto que ela toca**, fazendo-o **subir** (perde peso, reflutua). Não cria ponto distante — reabre o existente. Só cria ponto novo se o assunto for inédito.
-- A **onda** (relevo irregular) se forma porque pontos diferentes estão em estágios de resolução diferentes num mesmo instante.
-
-**Diagnóstico embutido [DECIDIDO]:** se um ponto sobe sozinho, a mudança foi **pontual**; se sobe e **arrasta os filhos** junto (pela cadeia de derivação), foi **estrutural**. A propagação distingue os dois visualmente.
-
-**Decisão de design importante [DECIDIDO]:** a visualização NÃO é uma camada separada a construir — ela é a **renderização direta do cálculo de peso**. Os estágios visuais emergem sozinhos se o peso for computado certo. Construir o visual é DEPOIS do peso estar sólido (anti-meta: não desenhar a montanha sobre um número que ainda treme).
-
----
-
-## 3. OS SETE ESTÁGIOS DA MONTANHA
-
-**[DECIDIDO]** A evolução visual de um projeto, derivável do peso ao longo do tempo:
-
-0. **Plano** — grid totalmente liso (ausência de ideias, tudo no zero).
-1. **Irregular** — primeiras ideias surgem, primeiros relevos.
-2. **Mais irregular** — primeiras expansões (derivações).
-3. **Guarda-chuva** — densidade dos pontos aumentando + expansões; forma começa a se organizar.
-4. **Montanhoso** — muitas cadeias em estágios diferentes; picos e vales.
-5. **Montanha (vista de longe)** — projeto solidificando; base larga (muito derivou da raiz), topo estável (o conceito-raiz raramente reabre).
-6. **CICATRIZ** — uma ideia/emenda disruptiva. **CORREÇÃO IMPORTANTE da intuição inicial:** a disrupção NÃO ergue um "pedaço de bolo". Ela **desfaz resolução**: abre uma **cicatriz de névoa** que rasga a montanha na coluna atingida (o ponto impactado e tudo que dele deriva perdem peso e reflutuam). A largura/profundidade da cicatriz = o alcance da disrupção (fina = pontual; desce a montanha toda = estrutural).
-7. **Cicatriz preenchida** — conforme os pontos reabertos são re-resolvidos, a coluna de névoa reganha massa e afunda, preenchendo o corte. A montanha volta sólida, **possivelmente com forma nova** (a re-resolução pode ter mudado o que havia ali).
-
----
-
-## 4. DIMENSÕES SOBREPOSTAS — constelações por domínio
-
-**[DECIDIDO]** Existem **múltiplas constelações para o mesmo projeto**, uma por domínio: constelação-ideia (o produto, nome de trabalho "domínio-app"), constelação-lei, e potencialmente outras (jurídico, financeiro, engenharia — como setores de uma empresa). **Todas são a mesma estrutura** (claims + peso + cicatriz) — mesmo motor. Diferem só na **origem e direção de crescimento**:
-- **Ideia nasce de cima** (o conceito) e **desce derivando** (wireframe, arquitetura, código).
-- **Lei nasce de baixo** (o texto promulgado, denso, concreto) e quando vem uma emenda, ela se liga por baixo e **propaga pra cima** (reabre a regra, que reabre o princípio).
-- Mesma cicatriz, sentidos opostos. Mesmo motor de propagação.
-
-**`[VERIFICAR]` são pontes entre dimensões [DECIDIDO]:** um `[VERIFICAR]` de uma constelação se **sobrepõe** à constelação-destino e busca o ponto que responde a dúvida. Resultado: **confirma** (a fonte diz isso), **refuta** (a fonte diz o contrário — automatiza o que foi feito à mão no caso LGPD), ou **não-encontrado** (nem a fonte resolve — e agora você sabe disso). Cada dúvida carrega o **endereço dimensional** de onde sua resposta mora (lei → jurídico, viabilidade → engenharia, custo → financeiro).
-
-**Natureza, não RAG vetorial [DECIDIDO]:** a busca é por **relação de resolução** (existe um ponto que responde, e qual seu peso/confiabilidade?), não por similaridade de texto. É parente de graph RAG / knowledge-graph retrieval, com o acréscimo do **peso como medida de confiabilidade da resposta**. **[EM ABERTO/VERIFICAR]** se "peso como confiabilidade" já existe formalizado (procurar GraphRAG, knowledge graph retrieval) — não foi confirmado se é novidade.
-
----
-
-## 5. PESO POR DOMÍNIO — como cada constelação ganha massa
-
-**[DECIDIDO]** O motor é o mesmo, mas **o que dá peso difere por domínio**, porque a fonte de verdade difere:
-- **Domínio-ideia:** a fonte de verdade é **você** (a ideia é sua). Peso vem de **decisão humana** resolvendo dúvida. Não há texto externo contra o qual conferir.
-- **Domínio-lei (e qualquer fonte externa):** a fonte de verdade é **o texto da lei**, externo e fixo — e o sistema pode lê-lo errado. Por isso a constelação-lei **nasce inteira leve** (interpretação crua não-confirmada) e só ganha peso por **verificação contra o texto-fonte**. O peso impede a fonte de mentir com autoridade.
-
-**Campo `fonte` em toda estrela [DECIDIDO]:** cada claim registra sua origem. Na constelação-ideia, "decisão humana". Na constelação-lei, o **documento oficial + trecho literal**. O `fonte` é o que permite a cicatriz **cruzar dimensões** (ver seção 7).
-
-### 5.1 Como a constelação-lei ganha peso — Saída 1 [DECIDIDO]
-
-Decisão crítica do dia, depois de identificar o risco fatal: se um LLM decompõe a lei E um LLM "confirma" a decomposição, é a raposa auditando o galinheiro — reintroduz o erro da LGPD com autoridade ampliada. A saída escolhida:
-
-- A constelação-lei é **decomposta por LLM**, MAS a "confirmação" é **ancoragem rastreável, não julgamento de verdade**.
-- O processo automático **localiza e anexa o trecho literal** do texto-fonte que originou cada claim. O peso vem de **o claim ter um trecho-fonte apontável que de fato existe e diz aquilo** — verificável por qualquer humano que clique e leia.
-- **Distinção obrigatória:** "o texto diz X" (rastreável, pesa) ≠ "X é verdadeiro/constitucional" (continua `[VERIFICAR]` humano, NUNCA ganha peso automático). O sistema **jamais afirma verdade jurídica** — só ancora o que o texto diz literalmente.
-- Exemplo do risco concreto (artigo sobre split payment usado no teste): o artigo argumenta que "o art. 47 é inconstitucional" — isso é **tese contestável**, não fato do texto. O sistema deve extrair como "o artigo afirma X [fonte: trecho]", não assentar "X é inconstitucional" como verdade.
-
----
-
-## 6. CONSTRUÇÃO DE MÃO DUPLA — as duas direções
-
-**[DECIDIDO]** O sistema cresce nos dois sentidos, com o mesmo motor:
-- **Cima → baixo (ideia):** o conceito gera derivações cada vez mais concretas. O **expansor** projeta pontos mais fundos a partir de pontos com peso suficiente para sustentá-los (não se deriva tela de uma tese ainda em névoa). Filho herda peso do pai.
-- **Baixo → cima (lei/fonte):** o texto promulgado é a base densa; uma emenda entra por baixo, se liga à regra que altera, e **propaga a perda de peso pra cima** pela cadeia de dependência. A regra reabre, o princípio que dependia dela reabre.
-
-Isso garante simetria: **uma alteração na lei impacta a constelação do mesmo jeito que uma ideia nova impacta o projeto** — abre cicatriz, propaga, exige re-resolução.
-
----
-
-## 7. PROPAGAÇÃO CROSS-CONSTELAÇÃO — a cicatriz que cruza dimensões
-
-**[DECIDIDO]** O `fonte` permite a cicatriz saltar entre montanhas. Quando um claim-lei reflutua (emenda abre dúvida nele), **todo claim de qualquer constelação cujo `fonte` aponta para ele também reflutua** — a perda de peso propaga entre constelações. É uma notificação que chega a todos os domínios que "beberam" daquele ponto.
-
-**REGRA DURA [DECIDIDO] — a decisão mais importante da propagação:**
-- A propagação **ABRE cicatriz automaticamente** (invalida: "isto não vale mais, confira") — seguro, é o alarme que nenhum sistema comum tem.
-- A propagação **NUNCA fecha a cicatriz automaticamente** (NUNCA reescreve a resposta). Reescrever seria **interpretação jurídica automática** = reintroduzir o erro da LGPD em escala.
-- Abrir é sempre certo (no máximo gera trabalho à toa). Fechar errado é pior que não abrir (falsa segurança).
-- Cada **dono de domínio re-resolve à mão** o que a cicatriz reabriu. O jurídico não decide o produto; ele só faz a montanha do produto tremer onde tocava a lei que mudou.
-
-Mecanismo: emenda entra na constelação-lei (via área jurídica) → reflutua os nós atingidos → **notifica** as dimensões que citam aquela `fonte` → os responsáveis veem os pontos que reflutuaram e re-resolvem.
-
----
-
-## 8. INTERAÇÃO, VERSIONAMENTO E HISTÓRICO
-
-**[CONSTRUÍDO]** O sistema é **dirigido por eventos**. Git versiona **arquivos** (estado de texto) e continua útil, mas o histórico valioso é o **log de eventos de propagação**, não o diff de linhas. Implementado em `propagation.py` (log append-only JSONL + `events_between` para o "diff" semântico entre marcos), testado em `test_propagation.py`.
-
-**Decisões [DECIDIDO]:**
-- O **diff que o responsável vê** ao clicar numa notificação é **semântico** — "quais nós reflutuaram, por qual causa/fonte" — não diff de arquivo. O campo `fonte` torna a cadeia causal navegável.
-- "Versão" = **marco no log de eventos** (não número de commit). O diff entre v99 e v100 = a **lista de eventos entre os dois marcos**.
-- **Caminho escolhido:** log de eventos **append-only em arquivo** (cada evento = {timestamp, tipo, claim afetado, causa/fonte}), recalculando o peso na hora. NÃO event-sourcing completo (over-engineering hoje), NÃO banco. Git mantém o estado dos arquivos.
-- **[EM ABERTO/VERIFICAR]** a tecnologia específica conforme o volume real crescer — começar com log JSON em arquivo, migrar quando doer.
-
----
-
-## 9. CORREÇÕES DE AGENTS DECIDIDAS HOJE
-
-**[CONSTRUÍDO]** (aplicado em `.claude/agents/`; nomes técnicos: extractor, expander, orchestrator, gate, reporter, critic, intake)
-- **Extractor (ex-decompositor):** remover o número fixo de "3 a 6 claims". Extrair **um claim por assunto distinto** encontrado, quantos forem (um documento legislativo que mexe em 12 pontos gera 12 claims). Ideia nova sobre projeto existente **reabre os claims que toca** (abre lacuna), só cria claim novo se o assunto for inédito.
-- **Expander (ex-expansor):** o filho **herda o score do pai** ao nascer (não nasce leve nem zerado). Fica mais leve que o pai só se tiver mais issues próprias.
-- **Orchestrator (ex-orquestrador):** após consolidar verdicts, **chamar o cálculo de score** (`score.py`) e gravar `dados/scores.json`. Recalcular a cada rodada e a cada nova ideia.
-
----
-
-## 10. PRINCÍPIOS REAFIRMADOS HOJE (anti-metas)
-
-- **Determinístico = código, nunca LLM.** Peso, propagação, herança são aritmética → pytest, grátis, instantâneo. Testá-los via LLM é desperdício de tokens (identificado como causa real da queda de produtividade).
-- **LLM só para julgamento** (o gate discrimina? o decompositor ancora o trecho certo?) — caro, rodar com parcimônia.
-- **Construir na ordem de dependência, uma fase por vez.** Peso primeiro (base de tudo); dimensões e versionamento DEPOIS do peso passar. Construir tudo junto = cego para a causa do próximo bug.
-- **O sistema nunca afirma fato/verdade jurídica** — só ancora texto literal e sinaliza `[VERIFICAR]`. Vale para a constelação-lei tanto quanto para o gate.
-- **Sem banco, sem RAG vetorial, sem interface visual ainda.** JSON em arquivo + log append-only.
-- **Fronteira fato/estrutura, seis vereditos, binding por humano:** intocados.
-
----
-
-## 11. ESTADO ATUAL E PRÓXIMO PASSO
-
-- **Score (peso):** corrigido e testado (base 10, herança, issue fechada credita, "(non-blocking)" ignorado). pytest verde.
-- **Dimensões, provenance, cross-graph linking, cascade invalidation, event log:** construídos e testados nesta sessão — `score.py`, `linking.py`, `propagation.py`, 19/19 pytest. Extractor/expander/orchestrator atualizados em disco. Vocabulário técnico em [`GLOSSARY.md`](GLOSSARY.md).
-- **Próximo foco — construir algo útil ao AUTOR primeiro.** Sobre o peso já sólido: a visualização da constelação (água/montanha/7 estágios) e rodar o fluxo end-to-end num projeto real do próprio autor. A montanha emerge do peso; o peso está firme. O valor se prova no uso real, construindo — não em validação externa antecipada.
-
-## 12. RESOLUÇÃO DE DÚVIDA SOB DEMANDA (cross-graph linking) — decidido nesta sessão
-
-**[DECIDIDO]** O fluxo de quando um `verification_item` do idea graph busca resposta em outro domínio. Princípio que amarra tudo: **todo caminho termina no usuário** — o sistema nunca decide, só muda *o que entrega na mão dele*. `confirms`/`refutes` é sempre PISTA, nunca veredito.
-
-Árvore de decisão:
-
-```
-verification_item (com endereço de domínio: lei / engenharia / financeiro)
-│
-1. existe domínio próprio (source graph p/ esse endereço)?
-│   ├── NÃO → devolve ao usuário: "sem domínio; responda à mão OU
-│   │         autorize ingerir o documento desse domínio"
-│   └── SIM ↓
-│
-2. procura nos nós (resolve_link sobre os claims do domínio)
-│   ├── not-found (grafo existe, nenhum nó responde)
-│   │     2a. [LAZY] a seção relevante já foi decomposta?
-│   │         ├── NÃO → recupera o trecho do doc + decompõe on-demand
-│   │         │         (cresce o grafo) → volta ao passo 2
-│   │         └── já decomposto e ainda nada → devolve ao usuário
-│   │
-│   └── found (NUNCA auto-resolve; devolve, mas com algo na mão)
-│         confidence = score do nó-fonte:
-│         ├── grounded (score alto) → PISTA: confirms/refutes + excerpt;
-│         │                            humano confirma a polaridade
-│         └── leve (score ≤ 0)      → "achei, mas não confie ainda"
+```bash
+python3 -m pytest -q                       # suíte determinística (56 testes, grátis)
+python3 engine/score.py claims.json verdicts.json scores.json [--doc texto]
+# embedder local (navegação/matching semântico): pip install no .venv
 ```
 
-**Dois "não existe" distintos [DECIDIDO]:** (a) domínio inexistente (sem source graph) ≠ (b) domínio existe mas nenhum nó responde. Em (b), antes de desistir, cabe a **decomposição lazy dirigida pela dúvida** (passo 2a).
+## Mapa de módulos (`engine/`)
 
-**Onde o RAG entra [DECIDIDO]:** só no passo 2a — navegação para achar *qual seção decompor* quando o grafo do domínio está incompleto. Recupera → decompõe → grounding exato → busca de novo. **RAG nunca vira fonte de verdade nem de score.** É a "versão forte" da hipótese de RAG (decomposição on-demand), não "RAG genérico antes de decompor".
-
-**Estado das peças:**
-- [CONSTRUÍDO] passo 2 (`resolve_link`), confidence por score, persistência (`link_claim`).
-- [CONSTRUÍDO] passo 1 (existe domínio próprio?) — `resolution.resolve_verification_item` lê `domain_of(item)` e checa o registry de domínios.
-- [CONSTRUÍDO] a etapa que embrulha os 4 desfechos (`no-domain`/`not-found`/`found-weak`/`found-strong`) e devolve ao usuário (`system_decided: False` sempre). `resolution.py` + `load_domains`; coberto por `test_resolution.py`; demo end-to-end no source graph 'lei' do projeto 02.
-- [CONSTRUÍDO — plumbing] passo 2a (lazy decompose dirigido pela dúvida). `retrieval.py` (navegação) + `resolution.make_lazy_decompose`. Navegação em dois ranqueadores com a mesma interface: **lexical** (`rank_lexical`, grátis) e **semântico** (`rank_semantic`, embeddings via `embed_fn` injetado). `make_lazy_decompose(decompose_fn, embed_fn=None, nav_floor)` é o hook `on_not_found`: navega → portões anti-token (piso de nav + ledger `entry["decomposed"]` que nunca re-decompõe) → `decompose_fn` (extractor, injetado) → grounding/score → re-busca. Tudo testado com stubs (`test_retrieval.py`), 40/40, **zero token**.
-  - **Falta (passo pago, gated ao reset de tokens):** injetar o **extractor real** como `decompose_fn` e (se preciso) um **embedder real** como `embed_fn`. Só o run real gasta.
-  - **Achados do build:** (1) chunker passou a ser por parágrafo — regex "Art. N" degradava doc em prosa a 2 mega-chunks. (2) Lexical tem viés p/ trechos curtos densos (pegou um heading); é o caso que justifica o semântico no run real. (3) `nav_floor` bloqueia corretamente nav fraca (não decompõe no chute).
-
-**Pré-requisito [CONSTRUÍDO]:** o `verification_item` agora é objeto `{text, domain, critical}` (forma A), onde `domain` ∈ `lei | engenharia | financeiro | null` é o endereço dimensional. Gate emite no novo schema; `score.py`/`linking.py` aceitam objeto e string legada (retrocompat, sem migração); `linking.domain_of(item)` lê o endereço pro passo 1. Coberto por `test_domain.py`. **Passo 1 + wrapper dos 4 desfechos: CONSTRUÍDOS** (`resolution.py`, ver abaixo). **Próximo tijolo:** passo 2a (lazy decompose via hook `on_not_found`).
-
-**Anti-regressão:** a ancoragem continua substring exato; a verdade continua humana; o `confirms/refutes` por negação-XOR é pista rasa de propósito (não confiar como veredito). Ver §5.1, §7 e [`GLOSSARY.md`].
-
-## 13. CROSS-GRAPH LINKING COMPLETO — matching semântico, margin gate, slot de candidatos (construído e testado)
-
-Esta seção fecha o §12: a resolução de dúvida sob demanda saiu de plumbing e virou fluxo ponta-a-ponta, validado num projeto real (02-simulador-caixa-split) com os modelos reais. Suíte **45/45 pytest**.
-
-### 13.1 Embedder real, local e injetado [CONSTRUÍDO]
-`embed.py` fornece o `embed_fn(text) -> vetor` que `retrieval` e `linking` esperam. Modelo `sentence-transformers` `paraphrase-multilingual-MiniLM-L12-v2` (multilíngue, simétrico, inferência **grátis e offline** após o download). Vive em `.venv` (gitignored). O repositório **não** chama API nenhuma — o modelo entra por injeção, na borda; o motor continua determinístico.
-
-### 13.2 Matching semântico no `resolve_link` [CONSTRUÍDO]
-`resolve_link(question, claims, scores, embed_fn=None)` agora casa **pergunta ↔ claim por cosseno** quando recebe `embed_fn` (senão, jaccard lexical, com o viés conhecido ao claim genérico curto-e-denso). O mesmo `embed_fn` é passado por `resolve_verification_item(..., embed_fn=)`.
-
-**Achado medido (responde ao §12):** no doc longo (LC 214, ~760 linhas) o **lexical é inútil** — 11 de 15 dúvidas navegam para *headings/citações*. O **semântico acerta 15/15** em prosa substantiva (cosseno 0.5–0.83). Logo o embedder não é opcional para documento de porte real; é o que destrava o linking.
-
-### 13.3 As duas falhas do matcher e seus tratamentos [CONSTRUÍDO]
-1. **Empate** (dois claims quase iguais) → **margin gate**: se `top1 − top2 < margin` (0.05) e ambos acima do piso, `resolve_link` devolve `result: "ambiguous"` + `candidates` e **não escolhe**. Mesma filosofia do resto: tornar a dúvida visível, nunca chutar o mais "central".
-2. **Pick confiante-errado** (o modelo coloca o claim genérico acima do específico com folga; o certo cai em 4º) → o margin gate **não pega** (não é empate). Só **embedder melhor** ou **revisão humana** resolve. É um teto de qualidade do modelo, não um bug de lógica.
-
-### 13.4 Slot `candidates` — a superfície humana do empate [CONSTRUÍDO]
-O match ambíguo carimba `candidates: [{source_claim, excerpt, confidence}]` **no próprio `verification_item`** (não num array no veredito) via `resolution.attach_candidates`. O item **segue aberto** (o score continua contando a dúvida); `link_claim` **recusa** persistir match ambíguo. O `reporter` foi atualizado para renderizar os candidatos como uma **escolha que volta ao humano** ("qual desses responde — escolha, o sistema não crava por você"). No projeto 02, **6 de 15** itens viraram ambíguos — eram `confirms` silenciosos antes; o gate os revelou.
-
-### 13.5 Demonstração ponta-a-ponta no projeto 02 [CONSTRUÍDO]
-Pipeline rodado do zero: `extractor`(haiku) → modalidade humana em lote → 9 `gate`(sonnet, lotes ≤5) → `score` → linking semântico → `reporter`(haiku). Grafo `lei` cresceu de 4 (art-47) para **11 claims** (10/11 grounded) decompondo 3 seções gold sob demanda. **3 fatos legais críticos verificados** (truth-call humano): mecânica-na-liquidação, split-simplificado-percentual, parcela-proporcional — com excerpt literal da lei; scores subiram (dois-cenarios/aliquota 7→9, parcela 5→7).
-
-**Custo medido:** gate ≈ **8k tokens/claim** (sonnet, carrega a spec + raciocina) — é o gargalo real do fan-out; pesar antes de rodar N claims. Extractor/reporter (haiku) ≈ 4–9k cada. Embedder: **0** (local).
-
-### 13.6 Próximos passos
-- **Repontar links imprecisos à mão** quando o match confiante-errado escapar (caso da parcela: ancorou no excerpt do mecanismo geral, não no preciso sec-105). É o ponto onde a revisão humana fecha o que o modelo erra.
-- **Rodar o `reporter` real** sobre os 6 itens ambíguos para validar a "tela de escolha" renderizada.
-- **Embedder maior / tunado para jurídico** se a precisão do match incomodar — o MiniLM pequeno é o teto atual (§13.3, falha 2).
-- **Fontes adicionais** para os fatos que o documento atual não cobre (vigência, mecânica de estorno/cancelamento, diferenciação por regime tributário).
-- **Render do empate no veredito → escolha → fechamento:** hoje o slot `candidates` existe no dado e o reporter sabe lê-lo; falta o loop humano de escolher um candidato e isso virar `verified_item` + link persistido automaticamente.
-
-**Anti-regressão (reafirmado):** grounding por substring exato; verdade humana; `confirms/refutes` é pista; `system_decided` sempre False; empate não é resolvido pelo sistema, é exposto. O embedder mudou só a **navegação e o matching** — nunca o grounding nem o veredito.
-
-## 14. DESCIDA DE NÍVEL PARAMETRIZÁVEL — movimento sem perder a cicatriz (construído e testado)
-
-A pré-condição do §8 do orchestrator (só desce para concepção sobre claims **resolvidos**), na forma **binária**, é sentida pelo usuário como burocracia — mata o momentum mesmo quando a fundação está "boa o suficiente". `descent.py` troca **"bloquear"** por **"seguir com cicatriz rastreada"**, reusando a propagação (§7). Determinístico, `test_descent.py`, 10 testes.
-
-### 14.1 `descent_gate(claims, verdicts, policy, min_fraction, accepted)`
-Decide se o gate abre, conforme a política:
-
-| `descent_policy` | comportamento | uso |
+| módulo | papel | spec |
 |---|---|---|
-| `strict` | todos resolvidos ou pára (histórico) | auditoria, fundação crítica |
-| `vinculante_only` | bloqueia só `vinculante` aberto; ilustrativo/default passam | equilíbrio |
-| `threshold` | desce se fração resolvida ≥ `min_fraction` | "o essencial está de pé" |
-| `provisional` | sempre desce; pais abertos → filhos `provisional` | **sentir movimento** |
-| `force` | sempre desce, sem marca | protótipo descartável |
+| `score.py` | peso determinístico (base, herança, dúvidas) | [score](docs/specs/score.md) |
+| `linking.py` | casa dúvida↔fonte (lexical/semântico, margin gate) | [linking](docs/specs/linking.md) |
+| `resolution.py` | árvore de decisão do cross-graph linking | [cross-graph](docs/specs/cross-graph-linking.md) |
+| `retrieval.py` | navegação (qual seção responde) | [retrieval](docs/specs/retrieval.md) |
+| `propagation.py` | cicatriz cross-grafo + log de eventos | [propagation](docs/specs/propagation.md) |
+| `descent.py` | gate de descida parametrizável + provisional | [descent](docs/specs/descent.md) |
+| `embed.py` | embedder local injetado | — |
 
-Retorna `{allowed, blocked_by, provisional_parents, resolved_fraction, reason}`. "Resolvido" = status `PASSA` **ou** aceite humano explícito (`accepted`). O gate é por **status**, não por score (score é termômetro; status é o portão).
+## Mapa de agents (`.claude/agents/`)
 
-### 14.2 Chão absoluto
-`CONTRADIZ-NIVEL-ACIMA` aberto **bloqueia em QUALQUER política** (inclusive `force`/`provisional`) e **não é liberável por aceite** — filho que contradiz o pai é incoerência, não burocracia.
+`intake` → `extractor` → `gate` → `reporter` (ciclo) · `expander` (descida) · `critic`, `orchestrator`. Fluxo em [pipeline](docs/specs/pipeline.md); tiers/custo em [token-budget](docs/quality/token-budget.md).
 
-### 14.3 Marca `provisional` + propagação fiada na descida
-`mark_provisional(child, provisional_parents)` carimba `provisional: {state: review, parents, reason}` no filho cujo `derives_from` cai em pai aberto (espelho do `stale`). O filho **herda o score baixo do pai** via `derives_from` (score.py já faz) — nasce flutuando, **visível na água**: é aqui que o usuário **sente** o movimento sem perder a honestidade. `refresh_provisional(children, provisional_parents)` re-avalia contra o estado ATUAL dos pais: pai que resolveu → filho perde a marca (vira claim normal); pai que reabriu/mudou → marca fica. É a propagação ligada na descida.
+## Estado atual
 
-Distinção: `provisional` (pai não-assentado) ≠ `[Especulativo]` (derivação inventada pelo expander) — eixos distintos, ambos pedem humano por motivos diferentes.
+- **Motor determinístico** (peso, grounding, linking, propagação, descida): código testado, **56/56**.
+- **Cross-graph linking completo** ponta-a-ponta: navegação semântica (embedder local), matching semântico + margin gate, slot `candidates`. Validado no projeto 02 (grafo lei 4→11 claims, 3 fatos críticos verificados).
+- **Descida parametrizável** (`descent_policy`) + marca `provisional` transitiva: 1ª descida ideação→concepção rodada (16 claims, política `provisional`).
+- **Só conceito ainda:** a visualização (água/montanha/7 estágios).
 
-### 14.4 Risco nomeado
-`provisional` só é honesto se a marca for **lida** (reporter destaca, score baixo visível) e a propagação **disparar de fato** quando o pai muda. Sem isso, vira `force` com etapa a mais — cicatriz teatro. Próximo passo de integração: o orchestrator (passo 8) chama `descent_gate` com a política do projeto; o expander, após gerar, roda `refresh_provisional`; o reporter renderiza nós `provisional`.
+## Próximos passos
 
-> Nota de honestidade: o **motor determinístico** — peso, ancoragem da constelação-lei, sobreposição dimensional, propagação cross-constelação, log de eventos — saiu do conceito e virou **código testado** (pytest, 17/17). O que **ainda é só conceito**: a visualização (água/montanha/7 estágios) e o fluxo end-to-end num projeto real. A elegância do modelo não prova que é útil — o próximo passo é construir algo que sirva ao autor no uso real, e descobrir o valor usando.
+- Gatear a concepção (fan-out, pesar custo) e resolver os 6 itens ambíguos do projeto 02.
+- Repontar links imprecisos à mão (pick confiante-errado do matcher).
+- Renderizar nós `provisional` e `candidates` no reporter (fechar o loop humano).
+- Embedder maior se a precisão do match incomodar.
+- Discutir "curadoria" como possível camada genérica nova.
+
+## Documentação
+
+Estruturada em [`docs/`](docs/): **[adr/](docs/adr/)** (decisões), **[specs/](docs/specs/)** (comportamento), **[quality/](docs/quality/)** (teste/invariantes/token), **[concept/](docs/concept/)** (constelação + glossário).

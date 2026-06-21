@@ -24,7 +24,7 @@ REGRA DURA: o sistema NUNCA fecha a dúvida. Todo desfecho volta ao usuário
 
 import json
 
-from linking import resolve_link, domain_of, item_text
+from engine.linking import resolve_link, domain_of, item_text
 
 OUTCOMES = ("no-domain", "not-found", "ambiguous", "found-weak", "found-strong")
 
@@ -126,8 +126,8 @@ def make_lazy_decompose(decompose_fn, embed_fn=None, nav_floor=0.16):
     entry precisa carregar `doc_text`. Mantém `entry["decomposed"]` como ledger
     anti-bomba: nunca re-decompõe a mesma seção.
     """
-    from score import compute_scores
-    from retrieval import retrieve
+    from engine.score import compute_scores
+    from engine.retrieval import retrieve
 
     def hook(item, entry):
         doc = entry.get("doc_text")
@@ -158,7 +158,7 @@ def load_domains(mapping):
     """Helper: monta o dict `domains` a partir de arquivos.
     mapping: {domain: {"claims_path": ..., "doc_path": ...(opcional), "verdicts": [...](opcional)}}.
     Calcula o score de cada source graph (grounding se houver doc_path)."""
-    from score import compute_scores
+    from engine.score import compute_scores
     out = {}
     for dom, m in mapping.items():
         claims = json.load(open(m["claims_path"], encoding="utf-8"))

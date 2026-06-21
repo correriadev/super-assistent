@@ -1,6 +1,6 @@
 """Gate parametrizável de descida + marca provisional (descent.py). Sem LLM."""
 
-from descent import (
+from engine.descent import (
     is_resolved, open_claims, descent_gate, mark_provisional, refresh_provisional,
 )
 

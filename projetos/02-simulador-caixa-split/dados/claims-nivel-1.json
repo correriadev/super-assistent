@@ -20,7 +20,7 @@
   {
     "id": "calculo-regime-atual",
     "content": "O simulador calcula o fluxo de caixa no regime atual: recebimento bruto, retenção do imposto até o dia de recolhimento.",
-    "binding": null,
+    "binding": "vinculante",
     "category": "motor",
     "derivation": "[Implicado]",
     "derives_from": [
@@ -40,7 +40,7 @@
   {
     "id": "calculo-regime-split",
     "content": "O simulador calcula o fluxo de caixa no regime split: o imposto é segregado e sai no momento da liquidação, não há intervalo de retenção.",
-    "binding": null,
+    "binding": "vinculante",
     "category": "motor",
     "derivation": "[Implicado]",
     "derives_from": [
@@ -60,7 +60,7 @@
   {
     "id": "comparacao-lado-a-lado",
     "content": "A interface exibe lado a lado os dois regimes (atual vs split) para o mesmo faturamento, facilitando a visualização da diferença.",
-    "binding": null,
+    "binding": "vinculante",
     "category": "interface",
     "derivation": "[Implicado]",
     "derives_from": [

@@ -1,0 +1,204 @@
+[
+  {
+    "id": "teste-calculo-regime-atual-basico",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30, mesesSimulacao=1; When calculateCashFlow is called; Then regimeAtual Timeline has events: [RECEBIMENTO(dia 0, +1000, saldo=1000), RECOLHIMENTO(dia 30, -270, saldo=730)]. Tributo fica em caixa entre dia 0 e 30.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo",
+      "modelo-timeline-saldo",
+      "parametro-aliquota-consolidada"
+    ],
+    "parent_constraint": "Regime atual deve reter imposto de forma visível entre recebimento e recolhimento; cálculo must be puro, determinístico, e saldo deve refletir a retenção temporal.",
+    "rationale": "Contrato 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que o cálculo seja puro e retorne Timeline com saldo. Este teste verifica que regime atual comporta-se conforme especificado."
+  },
+  {
+    "id": "teste-calculo-regime-split-basico",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30, mesesSimulacao=1; When calculateCashFlow is called; Then regimeSplit Timeline has events: [RECEBIMENTO(dia 0, +1000, saldo=1000), SEGREGACAO_SPLIT(dia 0, -270, saldo=730)]. Tributo sai imediatamente no split; não aguarda 30 dias.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo",
+      "modelo-timeline-saldo",
+      "parametro-aliquota-consolidada"
+    ],
+    "parent_constraint": "Regime split deve segregar imposto no dia do recebimento (liquidação imediata), sem aguardar offset; saldo deve refletir esse timing diferente.",
+    "rationale": "Contratos 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que ambos regimes retornem Timeline com saldo. Este teste verifica que regime split comporta-se conforme LC 214/2025 (segregação na liquidação)."
+  },
+  {
+    "id": "teste-diferencial-saldo-30-dias",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30; When calculateCashFlow is called; Then em cada dia d de 1 até 30, diferencial = saldoAcumulado_atual[d] - saldoAcumulado_split[d] = 270 (tributo ainda em caixa na linha atual); em dia 31, diferencial volta a 0 (tributo já recolhido em ambos).",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "metrica-principal-saldo-diferencial",
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Diferencial deve ser mensurável em cada ponto da Timeline; métrica principal é essa diferença temporal entre regimes; deve ser zero ou negativa para split (ou zero se offset=0).",
+    "rationale": "Contrato 'metrica-principal-saldo-diferencial' força que diferential seja calculado como saldo_atual - saldo_split. Este teste valida que o diferential é exatamente o 'buraco' de caixa causado pelo split."
+  },
+  {
+    "id": "teste-diferencial-percentual-sobre-bruto",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30; When calculateCashFlow is called; Then diferencial em reais = 270 (tributo × 1 mês); percentual sobre bruto = 270/1000 = 27%.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "metrica-principal-saldo-diferencial"
+    ],
+    "parent_constraint": "Diferencial deve ser expresso tanto em valor absoluto quanto em percentual sobre faturamentoBruto; percentual facilita compreensão relativa.",
+    "rationale": "Contrato 'metrica-principal-saldo-diferencial' explicita que diferencial deve ser calculado em 'valor absoluto + percentual sobre faturamentoBruto'."
+  },
+  {
+    "id": "teste-validacao-faturamento-zero",
+    "content": "Given faturamentoBruto=0, aliquota=0.27, recolhimentoOffsetDias=30; When validate(entrada) is called; Then valido=false, erros includes 'faturamentoBruto must be >= 0' (ou resultado aceitável para zero é explicitamente permitido; decidir).",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação deve rejeitar faturamentoBruto<0 ou aceitar 0 explicitamente; restrição: faturamentoBruto>=0 (de acordo com contrato).",
+    "rationale": "Contrato 'validacao-entrada-contrato' força regra 'faturamentoBruto>=0'. Zero é permitido (>=), então entrada {0, 0.27, 30} deve passar; teste valida este edge case."
+  },
+  {
+    "id": "teste-validacao-faturamento-negativo",
+    "content": "Given faturamentoBruto=-100, aliquota=0.27, recolhimentoOffsetDias=30; When validate(entrada) is called; Then valido=false, erros=['faturamentoBruto must be >= 0'].",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação rejeita faturamentoBruto<0; mensagem de erro deve estar presente.",
+    "rationale": "Contrato 'validacao-entrada-contrato' força que faturamentoBruto>=0. Teste verifica rejeição de negativo."
+  },
+  {
+    "id": "teste-validacao-offset-zero",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=0; When validate(entrada) is called; Then valido=false, erros=['recolhimentoOffsetDias must be > 0'].",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação rejeita recolhimentoOffsetDias<=0; offset deve ser estritamente positivo (>0).",
+    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de zero (boundary)."
+  },
+  {
+    "id": "teste-validacao-offset-negativo",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=-10; When validate(entrada) is called; Then valido=false, erros=['recolhimentoOffsetDias must be > 0'].",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação rejeita recolhimentoOffsetDias<=0.",
+    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de negativo."
+  },
+  {
+    "id": "teste-validacao-meses-zero",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30, mesesSimulacao=0; When validate(entrada) is called; Then valido=false, erros=['mesesSimulacao must be > 0'].",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação rejeita mesesSimulacao<=0; meses deve ser estritamente positivo.",
+    "rationale": "Contrato 'validacao-entrada-contrato' força que mesesSimulacao>0. Teste verifica rejeição de zero."
+  },
+  {
+    "id": "teste-validacao-multiplos-erros-acumula",
+    "content": "Given faturamentoBruto=-100, aliquota=0.27, recolhimentoOffsetDias=-10, mesesSimulacao=0; When validate(entrada) is called; Then valido=false, erros=['faturamentoBruto must be >= 0', 'recolhimentoOffsetDias must be > 0', 'mesesSimulacao must be > 0']. Validador acumula todos os erros em um array.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-entrada-contrato"
+    ],
+    "parent_constraint": "Validação acumula todos os erros em um array; não para no primeiro erro.",
+    "rationale": "Contrato 'validacao-entrada-contrato' explicitamente diz 'Acumula todos os erros'. Teste verifica que múltiplas violações são reportadas no array erros."
+  },
+  {
+    "id": "teste-aliquota-zero",
+    "content": "Given faturamentoBruto=1000, aliquota=0, recolhimentoOffsetDias=30; When calculateCashFlow is called; Then regimeAtual Timeline = [RECEBIMENTO(dia 0, +1000, saldo=1000)]. Nenhum recolhimento. regimeSplit Timeline = [RECEBIMENTO(dia 0, +1000, saldo=1000)]. Ambos regimes idênticos quando aliquota=0; diferencial=0.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Especulativo]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo",
+      "parametro-aliquota-consolidada"
+    ],
+    "parent_constraint": "Quando aliquota=0, não há retenção nem segregação; ambos regimes convergem a recebimento simples.",
+    "rationale": "Especulativo: contrato permite aliquota entre 0 e 100, mas não força explicitamente o comportamento quando aliquota=0. Invenção sua, mas razoável (case de borda)."
+  },
+  {
+    "id": "teste-offset-um-dia",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=1; When calculateCashFlow is called; Then diferencial entre dia 0 e dia 1 = 270 (tributo em caixa por 1 dia); em dia 2, diferencial=0 (tributo já recolhido).",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "metrica-principal-saldo-diferencial"
+    ],
+    "parent_constraint": "Offset=1 é válido; diferencial deve ser mensurável mesmo em offset mínimo.",
+    "rationale": "Compatível: contrato 'validacao-entrada-contrato' força recolhimentoOffsetDias>0, então 1 é válido. Teste propõe como medir diferential em offset mínimo; não é forçado, razoável proposta."
+  },
+  {
+    "id": "teste-precisao-arredondamento-banc",
+    "content": "Given faturamentoBruto=1000.555, aliquota=0.27, recolhimentoOffsetDias=30; When calculateCashFlow is called; Then tributo = round(1000.555 * 0.27, 2) = 270.15 (arredondamento bancário, 2 casas decimais). saldoAcumulado em Timeline deve estar sempre com 2 casas decimais; nenhum valor com > 2 casas (ex: 729.85, not 729.8499999999).",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "precisao-numero-duas-casas-decimais",
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Cálculo deve usar arredondamento bancário consistentemente; resultado final tem exatamente 2 casas decimais.",
+    "rationale": "Contrato 'precisao-numero-duas-casas-decimais' força arredondamento de 2 casas decimais. Teste valida que isso é aplicado corretamente no resultado da Timeline."
+  },
+  {
+    "id": "teste-formato-iso-datas-timeline",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30, mesesSimulacao=1; When calculateCashFlow is called; Then cada evento em regimeAtual.Timeline e regimeSplit.Timeline tem campo 'data' em formato ISO 8601 (ex: '2026-06-21', not '21/06/2026' or '06-21-2026').",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "representacao-data-formato-iso",
+      "modelo-timeline-saldo"
+    ],
+    "parent_constraint": "Datas devem ser ISO 8601 (YYYY-MM-DD) para consistência e evitar ambiguidade.",
+    "rationale": "Contrato 'representacao-data-formato-iso' força ISO 8601. Teste valida que Timeline retorna datas neste formato."
+  },
+  {
+    "id": "teste-tipo-evento-timeline-enum-exaustivo",
+    "content": "Given calculateCashFlow is called com entrada válida; When Timeline é inspección; Then cada evento tem tipoEvento que é exatamente um de: RECEBIMENTO, RECOLHIMENTO, SEGREGACAO_SPLIT. Nenhum evento com tipoEvento indefinido, null, ou string não-enumerado.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "tipo-evento-timeline",
+      "modelo-timeline-saldo"
+    ],
+    "parent_constraint": "Tipos de evento devem estar restritos ao enum {RECEBIMENTO, RECOLHIMENTO, SEGREGACAO_SPLIT}; validação estrutural.",
+    "rationale": "Contrato 'tipo-evento-timeline' lista os tipos permitidos. Teste valida que Timeline não contém tipos fora desse enum."
+  },
+  {
+    "id": "teste-pureza-sem-efeito-colateral",
+    "content": "Given faturamentoBruto=1000, aliquota=0.27, recolhimentoOffsetDias=30; When calculateCashFlow(1000, 0.27, 30) é chamado 2 vezes com os mesmos argumentos; Then ambas as chamadas retornam exatamente o mesmo resultado (Timeline idêntica em conteúdo); função não tem estado global, não modifica argumentos, não escreve em log ou DOM.",
+    "binding": null,
+    "category": "teste",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo",
+      "stack-js-vanilla-sem-framework"
+    ],
+    "parent_constraint": "Função deve ser pura: determinística (mesmos inputs → mesmos outputs), sem efeitos colaterais, sem estado global.",
+    "rationale": "Contrato 'assinatura-funcao-pura-calculo' diz 'Pura'. Teste valida que função é de fato pura (idempotência)."
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "id": "calculo-regime-atual",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "text": "intervalo receber→recolher existe no regime atual",
+        "via": "conhecimento do autor (contador)"
+      },
+      {
+        "text": "data de recolhimento",
+        "via": "escopo: data única parametrizável, não modela cada tributo"
+      },
+      {
+        "text": "bruto embute o tributo",
+        "via": "escopo: sem retenção na fonte por terceiros"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "calculo-regime-split",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "text": "o que é liquidação",
+        "via": "escopo: = momento do pagamento"
+      },
+      {
+        "text": "quais impostos",
+        "via": "escopo: IBS+CBS consolidados, alíquota única"
+      }
+    ],
+    "verified_items": [
+      {
+        "text": "split segrega na liquidação, sem intervalo",
+        "via": "fonte grounded: split-payment-mechanism"
+      },
+      {
+        "text": "vigência",
+        "via": "aceito o risco na fatia (simulação independe da data)"
+      },
+      {
+        "text": "modalidades de pagamento",
+        "via": "fora da fatia"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "comparacao-lado-a-lado",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "text": "o que é 'lado a lado'",
+        "via": "escopo: duas colunas na mesma tela"
+      },
+      {
+        "text": "quais métricas",
+        "via": "escopo: saldo de caixa no tempo por regime"
+      }
+    ],
+    "verified_items": [
+      {
+        "text": "rationale do vinculante",
+        "via": "proposta de valor central"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  }
+]

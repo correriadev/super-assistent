@@ -1,0 +1,226 @@
+[
+  {
+    "id": "teste-calculo-regime-atual-basico",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-calculo-regime-split-basico",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-diferencial-saldo-30-dias",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-diferencial-percentual-sobre-bruto",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-faturamento-zero",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-faturamento-negativo",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-offset-zero",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-offset-negativo",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-meses-zero",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-validacao-multiplos-erros-acumula",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-aliquota-zero",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-offset-um-dia",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-precisao-arredondamento-banc",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-formato-iso-datas-timeline",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-tipo-evento-timeline-enum-exaustivo",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "teste-pureza-sem-efeito-colateral",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "cenário concreto e checável; validação real = execução no ciclo 5"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  }
+]

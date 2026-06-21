@@ -34,13 +34,14 @@ python3 engine/score.py claims.json verdicts.json scores.json [--doc texto]
 
 - **Motor determinístico** (peso, grounding, linking, propagação, descida): código testado, **56/56**.
 - **Cross-graph linking completo** ponta-a-ponta: navegação semântica (embedder local), matching semântico + margin gate, slot `candidates`. Validado no projeto 02 (grafo lei 4→11 claims, 3 fatos críticos verificados).
-- **Descida parametrizável** (`descent_policy`) + marca `provisional` transitiva: 1ª descida ideação→concepção rodada (16 claims, política `provisional`).
+- **Descida parametrizável** (`descent_policy`) + marca `provisional` transitiva.
+- **1 run completa ponta-a-ponta (5 ciclos do motor):** ideação → concepção → arquitetura → cenários de teste → codificação (TDD). Produziu artefato real: [`app/`](app/) — simulador de caixa (regime atual × split), `calc.js`/`validate.js` puros + **16 testes `node --test`** (red→green) + `index.html` (duas colunas). Fatia fina (núcleo computacional); o resto segue `provisional`/adiado, marcado, não perdido.
 - **Só conceito ainda:** a visualização (água/montanha/7 estágios).
 
 ## Próximos passos
 
-- Gatear a concepção (fan-out, pesar custo) e resolver os 6 itens ambíguos do projeto 02.
-- Repontar links imprecisos à mão (pick confiante-errado do matcher).
+- Expandir a fatia: alíquota via fonte, parcelado, estorno, integração contábil (seguem `provisional`).
+- Resolver itens ambíguos do projeto 02 e repontar links imprecisos (pick confiante-errado do matcher).
 - Renderizar nós `provisional` e `candidates` no reporter (fechar o loop humano).
 - Embedder maior se a precisão do match incomodar.
 - Discutir "curadoria" como possível camada genérica nova.

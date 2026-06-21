@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador de Caixa — Split Payment</title>
+  <style>
+    :root { --ink:#1a1a1a; --muted:#6b7280; --line:#e5e7eb; --atual:#2563eb; --split:#dc2626; --bg:#f8fafc; }
+    * { box-sizing: border-box; }
+    body { font: 15px/1.5 system-ui, sans-serif; color: var(--ink); margin: 0; background: var(--bg); }
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+    p.sub { color: var(--muted); margin: 0 0 1.5rem; }
+    form { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.25rem; }
+    label { display: flex; flex-direction: column; gap: .25rem; font-size: .82rem; color: var(--muted); }
+    input { font: inherit; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: 7px; width: 9rem; }
+    button { font: inherit; font-weight: 600; padding: .55rem 1.1rem; border: 0; border-radius: 7px; background: var(--ink); color: #fff; cursor: pointer; }
+    .erros { color: var(--split); margin: 1rem 0 0; padding-left: 1.1rem; }
+    .headline { margin: 1.5rem 0; padding: 1rem 1.25rem; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--split); border-radius: 10px; }
+    .headline b { font-size: 1.6rem; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .col { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.25rem; }
+    .col h2 { font-size: .95rem; margin: 0 0 .75rem; padding-bottom: .5rem; border-bottom: 2px solid; }
+    .col.atual h2 { color: var(--atual); border-color: var(--atual); }
+    .col.split h2 { color: var(--split); border-color: var(--split); }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th, td { text-align: left; padding: .35rem .25rem; border-bottom: 1px solid var(--line); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Simulador de Caixa — Split Payment</h1>
+    <p class="sub">Quanto de capital de giro o split payment tira do caixa: regime atual × split, lado a lado.</p>
+
+    <form id="form">
+      <label>Faturamento bruto (R$)<input id="faturamentoBruto" type="number" step="0.01" value="1000" /></label>
+      <label>Alíquota IBS+CBS (0–1)<input id="aliquota" type="number" step="0.01" value="0.27" /></label>
+      <label>Dias até recolher<input id="recolhimentoOffsetDias" type="number" step="1" value="30" /></label>
+      <label>Meses<input id="mesesSimulacao" type="number" step="1" value="1" /></label>
+      <button type="submit">Simular</button>
+    </form>
+
+    <ul id="erros" class="erros" hidden></ul>
+    <div id="headline" class="headline" hidden></div>
+    <div id="cols" class="cols" hidden>
+      <section class="col atual"><h2>Regime atual</h2><div id="tabela-atual"></div></section>
+      <section class="col split"><h2>Regime split</h2><div id="tabela-split"></div></section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { calculateCashFlow, metricaDiferencial } from "./calc.js";
+    import { validate } from "./validate.js";
+
+    const $ = (id) => document.getElementById(id);
+    const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    function tabela(timeline) {
+      const linhas = timeline.map((e) => `<tr>
+        <td>${e.data}</td><td>${e.tipoEvento}</td>
+        <td class="num">${brl(e.valor)}</td><td class="num">${brl(e.saldoAcumulado)}</td></tr>`).join("");
+      return `<table><thead><tr><th>Data</th><th>Evento</th><th class="num">Valor</th><th class="num">Saldo</th></tr></thead><tbody>${linhas}</tbody></table>`;
+    }
+
+    $("form").addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const entrada = {
+        faturamentoBruto: parseFloat($("faturamentoBruto").value),
+        aliquota: parseFloat($("aliquota").value),
+        recolhimentoOffsetDias: parseInt($("recolhimentoOffsetDias").value, 10),
+        mesesSimulacao: parseInt($("mesesSimulacao").value, 10),
+      };
+      const { valido, erros } = validate(entrada);
+      $("erros").hidden = valido;
+      $("headline").hidden = !valido;
+      $("cols").hidden = !valido;
+      if (!valido) { $("erros").innerHTML = erros.map((e) => `<li>${e}</li>`).join(""); return; }
+
+      const r = calculateCashFlow(entrada.faturamentoBruto, entrada.aliquota, entrada.recolhimentoOffsetDias, entrada.mesesSimulacao);
+      const m = metricaDiferencial(r, entrada.faturamentoBruto);
+      $("headline").innerHTML = `O split tira <b>${brl(m.absoluto)}</b> do seu caixa <span class="muted">(${(m.percentual * 100).toFixed(1)}% do faturamento) durante o intervalo até o recolhimento.</span>`;
+      $("tabela-atual").innerHTML = tabela(r.regimeAtual);
+      $("tabela-split").innerHTML = tabela(r.regimeSplit);
+    });
+
+    $("form").dispatchEvent(new Event("submit"));
+  </script>
+</body>
+</html>

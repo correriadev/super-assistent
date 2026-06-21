@@ -1,0 +1,175 @@
+[
+  {
+    "id": "assinatura-funcao-pura-calculo",
+    "content": "calculateCashFlow(faturamentoBruto, aliquota, recolhimentoOffsetDias, mesesSimulacao=1) -> {regimeAtual: Timeline, regimeSplit: Timeline}. Pura. Mesma alíquota nos 2 regimes; diferença é só timing.",
+    "binding": "vinculante",
+    "category": "arquitetura",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "calculo-regime-atual",
+      "calculo-regime-split"
+    ],
+    "parent_constraint": "O cálculo deve ser puro (sem efeitos colaterais) e retornar estruturas que permitam comparação lado a lado entre os dois regimes, sem lógica de UI acoplada.",
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+  },
+  {
+    "id": "modelo-timeline-saldo",
+    "content": "Timeline = [{data, tipoEvento, valor, saldoAcumulado}]. tipoEvento ∈ {RECEBIMENTO, RECOLHIMENTO, SEGREGACAO_SPLIT}. saldoAcumulado absoluto, início 0, mesmo schema nos dois regimes.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "calculo-regime-atual",
+      "calculo-regime-split"
+    ],
+    "parent_constraint": "Deve permitir visualização de saldo de caixa ao longo do tempo em ambos os regimes; cada regime tem cronologia diferente (intervalo de retenção vs liquidação imediata).",
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+  },
+  {
+    "id": "tipo-evento-timeline",
+    "content": "Os eventos da Timeline incluem tipos: RECEBIMENTO, RETENCAO_PROVISORIA (regime atual), RECOLHIMENTO, SEGREGACAO_SPLIT (regime split), LIQUIDACAO_SPLIT.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "calculo-regime-atual",
+      "calculo-regime-split"
+    ],
+    "parent_constraint": "Regime atual: recebe bruto, retém até recolhimento. Regime split: recebe bruto, segregação sai na liquidação. Tipos de evento devem explicitar essa diferença.",
+    "rationale": "Diferença operacional entre regimes (intervalo vs imediatismo) exige eventos diferentes na timeline."
+  },
+  {
+    "id": "validacao-entrada-contrato",
+    "content": "validate(entrada) -> {valido, erros:string[]}. Regras: faturamentoBruto>=0; recolhimentoOffsetDias>0; mesesSimulacao>0. Acumula todos os erros. Vanilla JS, sem TS/Zod.",
+    "binding": "vinculante",
+    "category": "arquitetura",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "validacao-dados-entrada"
+    ],
+    "parent_constraint": "Mesmo que os dados venham de integração, devem ser validados antes do cálculo. Contrato terso, rejeita valores impossíveis.",
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+  },
+  {
+    "id": "parametro-data-recolhimento",
+    "content": "A função de cálculo aceita um parâmetro único dataRecolhimento (dia do mês ou data absoluta) que define quando o imposto sai no regime atual; não modela cada tributo separadamente.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "calculo-regime-atual"
+    ],
+    "parent_constraint": "Recolhimento é uma data parametrizável única, não deve ser rigidamente acoplado a tabelas de tributo ou regimes fiscais externos.",
+    "rationale": "Escopo decidido: 'Recolhimento (regime atual) = uma data parametrizável única; NÃO modela cada tributo/regime.' Isto é implicação direta."
+  },
+  {
+    "id": "parametro-aliquota-consolidada",
+    "content": "O cálculo aceita um parâmetro aliquotaIBS_CBS (número entre 0 e 100) que consolida IBS+CBS em uma única taxa; não desagrega por tributo.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "calculo-regime-split"
+    ],
+    "parent_constraint": "Impostos devem ser consolidados em uma alíquota única (IBS+CBS) no cálculo puro; desagregação é responsabilidade da camada de integração, não do motor.",
+    "rationale": "Escopo: 'Impostos = IBS+CBS consolidados, uma alíquota única.' É restrição arquitetural direta."
+  },
+  {
+    "id": "layout-duas-colunas-side-by-side",
+    "content": "Duas colunas fixas (desktop): esquerda=regimeAtual, direita=regimeSplit, tabela de eventos da timeline cada. Responsivo adiado.",
+    "binding": "vinculante",
+    "category": "interface",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "comparacao-lado-a-lado"
+    ],
+    "parent_constraint": "Comparação deve ser visual e simultânea; não pode ocultar um regime ou apresentar sequencialmente.",
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+  },
+  {
+    "id": "metrica-principal-saldo-diferencial",
+    "content": "diferencial = saldoAcumulado_atual − saldoAcumulado_split por ponto; valor absoluto + percentual sobre faturamentoBruto; início 0; só timing (tributação igual nos 2 regimes).",
+    "binding": "vinculante",
+    "category": "interface",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "formato-resultado-metrica-principal",
+      "comparacao-lado-a-lado"
+    ],
+    "parent_constraint": "Deve deixar visível o 'buraco' de caixa causado pela supressão do intervalo; deve ser mensurável em unidade monetária e/ou percentual.",
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+  },
+  {
+    "id": "estrutura-modular-calculo-ui-separados",
+    "content": "A arquitetura separa o módulo de cálculo puro (função calculateCashFlow + validação) do módulo de UI (renderização de colunas, formatação de números).",
+    "binding": "vinculante",
+    "category": "arquitetura",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Cálculo deve ser puro e independente de renderização; não pode conter lógica de DOM ou framework UI.",
+    "rationale": "Modularidade não é forçada pelos pais, mas é coerente com 'função pura' e permite testes, reutilização. Proposta razoável, não invenção livre."
+  },
+  {
+    "id": "representacao-data-formato-iso",
+    "content": "As datas dentro da Timeline usam formato ISO 8601 (YYYY-MM-DD) para consistência e evitar ambiguidade.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "modelo-timeline-saldo"
+    ],
+    "parent_constraint": "Timeline deve representar cronologia inequivocamente; formato ISO é padrão para interoperabilidade.",
+    "rationale": "Não é forçado pelos pais, mas é prática razoável para estrutura de dados que carrega datas."
+  },
+  {
+    "id": "stack-js-vanilla-sem-framework",
+    "content": "A implementação usa JavaScript vanilla (sem React, Vue, Angular) e HTML estático; a função de cálculo é pure JS, a UI é DOM manipulation.",
+    "binding": "vinculante",
+    "category": "arquitetura",
+    "derivation": "[Implicado]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Stack alvo é JS vanilla; nenhuma dependência de framework. Função pura de cálculo deve ser independente de runtime externo.",
+    "rationale": "Escopo decidido: 'Stack alvo: JS vanilla, função pura de cálculo, HTML estático. Sem framework, sem backend.' Isto é restrição arquitetural direta."
+  },
+  {
+    "id": "contrato-entrada-faturamento",
+    "content": "A entrada faturamento aceita: valor bruto (número), lista de parcelas (opcional, com datas de liquidação), ou assume pagamento à vista. Validação rejeita valores negativos.",
+    "binding": "vinculante",
+    "category": "dados",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "validacao-dados-entrada",
+      "suporte-parcelado"
+    ],
+    "parent_constraint": "Entrada deve permitir parcelamento e pagamento à vista; validação deve rejeitar impossibilidades.",
+    "rationale": "Compatível: não é forçado, mas razoável para acomodar tanto parcelado quanto à vista."
+  },
+  {
+    "id": "precisao-numero-duas-casas-decimais",
+    "content": "Todos os cálculos monetários usam arredondamento bancário (duas casas decimais) para evitar erros de precisão em ponto flutuante.",
+    "binding": "vinculante",
+    "category": "lógica",
+    "derivation": "[Compatível]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Cálculo de caixa envolve dinheiro; imprecisão pode causar desconfiança. Arredondamento consistente é obrigatório.",
+    "rationale": "Compatível: não é explicitamente forçado, mas é prática de finanças obrigatória para qualquer cálculo envolvendo dinheiro."
+  },
+  {
+    "id": "teste-unitario-regras-calculo",
+    "content": "O módulo de cálculo é testável em isolamento: cada regra (recebimento, retenção, recolhimento, segregação, liquidação) tem testes unitários que verificam eventos da Timeline.",
+    "binding": "vinculante",
+    "category": "qualidade",
+    "derivation": "[Especulativo]",
+    "derives_from": [
+      "assinatura-funcao-pura-calculo"
+    ],
+    "parent_constraint": "Função pura permite testes sem mock; cada regra deve ser verificável de forma isolada.",
+    "rationale": "Especulativo: não é forçado pelo pai, mas é proposta razoável de qualidade. Pai permite testes (função pura), mas não força explicitamente."
+  }
+]

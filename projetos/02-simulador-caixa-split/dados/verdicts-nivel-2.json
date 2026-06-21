@@ -1,0 +1,133 @@
+[
+  {
+    "id": "assinatura-funcao-pura-calculo",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "d": "Timeline definida em modelo-timeline-saldo"
+      },
+      {
+        "d": "dataRecolhimento = offset em dias"
+      },
+      {
+        "d": "regime atual usa MESMA alíquota; diferença é timing"
+      }
+    ],
+    "verified_items": [
+      {
+        "d": "alíquota IBS+CBS consolidada (fonte grounded)"
+      },
+      {
+        "d": "recolhimento = offset parametrizável"
+      },
+      {
+        "d": "transição: fora da fatia"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "modelo-timeline-saldo",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "d": "tipoEvento enum fechado: RECEBIMENTO/RECOLHIMENTO/SEGREGACAO_SPLIT"
+      },
+      {
+        "d": "detalhes cortado"
+      },
+      {
+        "d": "saldoAcumulado absoluto"
+      },
+      {
+        "d": "eventos ordenados por data, mesma data ordem por tipo"
+      },
+      {
+        "d": "schema idêntico nos 2 regimes"
+      }
+    ],
+    "verified_items": [
+      {
+        "d": "tipos de evento da fatia decididos"
+      },
+      {
+        "d": "split sai na liquidação, sem liberação posterior"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "validacao-entrada-contrato",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "d": "datas incoerentes = offset<=0 ou meses<=0"
+      },
+      {
+        "d": "acumula todos os erros (não short-circuit)"
+      }
+    ],
+    "verified_items": [
+      {
+        "d": "validação centralizada; calc assume input válido"
+      },
+      {
+        "d": "vanilla JS basta, sem TS/Zod (fora da fatia)"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "metrica-principal-saldo-diferencial",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [
+      {
+        "d": "unidade = por evento/dia"
+      },
+      {
+        "d": "início saldo 0"
+      },
+      {
+        "d": "percentual sobre faturamento bruto"
+      },
+      {
+        "d": "só timing, tributação igual"
+      }
+    ],
+    "verified_items": [
+      {
+        "d": "split suprime o intervalo (fonte grounded)"
+      },
+      {
+        "d": "janela por meio de pagamento: fora da fatia"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  },
+  {
+    "id": "layout-duas-colunas-side-by-side",
+    "status": "PASSA",
+    "structural_gaps": [],
+    "verification_items": [],
+    "resolved_gaps": [],
+    "verified_items": [
+      {
+        "d": "responsivo/mobile adiado; desktop 2 colunas fixas na fatia"
+      }
+    ],
+    "elicitation_question": null,
+    "contradiction": null
+  }
+]

@@ -73,7 +73,8 @@
         "dois-cenarios-comparacao"
       ],
       "reason": "desceu sobre fundação aberta (direta ou herdada de ancestral); reabre se o ancestral mudar"
-    }
+    },
+    "rationale": "Ver os dois regimes simultaneamente é a proposta de valor central — a ideia afirma 'se não mostrar a diferença no tempo, não serve'. Operacional: duas colunas na mesma tela; métrica = saldo de caixa no tempo por regime."
   },
   {
     "id": "integracao-contabilidade",

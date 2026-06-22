@@ -1,0 +1,181 @@
+[
+  {
+    "id": "impl-calculateCashFlow",
+    "content": "função pura calculateCashFlow em app/calc.js",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.js",
+      "symbol": "calculateCashFlow"
+    },
+    "grounded_by": {
+      "tests": [
+        "regime atual: recebe dia 0, recolhe no offset (tributo em caixa até lá)",
+        "regime split: tributo sai no dia 0 (segregação na liquidação)",
+        "diferencial = 270 durante a janela de retenção, 0 depois do recolhimento",
+        "alíquota 0: sem recolhimento, os dois regimes ficam idênticos",
+        "offset 1 dia: diferencial 270 no dia 0, 0 no dia 1",
+        "precisão: tributo arredondado a 2 casas; nenhum saldo com >2 decimais",
+        "datas em ISO 8601 (YYYY-MM-DD)",
+        "tipoEvento sempre um do enum fechado",
+        "pureza: mesma entrada → mesmo resultado, sem efeito colateral"
+      ]
+    },
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "t-calculo-regime-atual-basico",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-calculo-regime-split-basico",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-diferencial-saldo-30-dias",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-aliquota-zero",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-offset-um-dia",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-precisao-arredondamento-banc",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-formato-iso-datas-timeline",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-tipo-evento-timeline-enum-exaustivo",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-pureza-sem-efeito-colateral",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "modelo-timeline-saldo",
+        "kind": "derivation"
+      }
+    ]
+  },
+  {
+    "id": "impl-metricaDiferencial",
+    "content": "metricaDiferencial em app/calc.js",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.js",
+      "symbol": "metricaDiferencial"
+    },
+    "grounded_by": {
+      "tests": [
+        "métrica diferencial: absoluto 270 e percentual 0.27 sobre o bruto"
+      ]
+    },
+    "parent": "metrica-principal-saldo-diferencial",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "t-diferencial-percentual-sobre-bruto",
+        "kind": "grounding"
+      }
+    ]
+  },
+  {
+    "id": "impl-validate",
+    "content": "validate em app/validate.js",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.js",
+      "symbol": "validate"
+    },
+    "grounded_by": {
+      "tests": [
+        "faturamento 0 é válido (>= 0)",
+        "faturamento negativo: inválido",
+        "offset zero: inválido",
+        "offset negativo: inválido",
+        "meses zero: inválido",
+        "múltiplos erros acumulam em um array"
+      ]
+    },
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-faturamento-zero",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-faturamento-negativo",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-offset-zero",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-offset-negativo",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-meses-zero",
+        "kind": "grounding"
+      },
+      {
+        "domain": "simulador",
+        "ref": "t-validacao-multiplos-erros-acumula",
+        "kind": "grounding"
+      }
+    ]
+  },
+  {
+    "id": "impl-index-html",
+    "content": "tela de 2 colunas em app/index.html",
+    "binding": null,
+    "provenance": {
+      "file": "app/index.html"
+    },
+    "parent": "layout-duas-colunas-side-by-side",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "impl-calculateCashFlow",
+        "kind": "derivation"
+      },
+      {
+        "domain": "simulador",
+        "ref": "impl-validate",
+        "kind": "derivation"
+      },
+      {
+        "domain": "simulador",
+        "ref": "impl-metricaDiferencial",
+        "kind": "derivation"
+      }
+    ]
+  }
+]

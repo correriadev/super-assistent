@@ -5,13 +5,22 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo",
-      "modelo-timeline-saldo",
-      "parametro-aliquota-consolidada"
-    ],
     "parent_constraint": "Regime atual deve reter imposto de forma visível entre recebimento e recolhimento; cálculo must be puro, determinístico, e saldo deve refletir a retenção temporal.",
-    "rationale": "Contrato 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que o cálculo seja puro e retorne Timeline com saldo. Este teste verifica que regime atual comporta-se conforme especificado."
+    "rationale": "Contrato 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que o cálculo seja puro e retorne Timeline com saldo. Este teste verifica que regime atual comporta-se conforme especificado.",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "modelo-timeline-saldo",
+        "kind": "derivation"
+      },
+      {
+        "domain": "simulador",
+        "ref": "parametro-aliquota-consolidada",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-calculo-regime-split-basico",
@@ -19,13 +28,22 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo",
-      "modelo-timeline-saldo",
-      "parametro-aliquota-consolidada"
-    ],
     "parent_constraint": "Regime split deve segregar imposto no dia do recebimento (liquidação imediata), sem aguardar offset; saldo deve refletir esse timing diferente.",
-    "rationale": "Contratos 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que ambos regimes retornem Timeline com saldo. Este teste verifica que regime split comporta-se conforme LC 214/2025 (segregação na liquidação)."
+    "rationale": "Contratos 'assinatura-funcao-pura-calculo' e 'modelo-timeline-saldo' força que ambos regimes retornem Timeline com saldo. Este teste verifica que regime split comporta-se conforme LC 214/2025 (segregação na liquidação).",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "modelo-timeline-saldo",
+        "kind": "derivation"
+      },
+      {
+        "domain": "simulador",
+        "ref": "parametro-aliquota-consolidada",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-diferencial-saldo-30-dias",
@@ -33,12 +51,17 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "metrica-principal-saldo-diferencial",
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Diferencial deve ser mensurável em cada ponto da Timeline; métrica principal é essa diferença temporal entre regimes; deve ser zero ou negativa para split (ou zero se offset=0).",
-    "rationale": "Contrato 'metrica-principal-saldo-diferencial' força que diferential seja calculado como saldo_atual - saldo_split. Este teste valida que o diferential é exatamente o 'buraco' de caixa causado pelo split."
+    "rationale": "Contrato 'metrica-principal-saldo-diferencial' força que diferential seja calculado como saldo_atual - saldo_split. Este teste valida que o diferential é exatamente o 'buraco' de caixa causado pelo split.",
+    "parent": "metrica-principal-saldo-diferencial",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "assinatura-funcao-pura-calculo",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-diferencial-percentual-sobre-bruto",
@@ -46,11 +69,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "metrica-principal-saldo-diferencial"
-    ],
     "parent_constraint": "Diferencial deve ser expresso tanto em valor absoluto quanto em percentual sobre faturamentoBruto; percentual facilita compreensão relativa.",
-    "rationale": "Contrato 'metrica-principal-saldo-diferencial' explicita que diferencial deve ser calculado em 'valor absoluto + percentual sobre faturamentoBruto'."
+    "rationale": "Contrato 'metrica-principal-saldo-diferencial' explicita que diferencial deve ser calculado em 'valor absoluto + percentual sobre faturamentoBruto'.",
+    "parent": "metrica-principal-saldo-diferencial",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-faturamento-zero",
@@ -58,11 +81,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação deve rejeitar faturamentoBruto<0 ou aceitar 0 explicitamente; restrição: faturamentoBruto>=0 (de acordo com contrato).",
-    "rationale": "Contrato 'validacao-entrada-contrato' força regra 'faturamentoBruto>=0'. Zero é permitido (>=), então entrada {0, 0.27, 30} deve passar; teste valida este edge case."
+    "rationale": "Contrato 'validacao-entrada-contrato' força regra 'faturamentoBruto>=0'. Zero é permitido (>=), então entrada {0, 0.27, 30} deve passar; teste valida este edge case.",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-faturamento-negativo",
@@ -70,11 +93,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação rejeita faturamentoBruto<0; mensagem de erro deve estar presente.",
-    "rationale": "Contrato 'validacao-entrada-contrato' força que faturamentoBruto>=0. Teste verifica rejeição de negativo."
+    "rationale": "Contrato 'validacao-entrada-contrato' força que faturamentoBruto>=0. Teste verifica rejeição de negativo.",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-offset-zero",
@@ -82,11 +105,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação rejeita recolhimentoOffsetDias<=0; offset deve ser estritamente positivo (>0).",
-    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de zero (boundary)."
+    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de zero (boundary).",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-offset-negativo",
@@ -94,11 +117,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação rejeita recolhimentoOffsetDias<=0.",
-    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de negativo."
+    "rationale": "Contrato 'validacao-entrada-contrato' força que recolhimentoOffsetDias>0. Teste verifica rejeição de negativo.",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-meses-zero",
@@ -106,11 +129,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação rejeita mesesSimulacao<=0; meses deve ser estritamente positivo.",
-    "rationale": "Contrato 'validacao-entrada-contrato' força que mesesSimulacao>0. Teste verifica rejeição de zero."
+    "rationale": "Contrato 'validacao-entrada-contrato' força que mesesSimulacao>0. Teste verifica rejeição de zero.",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-validacao-multiplos-erros-acumula",
@@ -118,11 +141,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-entrada-contrato"
-    ],
     "parent_constraint": "Validação acumula todos os erros em um array; não para no primeiro erro.",
-    "rationale": "Contrato 'validacao-entrada-contrato' explicitamente diz 'Acumula todos os erros'. Teste verifica que múltiplas violações são reportadas no array erros."
+    "rationale": "Contrato 'validacao-entrada-contrato' explicitamente diz 'Acumula todos os erros'. Teste verifica que múltiplas violações são reportadas no array erros.",
+    "parent": "validacao-entrada-contrato",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-aliquota-zero",
@@ -130,12 +153,17 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Especulativo]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo",
-      "parametro-aliquota-consolidada"
-    ],
     "parent_constraint": "Quando aliquota=0, não há retenção nem segregação; ambos regimes convergem a recebimento simples.",
-    "rationale": "Especulativo: contrato permite aliquota entre 0 e 100, mas não força explicitamente o comportamento quando aliquota=0. Invenção sua, mas razoável (case de borda)."
+    "rationale": "Especulativo: contrato permite aliquota entre 0 e 100, mas não força explicitamente o comportamento quando aliquota=0. Invenção sua, mas razoável (case de borda).",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "parametro-aliquota-consolidada",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-offset-um-dia",
@@ -143,11 +171,11 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Compatível]",
-    "derives_from": [
-      "metrica-principal-saldo-diferencial"
-    ],
     "parent_constraint": "Offset=1 é válido; diferencial deve ser mensurável mesmo em offset mínimo.",
-    "rationale": "Compatível: contrato 'validacao-entrada-contrato' força recolhimentoOffsetDias>0, então 1 é válido. Teste propõe como medir diferential em offset mínimo; não é forçado, razoável proposta."
+    "rationale": "Compatível: contrato 'validacao-entrada-contrato' força recolhimentoOffsetDias>0, então 1 é válido. Teste propõe como medir diferential em offset mínimo; não é forçado, razoável proposta.",
+    "parent": "metrica-principal-saldo-diferencial",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-precisao-arredondamento-banc",
@@ -155,12 +183,17 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "precisao-numero-duas-casas-decimais",
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Cálculo deve usar arredondamento bancário consistentemente; resultado final tem exatamente 2 casas decimais.",
-    "rationale": "Contrato 'precisao-numero-duas-casas-decimais' força arredondamento de 2 casas decimais. Teste valida que isso é aplicado corretamente no resultado da Timeline."
+    "rationale": "Contrato 'precisao-numero-duas-casas-decimais' força arredondamento de 2 casas decimais. Teste valida que isso é aplicado corretamente no resultado da Timeline.",
+    "parent": "precisao-numero-duas-casas-decimais",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "assinatura-funcao-pura-calculo",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-formato-iso-datas-timeline",
@@ -168,12 +201,17 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "representacao-data-formato-iso",
-      "modelo-timeline-saldo"
-    ],
     "parent_constraint": "Datas devem ser ISO 8601 (YYYY-MM-DD) para consistência e evitar ambiguidade.",
-    "rationale": "Contrato 'representacao-data-formato-iso' força ISO 8601. Teste valida que Timeline retorna datas neste formato."
+    "rationale": "Contrato 'representacao-data-formato-iso' força ISO 8601. Teste valida que Timeline retorna datas neste formato.",
+    "parent": "representacao-data-formato-iso",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "modelo-timeline-saldo",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-tipo-evento-timeline-enum-exaustivo",
@@ -181,12 +219,17 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "tipo-evento-timeline",
-      "modelo-timeline-saldo"
-    ],
     "parent_constraint": "Tipos de evento devem estar restritos ao enum {RECEBIMENTO, RECOLHIMENTO, SEGREGACAO_SPLIT}; validação estrutural.",
-    "rationale": "Contrato 'tipo-evento-timeline' lista os tipos permitidos. Teste valida que Timeline não contém tipos fora desse enum."
+    "rationale": "Contrato 'tipo-evento-timeline' lista os tipos permitidos. Teste valida que Timeline não contém tipos fora desse enum.",
+    "parent": "tipo-evento-timeline",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "modelo-timeline-saldo",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "teste-pureza-sem-efeito-colateral",
@@ -194,11 +237,16 @@
     "binding": null,
     "category": "teste",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo",
-      "stack-js-vanilla-sem-framework"
-    ],
     "parent_constraint": "Função deve ser pura: determinística (mesmos inputs → mesmos outputs), sem efeitos colaterais, sem estado global.",
-    "rationale": "Contrato 'assinatura-funcao-pura-calculo' diz 'Pura'. Teste valida que função é de fato pura (idempotência)."
+    "rationale": "Contrato 'assinatura-funcao-pura-calculo' diz 'Pura'. Teste valida que função é de fato pura (idempotência).",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "stack-js-vanilla-sem-framework",
+        "kind": "derivation"
+      }
+    ]
   }
 ]

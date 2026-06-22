@@ -92,12 +92,19 @@ def descent_gate(claims, verdicts, policy="strict", min_fraction=0.6, accepted=(
     return _decision(True, policy, [], [], frac, "force: desce sem marca (escape hatch)")
 
 
+def _ownership_refs(c):
+    """Retorna a lista de refs de posse do nó: [parent] se existir, senão derives_from legado."""
+    if c.get("parent") is not None:
+        return [c["parent"]]
+    return list(c.get("derives_from") or [])
+
+
 def mark_provisional(child, provisional_parents):
-    """Carimba `provisional` num claim-filho se algum `derives_from` cai em pai aberto.
+    """Carimba `provisional` num claim-filho se o `parent` (ou derives_from legado) cai em pai aberto.
     Espelho do `stale`: state review + os pais não-assentados. Se nenhum pai do filho
     está aberto, LIMPA marca antiga (pai resolveu → filho vira claim normal). Idempotente.
     Retorna True se ficou provisional."""
-    unresolved = sorted(set(child.get("derives_from") or []) & set(provisional_parents))
+    unresolved = sorted(set(_ownership_refs(child)) & set(provisional_parents))
     if not unresolved:
         child.pop("provisional", None)
         return False
@@ -129,7 +136,7 @@ def refresh_provisional(children, provisional_parents):
         if c is None:                  # ancestral fora dos filhos = pai de nível acima
             return []
         bad = []
-        for p in c.get("derives_from") or []:
+        for p in _ownership_refs(c):
             if p in open_set or (p in by_id and offenders(p, stack | {cid})):
                 bad.append(p)
         memo[cid] = bad

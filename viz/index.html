@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Constelações — simulador × lei</title>
+  <style>
+    :root { --fog:#9aa7bd; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0a0e17; color: #e7ecf5; font: 13px/1.5 system-ui, sans-serif; }
+    #app { position: fixed; inset: 0; }
+    .panel { position: fixed; background: rgba(13,18,28,.82); border: 1px solid #1e293b; border-radius: 10px; padding: .75rem .9rem; backdrop-filter: blur(6px); }
+    #head { top: 1rem; left: 1rem; max-width: 300px; }
+    #head h1 { font-size: 1rem; margin: 0 0 .15rem; }
+    #head p { margin: 0; color: var(--fog); font-size: .78rem; }
+    #legend { bottom: 1rem; left: 1rem; font-size: .78rem; min-width: 200px; }
+    #legend .row { display: flex; align-items: center; gap: .5rem; margin: .2rem 0; }
+    #legend .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+    #legend .halo { box-shadow: 0 0 0 3px rgba(245,158,11,.45); }
+    #legend .line { width: 24px; height: 2px; flex-shrink: 0; display: inline-block; }
+    #legend hr { border: 0; border-top: 1px solid #1e293b; margin: .5rem 0; }
+    #tip { position: fixed; pointer-events: none; display: none; max-width: 340px; z-index: 10; }
+    #tip .id { font-weight: 600; }
+    #tip .meta { color: var(--fog); font-size: .74rem; margin: .25rem 0; }
+    #tip .content { font-size: .78rem; }
+    .k { color: #f59e0b; }
+    .cyan { color: #06b6d4; }
+    #hint { bottom: 1rem; right: 1rem; color: var(--fog); font-size: .74rem; text-align: right; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="head" class="panel">
+    <h1>Constelações do domínio</h1>
+    <p>
+      <b>Simulador</b> (esquerda) × <b>Lei</b> (direita). Profundidade = peso (afunda = resolvido).
+      Dentro do simulador: eixo horizontal = nível (ideação → código).
+      <span class="cyan">Ciano</span> = ponte cross-domínio.
+    </p>
+  </div>
+  <div id="legend" class="panel"></div>
+  <div id="tip" class="panel"></div>
+  <div id="hint" class="panel">arrastar: orbitar · scroll: zoom · hover: detalhe</div>
+
+  <script type="importmap">
+    { "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    } }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+    // ---- Paleta por nível (simulador) ----
+    const LEVEL_COLORS = {
+      "ideação":    0x60a5fa,
+      "concepção":  0x34d399,
+      "arquitetura":0xa78bfa,
+      "cenários":   0xf472b6,
+      "testes":     0xfbbf24,
+      "código":     0xf87171,
+    };
+    // Cor do domínio lei
+    const LEI_COLOR = 0xe2c96e;
+
+    // Cores de aresta
+    const EDGE_POSSE     = 0x33415c;  // cinza sutil — árvore de posse interna
+    const EDGE_REF_INTRA = 0xf59e0b;  // âmbar — referência intra-domínio
+    const EDGE_BRIDGE    = 0x06b6d4;  // ciano — ponte cross-domínio
+
+    // Layout
+    const X_GAP   = 24;   // espaçamento horizontal entre níveis (simulador)
+    const Z_GAP   = 5.5;  // espalhamento Z dentro do nível
+    const DEPTH   = 52;   // profundidade máxima Y (peso alto = negativo)
+    const LEI_X_OFFSET = 200;  // offset X do cluster lei (à direita do simulador)
+    const LEI_Z_GAP    = 7;    // espalhamento Z para lei
+
+    // ---- Carregar dados ----
+    const { points } = await (await fetch("./points.json")).json();
+
+    // Separar domínios
+    const simPoints = points.filter(p => p.domain === "simulador");
+    const leiPoints = points.filter(p => p.domain === "lei");
+
+    // ---- Escala de profundidade (log) global por domínio ----
+    function makeDepthOf(pts) {
+      const scores = pts.map(p => p.score);
+      const sMin = Math.min(...scores), sMax = Math.max(...scores);
+      const lmin = Math.log(sMin + 1), lmax = Math.log(sMax + 1);
+      return (s) => -((Math.log(s + 1) - lmin) / (lmax - lmin || 1)) * DEPTH;
+    }
+    const depthOfSim = makeDepthOf(simPoints);
+    const depthOfLei = makeDepthOf(leiPoints.length ? leiPoints : [{score:0}]);
+
+    // ---- Posições ----
+    const pos = {};
+
+    // Simulador: X=levelIndex, Z=espalhamento dentro do nível, Y=profundidade
+    const byLevel = {};
+    simPoints.forEach(p => (byLevel[p.levelIndex] ??= []).push(p));
+    for (const [li, arr] of Object.entries(byLevel)) {
+      arr.forEach((p, i) => {
+        pos[p.id] = new THREE.Vector3(
+          Number(li) * X_GAP,
+          depthOfSim(p.score),
+          (i - (arr.length - 1) / 2) * Z_GAP
+        );
+      });
+    }
+
+    // Lei: coluna vertical à direita; Z=espalhamento, Y=profundidade
+    leiPoints.forEach((p, i) => {
+      pos[p.id] = new THREE.Vector3(
+        LEI_X_OFFSET,
+        depthOfLei(p.score),
+        (i - (leiPoints.length - 1) / 2) * LEI_Z_GAP
+      );
+    });
+
+    // ---- Cena ----
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0e17);
+    scene.fog = new THREE.Fog(0x0a0e17, 150, 350);
+
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 1000);
+    camera.position.set(100, 40, 130);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(devicePixelRatio);
+    document.getElementById("app").appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    // Centro entre os dois clusters
+    const simMidX = (Object.keys(byLevel).length - 1) * X_GAP / 2;
+    controls.target.set((simMidX + LEI_X_OFFSET) / 2, -DEPTH / 2, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, 0.8);
+    key.position.set(80, 80, 60);
+    scene.add(key);
+
+    // ---- Plano d'água ----
+    const water = new THREE.Mesh(
+      new THREE.PlaneGeometry(300, 160),
+      new THREE.MeshBasicMaterial({ color: 0x1e3a5f, transparent: true, opacity: 0.14, side: THREE.DoubleSide })
+    );
+    water.rotation.x = -Math.PI / 2;
+    water.position.set((simMidX + LEI_X_OFFSET) / 2, 0.5, 0);
+    scene.add(water);
+
+    // ---- Arestas ----
+    // Materiais de aresta
+    const matPosse = new THREE.LineBasicMaterial({ color: EDGE_POSSE,     transparent: true, opacity: 0.45 });
+    const matRef   = new THREE.LineBasicMaterial({ color: EDGE_REF_INTRA, transparent: true, opacity: 0.55 });
+    const matBridge= new THREE.LineBasicMaterial({ color: EDGE_BRIDGE,    transparent: true, opacity: 0.85, linewidth: 2 });
+
+    points.forEach(p => {
+      (p.edgeObjects || []).forEach(e => {
+        const src = pos[p.id], dst = pos[e.ref];
+        if (!src || !dst) return;
+        let mat;
+        if (e.cross_domain) {
+          mat = matBridge;
+        } else if (e.kind === "posse") {
+          mat = matPosse;
+        } else {
+          mat = matRef;
+        }
+        scene.add(new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints([src, dst]),
+          mat
+        ));
+      });
+    });
+
+    // ---- Pontos ----
+    const sphere  = new THREE.SphereGeometry(1.15, 20, 20);
+    const haloGeo = new THREE.SphereGeometry(1.9,  16, 16);
+    const meshes  = [];
+
+    points.forEach(p => {
+      let color;
+      if (p.domain === "lei") {
+        color = LEI_COLOR;
+      } else {
+        color = LEVEL_COLORS[p.level] ?? 0x94a3b8;
+      }
+
+      const m = new THREE.Mesh(sphere, new THREE.MeshStandardMaterial({
+        color,
+        emissive: color,
+        emissiveIntensity: p.open ? 0.15 : 0.5,
+        roughness: 0.4,
+        transparent: p.open,
+        opacity: p.open ? 0.65 : 1,
+      }));
+      m.position.copy(pos[p.id]);
+      m.userData = p;
+      scene.add(m);
+      meshes.push(m);
+
+      // Halo âmbar = provisional (descido sobre fundação aberta)
+      if (p.provisional) {
+        const h = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
+          color: 0xf59e0b, wireframe: true, transparent: true, opacity: 0.35
+        }));
+        h.position.copy(pos[p.id]);
+        scene.add(h);
+      }
+
+      // Anel ciano = nó exposto (interface pública do domínio)
+      if (p.exposed) {
+        const ring = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
+          color: EDGE_BRIDGE, wireframe: true, transparent: true, opacity: 0.45
+        }));
+        ring.scale.set(1.15, 1.15, 1.15);
+        ring.position.copy(pos[p.id]);
+        scene.add(ring);
+      }
+    });
+
+    // ---- Labels de nível (simulador) ----
+    function label(text, x, z) {
+      const c = document.createElement("canvas");
+      c.width = 256; c.height = 64;
+      const g = c.getContext("2d");
+      g.fillStyle = "#cbd5e1";
+      g.font = "bold 28px system-ui";
+      g.textAlign = "center";
+      g.fillText(text, 128, 42);
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true }));
+      s.position.set(x, 7, z ?? 0);
+      s.scale.set(18, 4.5, 1);
+      scene.add(s);
+    }
+
+    // Labels dos níveis do simulador
+    ["ideação", "concepção", "arquitetura", "cenários", "testes", "código"].forEach((n, i) => {
+      if (byLevel[i]) label(n, i * X_GAP);
+    });
+
+    // Label do cluster lei
+    label("lei", LEI_X_OFFSET, 0);
+
+    // ---- Legenda ----
+    const counts = {};
+    points.forEach(p => (counts[p.domain] = (counts[p.domain] || 0) + 1));
+    const countsLvl = {};
+    points.forEach(p => (countsLvl[p.level] = (countsLvl[p.level] || 0) + 1));
+
+    const hexStr = (n) => "#" + n.toString(16).padStart(6, "0");
+
+    let legendHTML = `<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fog);margin-bottom:.3rem">Domínios</div>`;
+    legendHTML += `<div class="row"><span class="dot" style="background:${hexStr(LEVEL_COLORS["ideação"])}"></span>simulador <span style="color:var(--fog)">(${counts["simulador"] || 0})</span></div>`;
+    legendHTML += `<div class="row"><span class="dot" style="background:${hexStr(LEI_COLOR)}"></span>lei <span style="color:var(--fog)">(${counts["lei"] || 0})</span></div>`;
+    legendHTML += `<hr>`;
+    legendHTML += `<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fog);margin-bottom:.3rem">Níveis simulador</div>`;
+    for (const [n, c] of Object.entries(LEVEL_COLORS)) {
+      legendHTML += `<div class="row"><span class="dot" style="background:${hexStr(c)}"></span>${n} <span style="color:var(--fog)">(${countsLvl[n] || 0})</span></div>`;
+    }
+    legendHTML += `<hr>`;
+    legendHTML += `<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fog);margin-bottom:.3rem">Arestas</div>`;
+    legendHTML += `<div class="row"><span class="line" style="background:${hexStr(EDGE_POSSE)}"></span>posse (árvore interna)</div>`;
+    legendHTML += `<div class="row"><span class="line" style="background:${hexStr(EDGE_REF_INTRA)}"></span>referência intra-domínio</div>`;
+    legendHTML += `<div class="row"><span class="line" style="background:${hexStr(EDGE_BRIDGE)}"></span>ponte cross-domínio</div>`;
+    legendHTML += `<hr>`;
+    legendHTML += `<div class="row"><span class="dot halo" style="background:#0a0e17"></span>provisional (cicatriz)</div>`;
+    legendHTML += `<div class="row"><span class="dot" style="background:#0a0e17;box-shadow:0 0 0 3px ${hexStr(EDGE_BRIDGE)}55"></span>exposto (interface)</div>`;
+    legendHTML += `<div class="row" style="color:var(--fog)">translúcido = aberto · sólido = PASSA</div>`;
+
+    document.getElementById("legend").innerHTML = legendHTML;
+
+    // ---- Hover ----
+    const ray = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const tip = document.getElementById("tip");
+
+    addEventListener("pointermove", (e) => {
+      mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+      ray.setFromCamera(mouse, camera);
+      const hit = ray.intersectObjects(meshes)[0];
+      if (hit) {
+        const p = hit.object.userData;
+        const bridges = (p.edgeObjects || []).filter(e => e.cross_domain).length;
+        tip.style.display = "block";
+        tip.style.left = Math.min(e.clientX + 14, innerWidth - 360) + "px";
+        tip.style.top = e.clientY + 14 + "px";
+        tip.innerHTML = `<div class="id">${p.id}</div>
+          <div class="meta">
+            domínio <span class="k">${p.domain}</span>
+            ${p.domain === "simulador" ? ` · nível <span class="k">${p.level}</span>` : ""}
+            · peso <span class="k">${p.score}</span>
+            · ${p.status || "—"}
+            ${p.binding ? " · " + p.binding : ""}
+            ${p.derivation ? " · " + p.derivation : ""}
+            ${p.exposed ? ' · <span class="cyan">exposto</span>' : ""}
+            ${p.provisional ? ' · <span class="k">provisional</span>' : ""}
+            ${bridges ? ` · <span class="cyan">${bridges} ponte(s) cross</span>` : ""}
+            ${p.artifact && p.file ? ` · <code>${p.file}</code>` : ""}
+          </div>
+          <div class="content">${p.content}</div>`;
+      } else {
+        tip.style.display = "none";
+      }
+    });
+
+    addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    (function loop() {
+      requestAnimationFrame(loop);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+  </script>
+</body>
+</html>

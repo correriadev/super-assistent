@@ -5,12 +5,17 @@
     "binding": "vinculante",
     "category": "arquitetura",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "calculo-regime-atual",
-      "calculo-regime-split"
-    ],
     "parent_constraint": "O cálculo deve ser puro (sem efeitos colaterais) e retornar estruturas que permitam comparação lado a lado entre os dois regimes, sem lógica de UI acoplada.",
-    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)",
+    "parent": "calculo-regime-atual",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "calculo-regime-split",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "modelo-timeline-saldo",
@@ -18,12 +23,17 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "calculo-regime-atual",
-      "calculo-regime-split"
-    ],
     "parent_constraint": "Deve permitir visualização de saldo de caixa ao longo do tempo em ambos os regimes; cada regime tem cronologia diferente (intervalo de retenção vs liquidação imediata).",
-    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)",
+    "parent": "calculo-regime-atual",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "calculo-regime-split",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "tipo-evento-timeline",
@@ -31,12 +41,17 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "calculo-regime-atual",
-      "calculo-regime-split"
-    ],
     "parent_constraint": "Regime atual: recebe bruto, retém até recolhimento. Regime split: recebe bruto, segregação sai na liquidação. Tipos de evento devem explicitar essa diferença.",
-    "rationale": "Diferença operacional entre regimes (intervalo vs imediatismo) exige eventos diferentes na timeline."
+    "rationale": "Diferença operacional entre regimes (intervalo vs imediatismo) exige eventos diferentes na timeline.",
+    "parent": "calculo-regime-atual",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "calculo-regime-split",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "validacao-entrada-contrato",
@@ -44,11 +59,11 @@
     "binding": "vinculante",
     "category": "arquitetura",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "validacao-dados-entrada"
-    ],
     "parent_constraint": "Mesmo que os dados venham de integração, devem ser validados antes do cálculo. Contrato terso, rejeita valores impossíveis.",
-    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)",
+    "parent": "validacao-dados-entrada",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "parametro-data-recolhimento",
@@ -56,11 +71,11 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "calculo-regime-atual"
-    ],
     "parent_constraint": "Recolhimento é uma data parametrizável única, não deve ser rigidamente acoplado a tabelas de tributo ou regimes fiscais externos.",
-    "rationale": "Escopo decidido: 'Recolhimento (regime atual) = uma data parametrizável única; NÃO modela cada tributo/regime.' Isto é implicação direta."
+    "rationale": "Escopo decidido: 'Recolhimento (regime atual) = uma data parametrizável única; NÃO modela cada tributo/regime.' Isto é implicação direta.",
+    "parent": "calculo-regime-atual",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "parametro-aliquota-consolidada",
@@ -68,11 +83,11 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "calculo-regime-split"
-    ],
     "parent_constraint": "Impostos devem ser consolidados em uma alíquota única (IBS+CBS) no cálculo puro; desagregação é responsabilidade da camada de integração, não do motor.",
-    "rationale": "Escopo: 'Impostos = IBS+CBS consolidados, uma alíquota única.' É restrição arquitetural direta."
+    "rationale": "Escopo: 'Impostos = IBS+CBS consolidados, uma alíquota única.' É restrição arquitetural direta.",
+    "parent": "calculo-regime-split",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "layout-duas-colunas-side-by-side",
@@ -80,11 +95,11 @@
     "binding": "vinculante",
     "category": "interface",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "comparacao-lado-a-lado"
-    ],
     "parent_constraint": "Comparação deve ser visual e simultânea; não pode ocultar um regime ou apresentar sequencialmente.",
-    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)",
+    "parent": "comparacao-lado-a-lado",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "metrica-principal-saldo-diferencial",
@@ -92,12 +107,17 @@
     "binding": "vinculante",
     "category": "interface",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "formato-resultado-metrica-principal",
-      "comparacao-lado-a-lado"
-    ],
     "parent_constraint": "Deve deixar visível o 'buraco' de caixa causado pela supressão do intervalo; deve ser mensurável em unidade monetária e/ou percentual.",
-    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)"
+    "rationale": "contratos cravados pelo revisor no ciclo 3 (fecham as lacunas do gate)",
+    "parent": "formato-resultado-metrica-principal",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "comparacao-lado-a-lado",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "estrutura-modular-calculo-ui-separados",
@@ -105,11 +125,11 @@
     "binding": "vinculante",
     "category": "arquitetura",
     "derivation": "[Compatível]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Cálculo deve ser puro e independente de renderização; não pode conter lógica de DOM ou framework UI.",
-    "rationale": "Modularidade não é forçada pelos pais, mas é coerente com 'função pura' e permite testes, reutilização. Proposta razoável, não invenção livre."
+    "rationale": "Modularidade não é forçada pelos pais, mas é coerente com 'função pura' e permite testes, reutilização. Proposta razoável, não invenção livre.",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "representacao-data-formato-iso",
@@ -117,11 +137,11 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Compatível]",
-    "derives_from": [
-      "modelo-timeline-saldo"
-    ],
     "parent_constraint": "Timeline deve representar cronologia inequivocamente; formato ISO é padrão para interoperabilidade.",
-    "rationale": "Não é forçado pelos pais, mas é prática razoável para estrutura de dados que carrega datas."
+    "rationale": "Não é forçado pelos pais, mas é prática razoável para estrutura de dados que carrega datas.",
+    "parent": "modelo-timeline-saldo",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "stack-js-vanilla-sem-framework",
@@ -129,11 +149,11 @@
     "binding": "vinculante",
     "category": "arquitetura",
     "derivation": "[Implicado]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Stack alvo é JS vanilla; nenhuma dependência de framework. Função pura de cálculo deve ser independente de runtime externo.",
-    "rationale": "Escopo decidido: 'Stack alvo: JS vanilla, função pura de cálculo, HTML estático. Sem framework, sem backend.' Isto é restrição arquitetural direta."
+    "rationale": "Escopo decidido: 'Stack alvo: JS vanilla, função pura de cálculo, HTML estático. Sem framework, sem backend.' Isto é restrição arquitetural direta.",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "contrato-entrada-faturamento",
@@ -141,12 +161,17 @@
     "binding": "vinculante",
     "category": "dados",
     "derivation": "[Compatível]",
-    "derives_from": [
-      "validacao-dados-entrada",
-      "suporte-parcelado"
-    ],
     "parent_constraint": "Entrada deve permitir parcelamento e pagamento à vista; validação deve rejeitar impossibilidades.",
-    "rationale": "Compatível: não é forçado, mas razoável para acomodar tanto parcelado quanto à vista."
+    "rationale": "Compatível: não é forçado, mas razoável para acomodar tanto parcelado quanto à vista.",
+    "parent": "validacao-dados-entrada",
+    "domain": "simulador",
+    "links": [
+      {
+        "domain": "simulador",
+        "ref": "suporte-parcelado",
+        "kind": "derivation"
+      }
+    ]
   },
   {
     "id": "precisao-numero-duas-casas-decimais",
@@ -154,11 +179,11 @@
     "binding": "vinculante",
     "category": "lógica",
     "derivation": "[Compatível]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Cálculo de caixa envolve dinheiro; imprecisão pode causar desconfiança. Arredondamento consistente é obrigatório.",
-    "rationale": "Compatível: não é explicitamente forçado, mas é prática de finanças obrigatória para qualquer cálculo envolvendo dinheiro."
+    "rationale": "Compatível: não é explicitamente forçado, mas é prática de finanças obrigatória para qualquer cálculo envolvendo dinheiro.",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "teste-unitario-regras-calculo",
@@ -166,10 +191,10 @@
     "binding": "vinculante",
     "category": "qualidade",
     "derivation": "[Especulativo]",
-    "derives_from": [
-      "assinatura-funcao-pura-calculo"
-    ],
     "parent_constraint": "Função pura permite testes sem mock; cada regra deve ser verificável de forma isolada.",
-    "rationale": "Especulativo: não é forçado pelo pai, mas é proposta razoável de qualidade. Pai permite testes (função pura), mas não força explicitamente."
+    "rationale": "Especulativo: não é forçado pelo pai, mas é proposta razoável de qualidade. Pai permite testes (função pura), mas não força explicitamente.",
+    "parent": "assinatura-funcao-pura-calculo",
+    "domain": "simulador",
+    "links": []
   }
 ]

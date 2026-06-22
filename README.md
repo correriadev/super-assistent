@@ -9,10 +9,19 @@ A ideia de referência é um simulador (app), mas a essência serve a **qualquer
 ## Como rodar
 
 ```bash
-python3 -m pytest -q                       # suíte determinística (56 testes, grátis)
+python3 -m pytest -q                       # suíte determinística (84 testes, grátis)
 python3 engine/score.py claims.json verdicts.json scores.json [--doc texto]
 # embedder local (navegação/matching semântico): pip install no .venv
 ```
+
+### Visualização 3D (constelações)
+
+```bash
+python3 viz/export_points.py               # gera viz/points.json (só se mudou dado)
+python3 -m http.server 8731                # ES modules + fetch exigem http, não file://
+```
+
+Abra **http://localhost:8731/viz/**. Precisa de rede (three.js via CDN). Controles: arrastar = orbitar · scroll = zoom · hover = detalhe. Esquerda = constelação **simulador** (níveis ideação→código), direita = **lei**; **ciano** = ponte cross-domínio. Profundidade = peso (afunda = resolvido).
 
 ## Mapa de módulos (`engine/`)
 
@@ -32,7 +41,8 @@ python3 engine/score.py claims.json verdicts.json scores.json [--doc texto]
 
 ## Estado atual
 
-- **Motor determinístico** (peso, grounding, linking, propagação, descida): código testado, **56/56**.
+- **Motor determinístico** (peso, grounding, linking, propagação, descida, **integridade**): código testado, **84 testes**.
+- **Composição domínios×subdomínios (modelo Godot):** posse única (`parent`) vs referência (`links`); `verify_integrity` (`engine/integrity.py`) bloqueia órfão / símbolo ausente / teste vermelho / ref quebrada / link cross-domínio a nó não-exposto / id duplicado — o código é nó ancorado (símbolo existe + teste verde), nada flutua solto. Propagação = broadcast por índice reverso, cruza domínios. Plano e fases em [docs/plans](docs/plans/composicao-dominios-godot.md).
 - **Cross-graph linking completo** ponta-a-ponta: navegação semântica (embedder local), matching semântico + margin gate, slot `candidates`. Validado no projeto 02 (grafo lei 4→11 claims, 3 fatos críticos verificados).
 - **Descida parametrizável** (`descent_policy`) + marca `provisional` transitiva.
 - **1 run completa ponta-a-ponta (5 ciclos do motor):** ideação → concepção → arquitetura → cenários de teste → codificação (TDD). Produziu artefato real: [`app/`](app/) — simulador de caixa (regime atual × split), `calc.js`/`validate.js` puros + **16 testes `node --test`** (red→green) + `index.html` (duas colunas). Fatia fina (núcleo computacional); o resto segue `provisional`/adiado, marcado, não perdido.

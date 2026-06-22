@@ -58,6 +58,44 @@ def depends_on(claim, source_claim_id):
     return isinstance(p, dict) and p.get("ref") == source_claim_id
 
 
+def referenced_by(nodes):
+    """Constrói o índice reverso de referências: {ref_id: [ids dos nós que referenciam ref_id]}.
+
+    Para cada nó considera:
+      - parent   (posse, 1 por nó)
+      - links[].ref  (referências explícitas, N, incluindo cross-domínio)
+      - provenance.ref  (legado)
+
+    Análogo ao broadcast desacoplado do Godot: o alvo não conhece quem o referencia;
+    este índice resolve "quem aponta pra mim" sem varrer todos os nós a cada consulta.
+    """
+    idx = {}
+    for node in nodes:
+        node_id = node.get("id")
+        if not node_id:
+            continue
+
+        # parent = posse (1 por nó, pode ser None)
+        parent = node.get("parent")
+        if parent is not None:
+            idx.setdefault(parent, []).append(node_id)
+
+        # links[].ref = referências explícitas (N, cross-domínio)
+        for link in node.get("links") or []:
+            ref = link.get("ref") if isinstance(link, dict) else None
+            if ref:
+                idx.setdefault(ref, []).append(node_id)
+
+        # legado: provenance.ref
+        prov = node.get("provenance")
+        if isinstance(prov, dict):
+            ref = prov.get("ref")
+            if ref:
+                idx.setdefault(ref, []).append(node_id)
+
+    return idx
+
+
 def mark_stale(claim, source_claim_id):
     """Marca o claim como 'revise' SEM tocar na resposta. Idempotente."""
     claim["stale"] = {
@@ -74,16 +112,30 @@ _REVIEW_MARK = "[REVIEW] source {ref} invalidada — re-resolver à mão"
 def propagate(source_claim_id, claims, verdicts, log_path, ts=None):
     """
     Propaga a invalidação de `source_claim_id` para os claims dependentes.
-    claims/verdicts: listas de UM graph (chame uma vez por graph).
+
+    Usa o índice reverso `referenced_by` para localizar dependentes em O(dependentes)
+    em vez de varrer todos os claims com depends_on (O(n)). Funciona com nós de
+    múltiplos domínios na mesma lista — o índice resolve quem aponta para a fonte
+    independentemente de domínio (broadcast desacoplado, Godot signals).
+
     Para cada dependente: marca stale + reabre dúvida (score cai) + loga evento.
     NUNCA reescreve content/rationale/resposta.
     Retorna (ids_afetados, verdicts_atualizados).
     """
+    # Índice reverso construído uma única vez para toda a lista (O(n) build,
+    # O(dependentes) lookup — contra O(n) por dependente no loop antigo).
+    idx = referenced_by(claims)
+    dependentes_ids = set(idx.get(source_claim_id, []))
+
+    c_by_id = {c["id"]: c for c in claims if c.get("id")}
     v_by_id = {v["id"]: v for v in verdicts}
     afetados = []
-    for c in claims:
-        if not depends_on(c, source_claim_id):
+
+    for dep_id in dependentes_ids:
+        c = c_by_id.get(dep_id)
+        if c is None:
             continue
+
         antes = {k: c.get(k) for k in ("content", "rationale", "binding")}
         mark_stale(c, source_claim_id)
         depois = {k: c.get(k) for k in ("content", "rationale", "binding")}

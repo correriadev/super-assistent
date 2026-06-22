@@ -8,7 +8,10 @@
     "provenance": {
       "document": "LC 214/2025 / art. 47",
       "excerpt": "o direito ao crédito do adquirente somente pode ser exercido quando ocorrida a extinção do tributo por qualquer das modalidades do art. 27"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "art-47-ampliacao-condicoes-extinc",
@@ -19,7 +22,10 @@
     "provenance": {
       "document": "LC 214/2025 / art. 47",
       "excerpt": "Ao remeter genericamente a todas as modalidades de extinção, a lei complementar amplia o universo de condicionamento para além das duas hipóteses taxativamente admitidas pela Constituição — alcançando, por exemplo, situações em que o fornecedor simplesmente não pagou o tributo por modalidade diversa do split"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "art-47-transferencia-risco-inadimpl",
@@ -30,7 +36,10 @@
     "provenance": {
       "document": "LC 214/2025 / art. 47",
       "excerpt": "na medida em que o art. 47 transfere ao adquirente o risco do inadimplemento alheio fora das hipóteses constitucionais, há extrapolação da condicionante do art. 156-A, § 5º, II, com ofensa à não cumulatividade e à segurança jurídica"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "art-47-leitura-conforme-constituicao",
@@ -41,7 +50,10 @@
     "provenance": {
       "document": "LC 214/2025 / art. 47",
       "excerpt": "A leitura conforme à Constituição exige restringir o condicionamento do crédito às duas hipóteses constitucionais, preservando-se, nas demais, o aproveitamento independentemente da conduta do fornecedor"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "split-payment-constitutional-basis",
@@ -52,7 +64,10 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "split payment, previsto no art. 156-A, § 5º, II, da Constituição"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "split-payment-legal-discipline",
@@ -63,7 +78,10 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "disciplinado pelos arts. 31 a 35 da LC 214/2025"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "split-payment-mechanism",
@@ -74,7 +92,11 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "exposed": true,
+    "links": []
   },
   {
     "id": "split-padrao-operacoes-empresas",
@@ -85,7 +107,10 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "o split padrão (ou \"inteligente\"), aplicável às operações entre empresas, em que o sistema identifica a alíquota e o montante exatos do tributo"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "split-simplificado-percentuais",
@@ -96,7 +121,11 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "o split simplificado, que opera por percentuais predefinidos quando a apuração precisa em tempo real não for viável"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "exposed": true,
+    "links": []
   },
   {
     "id": "recolhimento-adquirente-residual",
@@ -107,7 +136,10 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "o recolhimento pelo adquirente, hipótese residual de internaliza"
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   },
   {
     "id": "segregacao-recolhimento-proporcional",
@@ -118,6 +150,9 @@
     "provenance": {
       "document": "LC 214/2025 (art. doutrinário pub_780677977)",
       "excerpt": "segregação e o recolhimento far-se-ão de modo proporcional, na liquidação financeira de cada parcela."
-    }
+    },
+    "parent": null,
+    "domain": "lei",
+    "links": []
   }
 ]

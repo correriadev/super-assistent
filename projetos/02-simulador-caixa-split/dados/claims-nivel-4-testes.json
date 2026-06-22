@@ -1,0 +1,274 @@
+[
+  {
+    "id": "t-calculo-regime-atual-basico",
+    "content": "teste que encarna o cenário teste-calculo-regime-atual-basico",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "regime atual: recebe dia 0, recolhe no offset (tributo em caixa até lá)"
+    },
+    "grounded_by": {
+      "tests": [
+        "regime atual: recebe dia 0, recolhe no offset (tributo em caixa até lá)"
+      ]
+    },
+    "parent": "teste-calculo-regime-atual-basico",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-calculo-regime-split-basico",
+    "content": "teste que encarna o cenário teste-calculo-regime-split-basico",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "regime split: tributo sai no dia 0 (segregação na liquidação)"
+    },
+    "grounded_by": {
+      "tests": [
+        "regime split: tributo sai no dia 0 (segregação na liquidação)"
+      ]
+    },
+    "parent": "teste-calculo-regime-split-basico",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-diferencial-saldo-30-dias",
+    "content": "teste que encarna o cenário teste-diferencial-saldo-30-dias",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "diferencial = 270 durante a janela de retenção, 0 depois do recolhimento"
+    },
+    "grounded_by": {
+      "tests": [
+        "diferencial = 270 durante a janela de retenção, 0 depois do recolhimento"
+      ]
+    },
+    "parent": "teste-diferencial-saldo-30-dias",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-diferencial-percentual-sobre-bruto",
+    "content": "teste que encarna o cenário teste-diferencial-percentual-sobre-bruto",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "métrica diferencial: absoluto 270 e percentual 0.27 sobre o bruto"
+    },
+    "grounded_by": {
+      "tests": [
+        "métrica diferencial: absoluto 270 e percentual 0.27 sobre o bruto"
+      ]
+    },
+    "parent": "teste-diferencial-percentual-sobre-bruto",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-aliquota-zero",
+    "content": "teste que encarna o cenário teste-aliquota-zero",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "alíquota 0: sem recolhimento, os dois regimes ficam idênticos"
+    },
+    "grounded_by": {
+      "tests": [
+        "alíquota 0: sem recolhimento, os dois regimes ficam idênticos"
+      ]
+    },
+    "parent": "teste-aliquota-zero",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-offset-um-dia",
+    "content": "teste que encarna o cenário teste-offset-um-dia",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "offset 1 dia: diferencial 270 no dia 0, 0 no dia 1"
+    },
+    "grounded_by": {
+      "tests": [
+        "offset 1 dia: diferencial 270 no dia 0, 0 no dia 1"
+      ]
+    },
+    "parent": "teste-offset-um-dia",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-precisao-arredondamento-banc",
+    "content": "teste que encarna o cenário teste-precisao-arredondamento-banc",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "precisão: tributo arredondado a 2 casas; nenhum saldo com >2 decimais"
+    },
+    "grounded_by": {
+      "tests": [
+        "precisão: tributo arredondado a 2 casas; nenhum saldo com >2 decimais"
+      ]
+    },
+    "parent": "teste-precisao-arredondamento-banc",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-formato-iso-datas-timeline",
+    "content": "teste que encarna o cenário teste-formato-iso-datas-timeline",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "datas em ISO 8601 (YYYY-MM-DD)"
+    },
+    "grounded_by": {
+      "tests": [
+        "datas em ISO 8601 (YYYY-MM-DD)"
+      ]
+    },
+    "parent": "teste-formato-iso-datas-timeline",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-tipo-evento-timeline-enum-exaustivo",
+    "content": "teste que encarna o cenário teste-tipo-evento-timeline-enum-exaustivo",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "tipoEvento sempre um do enum fechado"
+    },
+    "grounded_by": {
+      "tests": [
+        "tipoEvento sempre um do enum fechado"
+      ]
+    },
+    "parent": "teste-tipo-evento-timeline-enum-exaustivo",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-pureza-sem-efeito-colateral",
+    "content": "teste que encarna o cenário teste-pureza-sem-efeito-colateral",
+    "binding": null,
+    "provenance": {
+      "file": "app/calc.test.js",
+      "symbol": "pureza: mesma entrada → mesmo resultado, sem efeito colateral"
+    },
+    "grounded_by": {
+      "tests": [
+        "pureza: mesma entrada → mesmo resultado, sem efeito colateral"
+      ]
+    },
+    "parent": "teste-pureza-sem-efeito-colateral",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-faturamento-zero",
+    "content": "teste que encarna o cenário teste-validacao-faturamento-zero",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "faturamento 0 é válido (>= 0)"
+    },
+    "grounded_by": {
+      "tests": [
+        "faturamento 0 é válido (>= 0)"
+      ]
+    },
+    "parent": "teste-validacao-faturamento-zero",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-faturamento-negativo",
+    "content": "teste que encarna o cenário teste-validacao-faturamento-negativo",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "faturamento negativo: inválido"
+    },
+    "grounded_by": {
+      "tests": [
+        "faturamento negativo: inválido"
+      ]
+    },
+    "parent": "teste-validacao-faturamento-negativo",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-offset-zero",
+    "content": "teste que encarna o cenário teste-validacao-offset-zero",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "offset zero: inválido"
+    },
+    "grounded_by": {
+      "tests": [
+        "offset zero: inválido"
+      ]
+    },
+    "parent": "teste-validacao-offset-zero",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-offset-negativo",
+    "content": "teste que encarna o cenário teste-validacao-offset-negativo",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "offset negativo: inválido"
+    },
+    "grounded_by": {
+      "tests": [
+        "offset negativo: inválido"
+      ]
+    },
+    "parent": "teste-validacao-offset-negativo",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-meses-zero",
+    "content": "teste que encarna o cenário teste-validacao-meses-zero",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "meses zero: inválido"
+    },
+    "grounded_by": {
+      "tests": [
+        "meses zero: inválido"
+      ]
+    },
+    "parent": "teste-validacao-meses-zero",
+    "domain": "simulador",
+    "links": []
+  },
+  {
+    "id": "t-validacao-multiplos-erros-acumula",
+    "content": "teste que encarna o cenário teste-validacao-multiplos-erros-acumula",
+    "binding": null,
+    "provenance": {
+      "file": "app/validate.test.js",
+      "symbol": "múltiplos erros acumulam em um array"
+    },
+    "grounded_by": {
+      "tests": [
+        "múltiplos erros acumulam em um array"
+      ]
+    },
+    "parent": "teste-validacao-multiplos-erros-acumula",
+    "domain": "simulador",
+    "links": []
+  }
+]

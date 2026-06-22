@@ -5,7 +5,10 @@
     "binding": "vinculante",
     "category": "publico",
     "rationale": "É esse perfil que o split machuca, porque é deles que o intervalo entre receber e recolher fazia mais diferença.",
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "dois-cenarios-comparacao",
@@ -23,7 +26,9 @@
         "confidence": 10,
         "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento"
       }
-    ]
+    ],
+    "parent": null,
+    "domain": "simulador"
   },
   {
     "id": "aliquota-split-aproximacao",
@@ -41,7 +46,9 @@
         "confidence": 10,
         "excerpt": "o split simplificado, que opera por percentuais predefinidos quando a apuração precisa em tempo real não for viável"
       }
-    ]
+    ],
+    "parent": null,
+    "domain": "simulador"
   },
   {
     "id": "venda-parcelada-segregacao",
@@ -59,7 +66,9 @@
         "confidence": 10,
         "excerpt": "no instante em que o adquirente paga pelo bem ou serviço, a parcela correspondente ao IBS e à CBS é segregada pelo prestador de serviços de pagamento"
       }
-    ]
+    ],
+    "parent": null,
+    "domain": "simulador"
   },
   {
     "id": "estorno-cancelamento-reversal",
@@ -67,7 +76,10 @@
     "binding": "vinculante",
     "category": "funcionalidade",
     "rationale": "Se eu não tratar estorno e cancelamento, o simulador mostra um buraco maior do que o real e assusta o cliente à toa.",
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "fonte-dados-faturamento",
@@ -75,7 +87,10 @@
     "binding": "vinculante",
     "category": "dados",
     "rationale": "Eu já tenho o faturamento mensal deles na minha contabilidade, então puxo de lá.",
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "modelo-cobranca",
@@ -83,7 +98,10 @@
     "binding": "default-sobrescrevivel",
     "category": "pagamento",
     "rationale": null,
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "nome-produto",
@@ -91,7 +109,10 @@
     "binding": "ilustrativo",
     "category": "identidade",
     "rationale": null,
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   },
   {
     "id": "objetivo-simulador-impacto-caixa",
@@ -99,6 +120,9 @@
     "binding": "vinculante",
     "category": "objetivo",
     "rationale": "Hoje o cliente recebe o bruto, segura o tributo e recolhe depois; esse intervalo é capital de giro. Quando o split entrar, o intervalo some. Quero mostrar pro cliente, antes de doer, o tamanho do buraco.",
-    "provenance": "human decision"
+    "provenance": "human decision",
+    "parent": null,
+    "domain": "simulador",
+    "links": []
   }
 ]

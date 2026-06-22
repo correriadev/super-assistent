@@ -70,7 +70,7 @@ def test_contradiz_fura_ate_force_e_provisional():
 
 
 def test_mark_provisional_carimba_e_limpa():
-    child = {"id": "x", "derives_from": ["a", "b"]}
+    child = {"id": "x", "parent": "a"}
     assert mark_provisional(child, ["a"]) is True
     assert child["provisional"]["parents"] == ["a"] and child["provisional"]["state"] == "review"
     # pai 'a' resolveu -> some da lista -> marca limpa, filho vira normal
@@ -79,8 +79,8 @@ def test_mark_provisional_carimba_e_limpa():
 
 def test_refresh_provisional_segue_o_estado_atual_dos_pais():
     children = [
-        {"id": "x", "derives_from": ["a"]},
-        {"id": "y", "derives_from": ["b"]},
+        {"id": "x", "parent": "a"},
+        {"id": "y", "parent": "b"},
     ]
     assert set(refresh_provisional(children, ["a", "b"])) == {"x", "y"}
     # 'a' resolveu, 'b' segue aberto
@@ -90,9 +90,9 @@ def test_refresh_provisional_segue_o_estado_atual_dos_pais():
 
 def test_refresh_provisional_transitivo_pega_filho_de_irmao_provisional():
     children = [
-        {"id": "x", "derives_from": ["a"]},       # a = pai aberto -> provisional
-        {"id": "z", "derives_from": ["x"]},       # deriva de x (irmão provisional) -> transitivo
-        {"id": "w", "derives_from": ["nome"]},    # nome = pai resolvido (não aberto) -> limpo
+        {"id": "x", "parent": "a"},       # a = pai aberto -> provisional
+        {"id": "z", "parent": "x"},       # deriva de x (irmão provisional) -> transitivo
+        {"id": "w", "parent": "nome"},    # nome = pai resolvido (não aberto) -> limpo
     ]
     prov = set(refresh_provisional(children, ["a"]))  # só 'a' aberto; 'nome' resolvido
     assert prov == {"x", "z"}            # z pega a cicatriz via x

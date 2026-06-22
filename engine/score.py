@@ -117,7 +117,9 @@ def compute_scores(claims, verdicts, doc_text=None):
     Retorna dict {id: score}.
     """
     v_by_id = {v["id"]: v for v in verdicts}
-    derives = {c["id"]: list(c.get("derives_from") or []) for c in claims}
+    # posse (D5): herança vem do `parent` ÚNICO, não dos links. Compat com derives_from legado.
+    derives = {c["id"]: ([c["parent"]] if c.get("parent") else list(c.get("derives_from") or []))
+               for c in claims}
 
     own = {}
     for c in claims:

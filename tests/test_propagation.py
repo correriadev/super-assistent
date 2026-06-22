@@ -3,7 +3,7 @@
 import json
 from engine.score import compute_scores
 from engine.linking import resolve_link, link_claim
-from engine.propagation import propagate, log_event, read_events, events_between
+from engine.propagation import propagate, log_event, read_events, events_between, referenced_by
 
 DOC = open("ideias/pub_780677977.txt", encoding="utf-8").read()
 SOURCE = json.load(
@@ -61,3 +61,69 @@ def test_log_append_only_e_diff_por_eventos(tmp_path):
     assert len(read_events(str(log))) == 3
     diff = events_between(str(log), since="2026-01-15T00:00:00", until="2026-02-15T00:00:00")
     assert [e["claim"] for e in diff] == ["c1"]
+
+
+def test_referenced_by_constroi_indice_reverso():
+    """referenced_by mapeia cada ref_id para a lista de ids que apontam para ele."""
+    nos = [
+        {"id": "filho-a", "parent": "raiz", "links": [{"ref": "externo-x"}]},
+        {"id": "filho-b", "parent": "raiz", "links": []},
+        {"id": "filho-c", "parent": None, "links": [{"ref": "externo-x"}, {"ref": "externo-y"}]},
+        {"id": "legado", "provenance": {"ref": "externo-y"}},
+    ]
+    idx = referenced_by(nos)
+    assert sorted(idx["raiz"]) == ["filho-a", "filho-b"]
+    assert sorted(idx["externo-x"]) == ["filho-a", "filho-c"]
+    assert sorted(idx["externo-y"]) == ["filho-c", "legado"]
+
+
+def test_propagate_cross_domain_cicatriz_cruza_fronteira(tmp_path):
+    """Cicatriz cruza domínio: invalidar aws-gateway marca stale o nó do simulador
+    que o linka — mesmo sendo de domínios distintos. O índice reverso resolve.
+    A propagação NUNCA reescreve content/rationale/binding (invariante dura)."""
+    log = tmp_path / "events.jsonl"
+
+    gateway = {
+        "id": "aws-gateway",
+        "domain": "aws",
+        "exposed": True,
+        "content": "API Gateway AWS exposto",
+        "rationale": "infra",
+        "binding": "vinculante",
+        "links": [],
+        "provenance": {"document": "aws-arch", "excerpt": "gateway principal"},
+    }
+    simulador = {
+        "id": "simulador-precisa-gateway",
+        "domain": "simulador",
+        "content": "simulador depende do gateway",
+        "rationale": "integracao",
+        "binding": "vinculante",
+        "links": [{"domain": "aws", "ref": "aws-gateway", "result": "confirms", "confidence": 8}],
+        "provenance": "human decision",
+    }
+
+    todos_nos = [gateway, simulador]
+    verdicts = [{"id": "aws-gateway"}, {"id": "simulador-precisa-gateway"}]
+
+    antes = {k: simulador[k] for k in ("content", "rationale", "binding")}
+
+    afetados, v2 = propagate("aws-gateway", todos_nos, verdicts, str(log))
+
+    # nó do simulador foi marcado stale pelo índice reverso cruzando domínio
+    assert "simulador-precisa-gateway" in afetados
+    assert simulador["stale"]["state"] == "review"
+    assert simulador["stale"]["source"] == "aws-gateway"
+
+    # link dentro do simulador aponta state=review
+    assert simulador["links"][0]["state"] == "review"
+
+    # invariante dura: propagação não reescreve resposta
+    assert {k: simulador[k] for k in ("content", "rationale", "binding")} == antes
+
+    # evento logado
+    evs = read_events(str(log))
+    assert any(e["claim"] == "simulador-precisa-gateway" and e["cause"] == "aws-gateway" for e in evs)
+
+    # gateway em si NÃO vira stale (não foi quem referenciou a fonte)
+    assert "stale" not in gateway

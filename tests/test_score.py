@@ -33,7 +33,7 @@ def test_resolver_issue_sobe_score():
 
 
 def test_filho_herda_pai_e_propaga_queda():
-    claims = [{"id": "P"}, {"id": "C", "derives_from": ["P"]}]
+    claims = [{"id": "P"}, {"id": "C", "parent": "P"}]
     base = compute_scores(claims, [{"id": "P"}, {"id": "C"}])
     assert base["P"] == 10 and base["C"] == 20
     com = compute_scores(claims, [{"id": "P", "verification_items": ["fato"]}, {"id": "C"}])
@@ -44,7 +44,7 @@ def test_guarda_de_ciclo():
     import pytest
     with pytest.raises(ValueError):
         compute_scores(
-            [{"id": "A", "derives_from": ["B"]}, {"id": "B", "derives_from": ["A"]}],
+            [{"id": "A", "parent": "B"}, {"id": "B", "parent": "A"}],
             [{"id": "A"}, {"id": "B"}],
         )
 

@@ -56,6 +56,13 @@ Abra **http://localhost:8731/viz/**. Precisa de rede (three.js via CDN). Control
 - Embedder maior se a precisão do match incomodar.
 - Discutir "curadoria" como possível camada genérica nova.
 
+## Quickstart (rodar o estado de um projeto)
+
+    python3 -m engine.run projetos/02-simulador-caixa-split
+
+Reporta: contrato OK?, score de cada claim, bloqueios. Se um agente emitiu JSON
+fora do contrato (status inventado, campo faltando), falha-alto aqui com a causa.
+
 ## Documentação
 
 Estruturada em [`docs/`](docs/): **[adr/](docs/adr/)** (decisões), **[specs/](docs/specs/)** (comportamento), **[quality/](docs/quality/)** (teste/invariantes/token), **[concept/](docs/concept/)** (constelação + glossário).

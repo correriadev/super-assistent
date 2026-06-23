@@ -25,6 +25,8 @@ def run_project(proj_dir):
         rep["contract_error"] = str(e)
         return rep
     rep["scores"] = score_claims(claims, verdicts)
+    from engine.oracle import oracle_mix
+    rep["oracle_mix"] = oracle_mix(claims, verdicts)
     return rep
 
 

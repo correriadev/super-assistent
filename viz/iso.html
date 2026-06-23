@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cidade do domínio — 2.5D iso (de ponta-cabeça)</title>
+  <style>
+    :root { --fog:#9aa7bd; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #070b12; color: #e7ecf5; font: 13px/1.5 system-ui, sans-serif; }
+    #app { position: fixed; inset: 0; }
+    .panel { position: fixed; background: rgba(11,16,26,.85); border: 1px solid #1e293b; border-radius: 10px; padding: .7rem .85rem; backdrop-filter: blur(6px); }
+    #head { top: 1rem; left: 1rem; max-width: 290px; }
+    #head h1 { font-size: 1rem; margin: 0 0 .15rem; }
+    #head p { margin: 0; color: var(--fog); font-size: .76rem; }
+    #legend { bottom: 1rem; left: 1rem; font-size: .78rem; }
+    #legend .row { display: flex; align-items: center; gap: .5rem; margin: .18rem 0; }
+    #legend .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink:0; }
+    #legend .ln { width: 20px; height: 2px; flex-shrink:0; }
+    #legend hr { border:0; border-top:1px solid #1e293b; margin:.45rem 0; }
+    #tip { position: fixed; pointer-events: none; display: none; max-width: 330px; z-index: 10; }
+    #tip .id { font-weight: 600; }
+    #tip .meta { color: var(--fog); font-size: .74rem; margin: .25rem 0; }
+    #tip .content { font-size: .78rem; }
+    .cyan { color:#06b6d4; } .k { color:#f59e0b; }
+    #ctl { bottom: 1rem; right: 1rem; color: var(--fog); font-size: .73rem; text-align:right; line-height:1.7; }
+    #ctl b { color:#e7ecf5; }
+    #floorind { top: 1rem; right: 1rem; font-size:.8rem; text-align:right; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="head" class="panel">
+    <h1>Cidade do domínio</h1>
+    <p>De ponta-cabeça: <b>ideias no topo</b> (céu, névoa, presidência), <b>código no chão</b> (trabalhadores). Prédio = domínio · andar = nível · setor = subdomínio. Longe = caixas; perto (zoom) = esferas. <span class="cyan">Passarelas ciano</span> = cross-domínio.</p>
+  </div>
+  <div id="floorind" class="panel"></div>
+  <div id="legend" class="panel"></div>
+  <div id="tip" class="panel"></div>
+  <div id="ctl" class="panel">
+    <b>← →</b> / <b>A D</b> giram a cidade<br>
+    <b>↑ ↓</b> / <b>W S</b> sobem/descem andar<br>
+    <b>espaço</b> (segura) zoom: caixas → esferas<br>
+    <b>esc</b> volta à visão geral · hover = detalhe
+  </div>
+
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+
+    const LEVEL_COLORS = { "ideação":0x60a5fa,"concepção":0x34d399,"arquitetura":0xa78bfa,"cenários":0xf472b6,"testes":0xfbbf24,"código":0xf87171,"lei":0xe2c96e };
+    const EDGE = { posse:0x33415c, ref:0xf59e0b, bridge:0x06b6d4 };
+    const SIM_LEVELS = ["ideação","concepção","arquitetura","cenários","testes","código"];
+    const TOP = SIM_LEVELS.length - 1;                 // andar mais alto (ideação)
+    const FLOOR_H = 15, CELL = 6, SECTOR_GAP = 30, BUILDING_GAP = 86;
+
+    const { points } = await (await fetch("./points.json")).json();
+    const byId = Object.fromEntries(points.map(p => [p.id, p]));
+
+    const domains = [...new Set(points.map(p => p.domain))];
+    const buildingX = {}; domains.forEach((d, i) => buildingX[d] = i * BUILDING_GAP);
+    // PONTA-CABEÇA: ideação (índice 0) vira o andar mais alto; código (5) vira o térreo.
+    const floorIndex = (p) => p.domain === "simulador" ? TOP - SIM_LEVELS.indexOf(p.level) : 0;
+    const sectorOf = (p) => p.subdomain || p.level;    // setor = subdomínio (fallback: o nível)
+
+    // grupos por (prédio, andar, setor)
+    const groups = {};
+    points.forEach(p => { (groups[`${p.domain}@${floorIndex(p)}@${sectorOf(p)}`] ??= []).push(p); });
+    // setores por andar de cada prédio -> offset lado a lado
+    const sectorsByFloor = {};
+    Object.keys(groups).forEach(k => { const [d, f] = k.split("@"); (sectorsByFloor[`${d}@${f}`] ??= []).push(k); });
+
+    const pos = {}, sectorMeta = {};
+    for (const [fk, secKeys] of Object.entries(sectorsByFloor)) {
+      const [dom, f] = fk.split("@"); const fi = +f;
+      secKeys.forEach((k, si) => {
+        const arr = groups[k];
+        const sx = buildingX[dom] + (si - (secKeys.length - 1) / 2) * SECTOR_GAP;
+        const cols = Math.ceil(Math.sqrt(arr.length));
+        arr.forEach((p, i) => {
+          const cx = (i % cols) - (cols - 1) / 2, cz = Math.floor(i / cols) - (Math.ceil(arr.length / cols) - 1) / 2;
+          pos[p.id] = new THREE.Vector3(sx + cx * CELL, fi * FLOOR_H + 1.4, cz * CELL);
+        });
+        const w = Math.max(cols * CELL + 4, 10), d = Math.max(Math.ceil(arr.length / cols) * CELL + 4, 10);
+        sectorMeta[k] = { x: sx, y: fi * FLOOR_H, z: 0, w, d, floor: fi, color: LEVEL_COLORS[arr[0].level] || 0x94a3b8, sector: arr[0].subdomain || arr[0].level, count: arr.length, level: arr[0].level };
+      });
+    }
+    const cityCenter = new THREE.Vector3((domains.length - 1) * BUILDING_GAP / 2, TOP * FLOOR_H / 2, 0);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x070b12);
+    scene.fog = new THREE.Fog(0x070b12, 200, 460);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.78));
+    const klight = new THREE.DirectionalLight(0xffffff, 0.65); klight.position.set(60, 120, 40); scene.add(klight);
+
+    // névoa do céu: decks translúcidos no topo (onde as ideias habitam)
+    for (let i = 0; i < 3; i++) {
+      const haze = new THREE.Mesh(new THREE.PlaneGeometry(400, 220),
+        new THREE.MeshBasicMaterial({ color: 0xaebfd6, transparent: true, opacity: 0.035, side: THREE.DoubleSide, depthWrite: false }));
+      haze.rotation.x = -Math.PI / 2; haze.position.set(cityCenter.x, (TOP + 0.6 + i * 0.5) * FLOOR_H, 0); scene.add(haze);
+    }
+
+    const aspect = innerWidth / innerHeight, F = 70;
+    const camera = new THREE.OrthographicCamera(-F * aspect, F * aspect, F, -F, -500, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(devicePixelRatio);
+    document.getElementById("app").appendChild(renderer.domElement);
+
+    // ---- caixas de setor (LOD longe) + labels ----
+    const boxes = [];
+    function sprite(text) {
+      const c = document.createElement("canvas"); c.width = 256; c.height = 64;
+      const g = c.getContext("2d"); g.fillStyle = "#cbd5e1"; g.font = "bold 28px system-ui"; g.textAlign = "left"; g.fillText(text, 6, 42);
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false })); s.scale.set(18, 4.5, 1); return s;
+    }
+    for (const [k, m] of Object.entries(sectorMeta)) {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(m.w, FLOOR_H * 0.62, m.d),
+        new THREE.MeshStandardMaterial({ color: m.color, emissive: m.color, emissiveIntensity: 0.25, roughness: 0.6, transparent: true, opacity: 0.6 }));
+      box.position.set(m.x, m.y + FLOOR_H * 0.31, m.z); box.userData = { meta: m }; scene.add(box); boxes.push(box);
+      const lab = sprite(m.sector); lab.position.set(m.x, m.y + FLOOR_H * 0.7, m.d / 2 + 2); lab.userData = { meta: m }; scene.add(lab); m.label = lab;
+    }
+
+    // ---- arestas (LOD perto) ----
+    const edges = [];
+    points.forEach(p => (p.edgeObjects || []).forEach(e => {
+      if (!pos[p.id] || !pos[e.ref]) return;
+      const kind = e.cross_domain ? "bridge" : e.kind;
+      const mat = new THREE.LineBasicMaterial({ color: EDGE[kind] || 0x33415c, transparent: true, opacity: 0 });
+      const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints([pos[p.id], pos[e.ref]]), mat);
+      ln.userData = { a: p.id, b: e.ref, base: kind === "bridge" ? 0.85 : 0.5 }; scene.add(ln); edges.push(ln);
+    }));
+
+    // ---- esferas (LOD perto) ----
+    const sphere = new THREE.SphereGeometry(1, 16, 16); const meshes = [];
+    points.forEach(p => {
+      const col = LEVEL_COLORS[p.level] || 0x94a3b8;
+      const r = Math.max(1, Math.sqrt(Math.log((p.score || 0) + 1)) * 1.3);
+      const m = new THREE.Mesh(sphere, new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: p.open ? 0.15 : 0.5, roughness: 0.4, transparent: true, opacity: 0 }));
+      m.position.copy(pos[p.id]); m.scale.setScalar(r); m.userData = { p, base: p.open ? 0.75 : 1, floor: floorIndex(p) };
+      scene.add(m); meshes.push(m);
+      if (p.exposed) { const ring = new THREE.Mesh(new THREE.SphereGeometry(1.5, 12, 12), new THREE.MeshBasicMaterial({ color: 0x06b6d4, wireframe: true, transparent: true, opacity: 0 })); ring.position.copy(pos[p.id]); ring.scale.setScalar(r); scene.add(ring); m.userData.ring = ring; }
+    });
+
+    // ---- estado de jogo ----
+    let azimuth = Math.PI / 4; const ELEV = Math.atan(1 / Math.SQRT2);
+    let focusFloor = null, camY = cityCenter.y, camZoom = 1; const keys = new Set(); const CAM_DIST = 300;
+    const setFocus = (f) => { focusFloor = f === null ? null : Math.max(0, Math.min(TOP, f)); };
+    addEventListener("keydown", (e) => {
+      if (e.code === "Escape") return setFocus(null);
+      if (["ArrowUp", "KeyW"].includes(e.code)) { setFocus(focusFloor === null ? TOP : focusFloor + 1); e.preventDefault(); }
+      else if (["ArrowDown", "KeyS"].includes(e.code)) { setFocus(focusFloor === null ? 0 : focusFloor - 1); e.preventDefault(); }
+      else { keys.add(e.code); if (e.code === "Space") e.preventDefault(); }
+    });
+    addEventListener("keyup", (e) => keys.delete(e.code));
+
+    // ---- hover (esferas quando perto, caixas quando longe) ----
+    const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(), tip = document.getElementById("tip");
+    let near = 0;
+    addEventListener("pointermove", (ev) => {
+      mouse.set((ev.clientX / innerWidth) * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera);
+      const hit = ray.intersectObjects(near > 0.5 ? meshes : boxes)[0];
+      if (hit) {
+        tip.style.display = "block"; tip.style.left = Math.min(ev.clientX + 14, innerWidth - 340) + "px"; tip.style.top = ev.clientY + 14 + "px";
+        if (hit.object.userData.p) { const p = hit.object.userData.p;
+          tip.innerHTML = `<div class="id">${p.id}</div><div class="meta">${p.domain} · ${p.level} · peso <span class="k">${p.score}</span>${p.exposed ? ' · <span class="cyan">exposto</span>' : ''}${p.provisional ? ' · provisional' : ''}</div><div class="content">${(p.content || "").slice(0, 150)}</div>`;
+        } else { const m = hit.object.userData.meta;
+          tip.innerHTML = `<div class="id">${m.sector}</div><div class="meta">setor · ${m.level} · ${m.count} nós</div><div class="content">aproxime (espaço) para ver os nós</div>`; }
+      } else tip.style.display = "none";
+    });
+
+    const counts = {}; points.forEach(p => counts[p.level] = (counts[p.level] || 0) + 1);
+    document.getElementById("legend").innerHTML =
+      ["ideação","concepção","arquitetura","cenários","testes","código","lei"].filter(n => counts[n]).map(n =>
+        `<div class="row"><span class="dot" style="background:#${LEVEL_COLORS[n].toString(16).padStart(6,"0")}"></span>${n} <span style="color:var(--fog)">(${counts[n]})</span></div>`).join("") +
+      `<hr><div class="row"><span class="ln" style="background:#06b6d4"></span>passarela cross-domínio</div><div class="row"><span class="ln" style="background:#f59e0b"></span>referência · <span class="ln" style="background:#33415c"></span>posse</div>`;
+    const flName = (f) => f === null ? "visão geral" : (SIM_LEVELS[TOP - f] || ("andar " + f));
+
+    function loop() {
+      requestAnimationFrame(loop);
+      if (keys.has("ArrowLeft") || keys.has("KeyA")) azimuth -= 0.025;
+      if (keys.has("ArrowRight") || keys.has("KeyD")) azimuth += 0.025;
+      camZoom += ((keys.has("Space") ? 2 : 1) - camZoom) * 0.1;
+      camY += ((focusFloor === null ? cityCenter.y : focusFloor * FLOOR_H) - camY) * 0.12;
+      near = Math.max(0, Math.min(1, camZoom - 1));                 // 0 longe (caixas) -> 1 perto (esferas)
+
+      // dim por foco (mais forte quando perto) + LOD caixa↔esfera
+      const dimFar = 0.22 - near * 0.17;
+      const fdim = (fl) => focusFloor === null ? 1 : (fl === focusFloor ? 1 : dimFar);
+      boxes.forEach(b => { const d = fdim(b.userData.meta.floor); b.material.opacity = 0.6 * (1 - near) * d; b.userData.meta.label.material.opacity = (0.35 + 0.65 * (1 - near)) * d; });
+      meshes.forEach(m => { const d = fdim(m.userData.floor); m.material.opacity = m.userData.base * near * d; if (m.userData.ring) m.userData.ring.material.opacity = 0.5 * near * d; });
+      edges.forEach(l => { const d = Math.min(fdim(floorIndex(byId[l.userData.a])), fdim(floorIndex(byId[l.userData.b]))); l.material.opacity = l.userData.base * near * d; });
+
+      const dir = new THREE.Vector3(Math.cos(azimuth) * Math.cos(ELEV), Math.sin(ELEV), Math.sin(azimuth) * Math.cos(ELEV));
+      const target = new THREE.Vector3(cityCenter.x, camY, cityCenter.z);
+      camera.position.copy(target).addScaledVector(dir, CAM_DIST); camera.lookAt(target);
+      camera.zoom = camZoom; camera.updateProjectionMatrix();
+      document.getElementById("floorind").innerHTML = `foco: <b>${flName(focusFloor)}</b> · ${near > 0.5 ? "nós" : "setores"}`;
+      renderer.render(scene, camera);
+    }
+    addEventListener("resize", () => { const a = innerWidth / innerHeight; camera.left = -F * a; camera.right = F * a; camera.top = F; camera.bottom = -F; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+    loop();
+  </script>
+</body>
+</html>

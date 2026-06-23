@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Constelações 2D — simulador × lei (estilo Obsidian)</title>
+  <style>
+    :root { --fog:#9aa7bd; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0a0e17; color: #e7ecf5; font: 13px/1.5 system-ui, sans-serif; }
+    #graph { position: fixed; inset: 0; }
+    .panel { position: fixed; background: rgba(13,18,28,.85); border: 1px solid #1e293b; border-radius: 10px; padding: .7rem .85rem; backdrop-filter: blur(6px); }
+    #head { top: 1rem; left: 1rem; max-width: 300px; }
+    #head h1 { font-size: 1rem; margin: 0 0 .15rem; }
+    #head p { margin: 0; color: var(--fog); font-size: .76rem; }
+    #filters { top: 1rem; right: 1rem; max-width: 220px; max-height: 90vh; overflow:auto; }
+    #filters h2 { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--fog); margin: .6rem 0 .25rem; }
+    #filters label { display: flex; align-items: center; gap: .45rem; font-size: .8rem; cursor: pointer; margin: .12rem 0; }
+    #filters .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink:0; }
+    #filters .ln { width: 18px; height: 2px; flex-shrink:0; }
+    #hint { bottom: 1rem; left: 1rem; color: var(--fog); font-size: .74rem; }
+    #hint b { color:#e7ecf5; }
+    .cyan { color:#06b6d4; }
+  </style>
+</head>
+<body>
+  <div id="graph"></div>
+  <div id="head" class="panel">
+    <h1>Constelações 2D</h1>
+    <p>Force-directed (estilo Obsidian). Colunas = nível; cor = domínio/nível; tamanho = peso; <span class="cyan">ciano</span> = ponte cross-domínio. Clique num nó = foco local.</p>
+  </div>
+  <div id="filters" class="panel"></div>
+  <div id="hint" class="panel">arrastar nó · scroll = zoom · <b>clique nó</b> = grafo local · clique no fundo = volta</div>
+
+  <script src="https://unpkg.com/d3-force@3"></script>
+  <script src="https://unpkg.com/force-graph"></script>
+  <script>
+  (async function () {
+    const LEVEL_COLORS = { "ideação":"#60a5fa","concepção":"#34d399","arquitetura":"#a78bfa","cenários":"#f472b6","testes":"#fbbf24","código":"#f87171","lei":"#e2c96e" };
+    const EDGE = { posse:"#33415c", ref:"#f59e0b", bridge:"#06b6d4" };
+    const LEVEL_X = { "ideação":0,"concepção":1,"arquitetura":2,"cenários":3,"testes":4,"código":5,"lei":7 }; // lei à direita
+    const COL_GAP = 170;
+
+    const { points } = await (await fetch("./points.json")).json();
+    const colorOf = (p) => LEVEL_COLORS[p.level] || "#94a3b8";
+
+    // nodes + links a partir de edgeObjects
+    const nodes = points.map(p => ({ ...p, __color: colorOf(p), val: Math.log((p.score||0) + 1) }));
+    const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+    const links = [];
+    points.forEach(p => (p.edgeObjects || []).forEach(e => {
+      if (byId[e.ref]) links.push({ source: p.id, target: e.ref, kind: e.kind, bridge: !!e.cross_domain });
+    }));
+
+    // adjacência (não-direcionada) p/ grafo local
+    const adj = {};
+    links.forEach(l => {
+      (adj[l.source.id || l.source] ??= new Set()).add(l.target.id || l.target);
+      (adj[l.target.id || l.target] ??= new Set()).add(l.source.id || l.source);
+    });
+
+    const state = {
+      domains: new Set(nodes.map(n => n.domain)),
+      levels: new Set(nodes.map(n => n.level)),
+      kinds: new Set(["posse", "ref", "bridge"]),
+      focus: null, // id do nó em foco (grafo local), ou null = global
+    };
+
+    const kindOf = (l) => l.bridge ? "bridge" : l.kind;
+    function visibleNode(n) { return state.domains.has(n.domain) && state.levels.has(n.level); }
+    function inFocus(id) {
+      if (!state.focus) return true;
+      return id === state.focus || (adj[state.focus] && adj[state.focus].has(id));
+    }
+
+    const Graph = ForceGraph()(document.getElementById("graph"))
+      .graphData({ nodes, links })
+      .backgroundColor("#0a0e17")
+      .nodeRelSize(3)
+      .nodeVal("val")
+      .nodeLabel(n => `<div style="font:12px system-ui;max-width:320px">
+          <b>${n.id}</b><br>
+          <span style="color:#9aa7bd">${n.domain} · ${n.level} · peso ${n.score}${n.exposed ? ' · <span style=color:#06b6d4>exposto</span>' : ''}${n.provisional ? ' · provisional' : ''}</span><br>
+          ${(n.content || "").slice(0, 160)}</div>`)
+      .nodeCanvasObject((n, ctx) => {
+        const r = Math.max(2.2, Math.sqrt(n.val) * 2.4);
+        const dim = !inFocus(n.id);
+        ctx.globalAlpha = dim ? 0.1 : 1;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = n.__color; ctx.fill();
+        if (n.exposed) { ctx.lineWidth = 1.3; ctx.strokeStyle = "#06b6d4"; ctx.stroke(); }
+        if (n.provisional) { ctx.beginPath(); ctx.arc(n.x, n.y, r + 2.2, 0, 2 * Math.PI); ctx.lineWidth = 1; ctx.strokeStyle = "#f59e0b"; ctx.globalAlpha = dim ? 0.08 : 0.5; ctx.stroke(); }
+        ctx.globalAlpha = 1;
+      })
+      .linkColor(l => EDGE[kindOf(l)])
+      .linkWidth(l => l.bridge ? 2 : 1)
+      .linkDirectionalParticles(l => l.bridge ? 2 : 0)
+      .linkDirectionalParticleWidth(2)
+      .onNodeClick(n => { state.focus = (state.focus === n.id ? null : n.id); apply(); })
+      .onBackgroundClick(() => { if (state.focus) { state.focus = null; apply(); } });
+
+    // layering: puxa cada nó pra coluna do seu nível (mantém o gradiente)
+    Graph.d3Force("x", d3.forceX(n => (LEVEL_X[n.level] ?? 0) * COL_GAP).strength(0.5));
+    Graph.d3Force("y", d3.forceY(0).strength(0.04));
+    Graph.d3Force("charge").strength(-90);
+
+    function apply() {
+      const ns = nodes.filter(visibleNode);
+      const ok = new Set(ns.map(n => n.id));
+      const ls = links.filter(l => state.kinds.has(kindOf(l))
+        && ok.has(l.source.id || l.source) && ok.has(l.target.id || l.target));
+      Graph.graphData({ nodes: ns, links: ls });
+    }
+
+    // ---- painel de filtros ----
+    const fp = document.getElementById("filters");
+    function chk(label, dotHtml, checked, on) {
+      const id = "f" + Math.random().toString(36).slice(2);
+      const el = document.createElement("label");
+      el.innerHTML = `<input type="checkbox" ${checked ? "checked" : ""} id="${id}">${dotHtml}<span>${label}</span>`;
+      el.querySelector("input").addEventListener("change", e => { on(e.target.checked); apply(); });
+      fp.appendChild(el);
+      return el;
+    }
+    const dot = (c) => `<span class="dot" style="background:${c}"></span>`;
+    const ln = (c) => `<span class="ln" style="background:${c}"></span>`;
+
+    fp.insertAdjacentHTML("beforeend", "<h2>domínios</h2>");
+    [...new Set(nodes.map(n => n.domain))].forEach(d =>
+      chk(d, dot(d === "lei" ? LEVEL_COLORS.lei : "#94a3b8"), true, on => on ? state.domains.add(d) : state.domains.delete(d)));
+
+    fp.insertAdjacentHTML("beforeend", "<h2>níveis</h2>");
+    ["ideação","concepção","arquitetura","cenários","testes","código","lei"].forEach(lv => {
+      if (!nodes.some(n => n.level === lv)) return;
+      chk(lv, dot(LEVEL_COLORS[lv]), true, on => on ? state.levels.add(lv) : state.levels.delete(lv));
+    });
+
+    fp.insertAdjacentHTML("beforeend", "<h2>arestas</h2>");
+    [["posse", "posse (árvore)"], ["ref", "referência"], ["bridge", "ponte cross-domínio"]].forEach(([k, lbl]) =>
+      chk(lbl, ln(EDGE[k]), true, on => on ? state.kinds.add(k) : state.kinds.delete(k)));
+
+    apply();
+    addEventListener("resize", () => Graph.width(innerWidth).height(innerHeight));
+  })();
+  </script>
+</body>
+</html>

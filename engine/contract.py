@@ -41,6 +41,11 @@ def validate_verdict(v):
         _require(isinstance(it.get("text"), str), f"verdict {cid}: item sem text")
         _require(it.get("domain") in DOMAINS, f"verdict {cid}: domain inválido {it.get('domain')!r}")
         _require(isinstance(it.get("critical"), bool), f"verdict {cid}: critical deve ser bool")
+        for cand in it.get("candidates", []):
+            _require(isinstance(cand.get("source_claim"), str), f"verdict {cid}: candidate sem source_claim")
+            _require(isinstance(cand.get("excerpt"), str), f"verdict {cid}: candidate sem excerpt")
+            _require(isinstance(cand.get("confidence"), (int, float)),
+                     f"verdict {cid}: candidate confidence deve ser numérica")
     if v["status"] == "PRECISA-JUSTIFICAR":
         _require(isinstance(v.get("elicitation_question"), str) and v["elicitation_question"],
                  f"verdict {cid}: elicitation_question obrigatória em PRECISA-JUSTIFICAR")

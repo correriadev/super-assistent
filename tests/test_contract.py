@@ -51,3 +51,18 @@ def test_validate_lista_acumula_erros():
             "elicitation_question": None, "contradiction": None}]
     with pytest.raises(ContractError, match="b"):
         validate_verdicts(bad)
+
+def test_verification_item_candidates_valido():
+    v = {"id": "x", "status": "PENDENTE-VERIFICAÇÃO", "structural_gaps": [],
+         "verification_items": [{"text": "q?", "domain": "lei", "critical": True,
+             "candidates": [{"source_claim": "s1", "excerpt": "...", "confidence": 10}]}],
+         "elicitation_question": None, "contradiction": None}
+    assert validate_verdict(v) == v
+
+def test_candidate_confidence_nao_numerica_falha():
+    v = {"id": "x", "status": "PENDENTE-VERIFICAÇÃO", "structural_gaps": [],
+         "verification_items": [{"text": "q?", "domain": "lei", "critical": True,
+             "candidates": [{"source_claim": "s1", "excerpt": "...", "confidence": "alta"}]}],
+         "elicitation_question": None, "contradiction": None}
+    with pytest.raises(ContractError, match="confidence"):
+        validate_verdict(v)

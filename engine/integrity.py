@@ -63,6 +63,34 @@ def tests_green(node, test_results):
     return all(test_results.get(n) is True for n in names)
 
 
+def is_test_node(node):
+    """Nó-teste: o slot adversarial no ponto onde o oráculo é execução (red/green)."""
+    return node.get("node_type") == "test"
+
+
+def validates_ref(node):
+    """O nó-código que este nó-teste valida (link type 'valida'). None se ausente."""
+    for link in node.get("links") or []:
+        if link.get("type") == "valida":
+            return link.get("ref")
+    return None
+
+
+def test_verdict(node, test_results):
+    """Veredito que o teste emite NO GRAFO: PASSA (verde) | CONTESTADO (vermelho).
+    None se não for nó-teste, não declarar testes, ou faltar resultado. O teste é o gate
+    no ponto onde o oráculo ficou decidível — o veredito que o gate-da-ideia não pode dar."""
+    if not is_test_node(node):
+        return None
+    names = (node.get("grounded_by") or {}).get("tests")
+    if not names:
+        return None
+    res = [test_results.get(n) for n in names]
+    if any(r is None for r in res):
+        return None
+    return "PASSA" if all(res) else "CONTESTADO"
+
+
 def _all_refs(node):
     """Todas as refs de um nó: parent (posse) + links[].ref + derives_from legado."""
     refs = []
@@ -122,6 +150,8 @@ def verify_integrity(nodes, repo_root, app_dir=None):
     alias_index = {a: n for n in nodes for a in (n.get("aliases") or [])}
     dup_ids = sorted(i for i, c in Counter(n["id"] for n in nodes).items() if c > 1)
     orphans, ungrounded, red, dangling, unexposed = [], [], [], [], []
+    test_verdicts = {}
+    red_test_nodes = []
     results = run_node_tests(app_dir) if app_dir else {}
 
     for n in nodes:
@@ -134,6 +164,19 @@ def verify_integrity(nodes, repo_root, app_dir=None):
                 dangling.append((n["id"], ref))
             elif not is_exposed(target):
                 unexposed.append((n["id"], ref))
+
+        if is_test_node(n):
+            tv = test_verdict(n, results)
+            if tv is not None:
+                test_verdicts[n["id"]] = tv
+                if tv == "CONTESTADO":
+                    red_test_nodes.append(n["id"])
+            vref = validates_ref(n)
+            if vref and vref not in ids and vref not in alias_index:
+                entry = (n["id"], vref)
+                if entry not in dangling:
+                    dangling.append(entry)
+            continue
 
         if not is_artifact(n):
             continue
@@ -152,7 +195,7 @@ def verify_integrity(nodes, repo_root, app_dir=None):
         if tests_green(n, results) is False:
             red.append(n["id"])
 
-    ok = not (orphans or ungrounded or red or dangling or unexposed or dup_ids)
+    ok = not (orphans or ungrounded or red or dangling or unexposed or dup_ids or red_test_nodes)
     return {
         "ok": ok,
         "orphans": orphans,
@@ -161,4 +204,6 @@ def verify_integrity(nodes, repo_root, app_dir=None):
         "missing_parent_ref": dangling,
         "unexposed_xref": unexposed,
         "dup_ids": dup_ids,
+        "test_verdicts": test_verdicts,
+        "red_test_nodes": red_test_nodes,
     }

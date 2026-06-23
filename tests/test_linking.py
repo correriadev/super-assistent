@@ -112,3 +112,37 @@ def test_margin_largo_nao_dispara_no_match_claro():
     r = resolve_link("o tributo é segregado no instante do pagamento?", claims,
                      {"certo": 10, "longe": 10}, embed_fn=_stub_embed)
     assert r["result"] in ("confirms", "refutes") and r["source_claim"] == "certo"
+
+
+def test_suggest_links_anexa_candidates_por_dominio():
+    from engine.linking import suggest_links
+    source = [
+        {"id": "lei-residencia", "domain": "lei", "content": "a LGPD exige residência nacional de dados",
+         "provenance": {"document": "LGPD", "excerpt": "residência nacional de dados"}},
+        {"id": "eng-latencia", "domain": "engenharia", "content": "latência de rede sobe com distância",
+         "provenance": {"document": "doc", "excerpt": "latência"}},
+    ]
+    scores = {"lei-residencia": 10, "eng-latencia": 10}
+    verdict = {"id": "x", "status": "PENDENTE-VERIFICAÇÃO", "structural_gaps": [],
+               "verification_items": [
+                   {"text": "a LGPD exige residência nacional de dados?", "domain": "lei", "critical": True},
+                   {"text": "pergunta sem domínio", "domain": None, "critical": False},
+               ],
+               "elicitation_question": None, "contradiction": None}
+    enriched = suggest_links(verdict, source, scores)
+    # o item de domínio lei recebeu candidates apontando ao claim-fonte de lei
+    item_lei = verdict["verification_items"][0]
+    assert "candidates" in item_lei
+    assert item_lei["candidates"][0]["source_claim"] == "lei-residencia"
+    # o item sem domínio não foi tocado
+    assert "candidates" not in verdict["verification_items"][1]
+    assert item_lei in enriched
+
+def test_suggest_links_dominio_sem_fonte_nao_inventa():
+    from engine.linking import suggest_links
+    source = [{"id": "lei-x", "domain": "lei", "content": "algo", "provenance": {"excerpt": "algo"}}]
+    verdict = {"id": "y", "verification_items": [
+        {"text": "pergunta de engenharia", "domain": "engenharia", "critical": True}]}
+    enriched = suggest_links(verdict, source, {"lei-x": 10})
+    assert enriched == []
+    assert "candidates" not in verdict["verification_items"][0]

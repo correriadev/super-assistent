@@ -148,6 +148,44 @@ def resolve_link(question, source_claims, source_scores, threshold=_THRESHOLD, e
     }
 
 
+def _candidates_from(resolution):
+    """Normaliza a saída de resolve_link em lista de candidates [{source_claim, excerpt, confidence}]."""
+    if resolution.get("candidates"):            # caso ambiguous: já vem a lista
+        return resolution["candidates"]
+    if resolution.get("source_claim"):          # confirms/refutes: o melhor único
+        return [{
+            "source_claim": resolution["source_claim"],
+            "excerpt": resolution.get("excerpt"),
+            "confidence": resolution.get("confidence", 0),
+        }]
+    return []
+
+
+def suggest_links(verdict, source_claims, source_scores, embed_fn=None):
+    """Fecha o loop cross-graph (README §12), HUMAN-TRIGGERED: para cada verification_item
+    com endereço de domínio, procura no source graph DAQUELE domínio e anexa o resultado
+    de resolve_link como `candidates` no item. NÃO persiste link (isso é link_claim, sob
+    confirmação humana) — só torna a pista visível. `not-found` não enriquece.
+    Retorna os itens que ganharam candidato."""
+    enriched = []
+    for item in verdict.get("verification_items") or []:
+        dom = domain_of(item)
+        if not dom:
+            continue
+        pool = [c for c in source_claims if c.get("domain") == dom]
+        if not pool:
+            continue
+        r = resolve_link(item, pool, source_scores, embed_fn=embed_fn)
+        if r.get("result") == "not-found":
+            continue
+        cands = _candidates_from(r)
+        if not cands:
+            continue
+        item["candidates"] = cands
+        enriched.append(item)
+    return enriched
+
+
 def link_claim(idea_claim, question, resolution):
     """Persiste um match de `resolve_link` como LINK no claim do idea graph — a ponte
     cross-graph que encosta no disco.

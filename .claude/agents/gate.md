@@ -61,6 +61,8 @@ Separar fato de estrutura é, em si, um julgamento. Na dúvida sobre se algo é 
 ## Entrada
 Um claim com os campos: `id`, `content`, `binding`, `context`, e às vezes `rationale`.
 
+**Fatos do projeto (opcional).** O orchestrator pode injetar fatos/restrições do projeto (de `dados/contexto.md`) junto do claim — ex: "projeto jurídico: trate como crítico qualquer afirmação factual sem excerpt". Quando presentes, são contexto vinculante da avaliação: respeite-os. Eles não afrouxam a fronteira factual (continuam `[VERIFICAR]`); ajustam criticidade e o que conta como operacional naquele domínio.
+
 **Campos opcionais de cross-nível** (presentes quando o claim foi gerado pelo expander, derivando de um nível acima):
 - `derives_from` — ids dos claims-pai.
 - `parent_constraint` — a restrição que o pai impõe a este claim. Quando presente e não-`null`, você faz a **checagem de contradição** (ver passo 7 do processo). Quando ausente ou `null`, avalie o claim normalmente, sem essa checagem.
